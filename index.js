@@ -11,10 +11,90 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function Comment(user, date, text) {
+    this.user = user && user.toLowerCase();
+    this.date = date;
+    this.text = text;
+    this.importance = 0;
+    for (let char of text) {
+        if (char === '!') {
+            this.importance--;
+        }
+    }
+}
+
+function parseComments()
+{
+    let comments = [];
+    let regExpr = new RegExp(`.*;.*;.*`, 'i')
+    for(file of files) {
+        for(line of file.split("\r\n").filter(x => x !=='' &&  x !=='\n\r')){
+            if (line.includes('TODO') && line.includes('//')){
+                let onlyComm = line.split('//')[1];
+                if(onlyComm.includes('TODO')){
+                    onlyComm = onlyComm.replace('TODO', '').trim();
+                    if (regExpr.test(onlyComm)) {
+                        let comm = onlyComm.split(';');
+                        comments.push(new Comment(comm[0], new Date(comm[1].trim()), onlyComm));
+                    }else{
+                        comments.push(new Comment("", "", onlyComm));
+                    }
+                }
+            }
+        }
+    }
+    console.log(comments)
+    return(comments);
+}
+
+/* function getUserComments(name){
+    let userComms = [];
+    let regExpr = new RegExp(`${name}.*;.*;.*`, 'i')
+    for (let comment of parseComments()) {
+        if (regExpr.test(comment)) {
+            userComms.push(comment);
+        }
+    }
+    return userComms;
+}*/
+
 function processCommand(command) {
-    switch (command) {
+    command = command.split(' ');
+    switch (command[0]) {
         case 'exit':
             process.exit(0);
+            break;
+        case 'show':
+            for(comm of parseComments()){
+                    console.log(comm.text);
+            }
+            break;
+        case 'important':
+            for (let comment of parseComments()) {
+                if (comment.importance > 0) {
+                    console.log(comment.text);
+                }
+            }
+            break;
+        case 'user':
+            for (let comment of parseComments()) 
+                if(comment.user === command[1])
+                    console.log(comment.text);
+            break;
+        case 'sort':   
+            let comments = parseComments();
+            if(command[1] === "importance"){
+                comments.sort((a, b) =>  a.importance - b.importance);
+            }
+            if (command[1] === "user")
+                comments.sort(function(a, b){
+                    if(a.user < b.user) { return 1; }
+                    if(a.user > b.user) { return -1; }
+                    return 0;});
+            if (command[1] === "date")
+                comments.sort((a,b) => b.date - a.date);
+            for(comm of comments)
+                console.log(comm.text)
             break;
         default:
             console.log('wrong command');
