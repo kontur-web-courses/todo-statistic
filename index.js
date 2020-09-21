@@ -18,7 +18,7 @@ function Comment(user, date, text) {
     this.importance = 0;
     for (let char of text) {
         if (char === '!') {
-            this.importance--;
+            this.importance++;
         }
     }
 }
@@ -37,26 +37,14 @@ function parseComments()
                         let comm = onlyComm.split(';');
                         comments.push(new Comment(comm[0], new Date(comm[1].trim()), onlyComm));
                     }else{
-                        comments.push(new Comment("", "", onlyComm));
+                        comments.push(new Comment('', '', onlyComm));
                     }
                 }
             }
         }
     }
-    console.log(comments)
     return(comments);
 }
-
-/* function getUserComments(name){
-    let userComms = [];
-    let regExpr = new RegExp(`${name}.*;.*;.*`, 'i')
-    for (let comment of parseComments()) {
-        if (regExpr.test(comment)) {
-            userComms.push(comment);
-        }
-    }
-    return userComms;
-}*/
 
 function processCommand(command) {
     command = command.split(' ');
@@ -81,25 +69,16 @@ function processCommand(command) {
                 if(comment.user === command[1])
                     console.log(comment.text);
             break;
-        case 'sort':   
-            let comments = parseComments();
-            if(command[1] === "importance"){
-                comments.sort((a, b) =>  a.importance - b.importance);
-            }
-            if (command[1] === "user")
-                comments.sort(function(a, b){
-                    if(a.user < b.user) { return 1; }
-                    if(a.user > b.user) { return -1; }
-                    return 0;});
-            if (command[1] === "date")
-                comments.sort((a,b) => b.date - a.date);
-            for(comm of comments)
-                console.log(comm.text)
+        case 'sort':
+            for (let comm of parseComments().sort((a, b) => {
+                if(a[command[1]] < b[command[1]]) { return 1; }
+                    if(a[command[1]] > b[command[1]]) { return -1; }
+                    return 0;
+            }))
+                console.log(comm.text);
             break;
         default:
             console.log('wrong command');
             break;
     }
 }
-
-// TODO you can do it!
