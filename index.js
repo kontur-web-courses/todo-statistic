@@ -62,5 +62,10 @@ function importantRunner() {
 function userRunner(user) {
     const nameEnd = ";"
     let showResult = showRunner()
-    return showResult.filter(value => value.substring(value.indexOf(commentStart), value.indexOf(nameEnd)) === user)
+    let comparer = function(value){
+        let startIndex = commentStart.length + 1
+        let nameEndIndex = value.indexOf(nameEnd)
+        return value.substring(startIndex, nameEndIndex) === user
+    } 
+    return showResult.filter(comparer)
 }
