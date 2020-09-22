@@ -1,7 +1,5 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
-const { get } = require('http');
-const { connected } = require('process');
 
 const files = getFiles();
 const toDoList = new Array();
