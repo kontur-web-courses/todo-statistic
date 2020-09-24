@@ -36,7 +36,7 @@ function getCount(str) {
 function showTODO(object) {
     let str = "";
     for (item in object) {
-        if (item != 'full' && item != 'count') {
+        if (item != 'count') {
             str += ' ' + object[item];
         }
     }
@@ -54,14 +54,12 @@ function createTODOList(arr) {
                 name: todo_name.split(' ')[2],
                 date,
                 text,
-                full: true,
                 count: getCount(text),
             });
         }
         else {
             result.push({
                 todo: todo_name,
-                full: false,
                 count: getCount(todo_name)
             });
         }
