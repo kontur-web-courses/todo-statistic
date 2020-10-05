@@ -5,7 +5,7 @@ const files = getFiles();
 
 let nameSize = 0;
 let dateSize = 0;
-let comSize = 0;
+let comSize = 50;
 let result = '';
 
 console.log('Please, write your command!');
@@ -63,7 +63,8 @@ function processCommand(command) {
 }
 
 function makeHeading(){
-    return '!'.padEnd(3)+'|'.padEnd(3) + 'user'.padEnd(nameSize)+'  |'.padEnd(5) + 'date'.padEnd(dateSize)+'  |'.padEnd(5)  + 'comment'.padEnd(comSize) + '\n';
+    let res ='!'.padEnd(3)+'|'.padEnd(3) + 'user'.padEnd(nameSize)+'  |'.padEnd(5) + 'date'.padEnd(dateSize)+'  |'.padEnd(5)  + 'comment'.padEnd(comSize) + '\n';
+    return res + '-'.repeat(4+nameSize+5+dateSize+5+comSize) + '\n';
 }
 
 function deduceResult(todo){
@@ -88,7 +89,7 @@ function deduceResult(todo){
     if (comment.length>50){ // комментарий
         comment = comment.substr(0, 47) + '...';
     }
-    return(result = result + comment.padEnd(comSize));
+    return(result = result + comment);
 }
 
 function getDateAfter(){
@@ -130,9 +131,6 @@ function getSize(result){
         }
         if (todo.hasOwnProperty('date') && todo.date.length > dateSize && todo.date.length < 11){
             dateSize = String(todo.date).length;
-        }
-        if (todo.com.length > comSize && todo.com.length < 51){
-            comSize = todo.com.length;
         }
     }
     
