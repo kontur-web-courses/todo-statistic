@@ -1,5 +1,7 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
+const {show} = require('./show');
+const {important} = require('./important');
 
 const files = getFiles();
 
@@ -16,6 +18,14 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            show(getFiles());
+            break;
+        case 'important':
+            important(getFiles());
+            break;
+        case 'user':
+
         default:
             console.log('wrong command');
             break;
