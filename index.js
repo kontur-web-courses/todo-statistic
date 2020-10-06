@@ -31,27 +31,27 @@ function processCommand(command) {
                 .filter(c => c.importance > 0)
                 .map(c => console.log(c.text));
             break;
-        case command.match(/^user [a-zа-я0-9_\s]+$/gi) ? command : null:
+        case command.match(/^user [a-zа-я0-9_\s]+$/g) ? command : null:
             const user = command.replace('user ', '').trim().toLowerCase();
             console.log('\r\nResults:\r\n');
             COMMENTS
                 .filter(c => c.user.toLowerCase() === user)
                 .map(c => console.log(c.text));
             break;
-        case command.match(/^sort importance$/gi) ? command : null:
+        case command.match(/^sort importance$/g) ? command : null:
             console.log('\r\nResults:\r\n');
             COMMENTS
                 .sort((a, b) => b.importance - a.importance)
                 .map(c => console.log(c.text));
             // sortImportance();
             break;
-        case command.match(/^sort user$/gi) ? command : null:
+        case command.match(/^sort user$/g) ? command : null:
             console.log('\r\nResults:\r\n');
             COMMENTS
                 .sort((a, b) => (a.user && b.user) ? (a.user).localeCompare(b.user) : 0)
                 .map(c => console.log(c));
             break;
-        case command.match(/^sort date$/gi) ? command : null:
+        case command.match(/^sort date$/g) ? command : null:
             console.log('\r\nResults:\r\n');
             COMMENTS
                 .sort((a, b) => {
@@ -60,9 +60,18 @@ function processCommand(command) {
                 })
                 .map(c => console.log(c));
             break;
-        case command.match(/date [0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?/i) ? command : null:
-            const date = command.match(/date [0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?/);
-            console.log(date, date.length)
+        case command.match(/^((date [0-9]{4}-[0-9]{2}-[0-9]{2}|date [0-9]{4}-[0-9]{2})|date [0-9]{4})$/g) ? command : null:
+            const date = new Date(command.match(/(([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}-[0-9]{2})|[0-9]{4})$/g)[0]);
+            const _date = {
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+                day: date.getDate(),
+            }
+            console.log('\r\nResults:\r\n');
+            console.log(date, _date)
+            COMMENTS
+                .filter(comment => comment.date && comment.date.date > date)
+                .map(comment => console.log(comment));
             break;
         default:
             console.log('wrong command');
