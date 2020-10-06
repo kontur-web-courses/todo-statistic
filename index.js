@@ -2,6 +2,7 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 const {show} = require('./show');
 const {important} = require('./important');
+const {userTODO} = require('./userTODO');
 
 const files = getFiles();
 
@@ -14,7 +15,11 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let argument;
+    command = command.split(' ');
+    if (command.length > 1)
+        argument = command[1];
+    switch (command[0]) {
         case 'exit':
             process.exit(0);
             break;
@@ -25,7 +30,8 @@ function processCommand(command) {
             important(getFiles());
             break;
         case 'user':
-
+            userTODO(getFiles(), argument);
+            break;
         default:
             console.log('wrong command');
             break;
