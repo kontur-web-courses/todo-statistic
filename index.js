@@ -62,13 +62,7 @@ function processCommand(command) {
             break;
         case command.match(/^((date [0-9]{4}-[0-9]{2}-[0-9]{2}|date [0-9]{4}-[0-9]{2})|date [0-9]{4})$/g) ? command : null:
             const date = new Date(command.match(/(([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}-[0-9]{2})|[0-9]{4})$/g)[0]);
-            const _date = {
-                year: date.getFullYear(),
-                month: date.getMonth() + 1,
-                day: date.getDate(),
-            }
             console.log('\r\nResults:\r\n');
-            console.log(date, _date)
             COMMENTS
                 .filter(comment => comment.date && comment.date.date > date)
                 .map(comment => console.log(comment));
