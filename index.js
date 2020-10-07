@@ -1,7 +1,7 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
-const TODOIdentity = '// TODO '
+const TODOIdentity = /\/\/.*todo/gi;
 
 let headers = {
     importance: 1,
@@ -25,23 +25,9 @@ function getFiles() {
     return getAllFilePathsWithExtension(process.cwd(), 'js');
 }
 
-function processCommand(command) {
-    let userName ='';
-    let filter = '';
-    let date ='';
-    if (command.indexOf('user') === 0) {
-        userName = command.slice(5);
-        command = 'user';
-    }
-    else if (command.includes('sort')) {
-        filter = command.slice(5);
-        command = 'sort';
-    }
-    else if (command.includes('date')) {
-        date = command.slice(5);
-        command = 'date';
-    }
-
+function processCommand(userCommand) {
+    let [command, ...args] = userCommand.split(' ');
+    args = args.toString();
     switch (command) {
         case 'exit':
             process.exit(0);
@@ -57,12 +43,12 @@ function processCommand(command) {
             split();
             break;
         case 'user':
-            findAllTODOs(false, userName.toLowerCase())
+            findAllTODOs(false, args.toLowerCase())
                 .map(TODO => show(TODO));
             split();
             break;
         case 'sort':
-            filterTODOS(filter)
+            filterTODOS(args)
                 .map(TODO => show(TODO));
             split();
             break;
@@ -70,7 +56,7 @@ function processCommand(command) {
             filterTODOS('date')
                 .reverse()
                 .map(TODO => {
-                    if (+(new Date(TODO.date)) > +(new Date(date)))
+                    if (+(new Date(TODO.date)) > +(new Date(args)))
                         show(TODO);
                 });
             split();
@@ -129,11 +115,10 @@ function ParsedTODO(string, fileName) {
     }
 
     this.fileName = fileName;
-
     this.full = string;
     this.importance = countImportance(string);
 
-    string = string.slice(8).split(';');
+    string = string.slice(8).split(';').map(x => x.trim());
     if (string.length < 2) {
         this.userName = '';
         this.date = '';
@@ -144,8 +129,8 @@ function ParsedTODO(string, fileName) {
     }
 
     this.userName = string[0].toLowerCase();
-    this.date = string[1].slice(1);
-    this.comment = string[2].slice(1);
+    this.date = string[1];
+    this.comment = string[2];
 
     if (this.fileName.length > longestFileName)
         longestFileName = this.fileName.length
@@ -164,8 +149,8 @@ function findAllTODOs(important = false, userName = null) {
         let fileName = files[fileNumber].split('/')[1];
         for (let string of file.split('\r\n' )) {
             // смотрим, содержит ли строка // ТODO
-            if (string.indexOf(TODOIdentity) >= 0 && string.indexOf('const TODOIdentity') < 0) {
-                string = string.slice(string.indexOf(TODOIdentity), )
+            if (string.match(TODOIdentity) && string.indexOf('const TODOIdentity') < 0) {
+                string = string.slice(string.search(TODOIdentity))
                 //если не дано имя, то смотрим дальше
                 if (userName !== null) {
                     //если данного имени нет в строке, смотрим дальше
@@ -186,3 +171,4 @@ function findAllTODOs(important = false, userName = null) {
 }
 
 // TODO you can do it!
+// todo it1
