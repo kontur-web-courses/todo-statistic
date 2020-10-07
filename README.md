@@ -115,9 +115,9 @@
 
 Для этой задачи может пригодиться метод [repeat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat)
 
-10. \* Выводи в таблицах кроме информации из todo еще и имя файла, в котором этот todo найден. Чтобы выделить имя файла из пути можно воспользоваться модулем [path](https://nodejs.org/api/path.html#path_path_basename_path_ext) из Node.js:
++10. \* Выводи в таблицах кроме информации из todo еще и имя файла, в котором этот todo найден. Чтобы выделить имя файла из пути можно воспользоваться модулем [path](https://nodejs.org/api/path.html#path_path_basename_path_ext) из Node.js:
 
-11. \* По условиям задачи все todo имеют вид:
++11. \* По условиям задачи все todo имеют вид:
 ```
     // TODO Переделать это
 ```
