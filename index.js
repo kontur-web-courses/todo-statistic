@@ -2,9 +2,18 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 const path = require('path');
 
-const files = getFiles();
-
-const TODOS = getAllTodos(files);
+const COMMANDS = {
+    EXIT: commandExit,
+    SHOW: commandShow,
+    IMPORTANT: commandImportant,
+    USER: commandUser,
+    SORT_IMPORTANCE: commandSortImportance,
+    SORT_USER: commandSortUser,
+    SORT_DATE: commandSortDate,
+    DATE: commandDate,
+};
+const FILES = getFiles();
+const TODOS = getAllTodos(FILES);
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -20,57 +29,78 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    let com = '';
-    switch (command) {
-        case 'exit':
-            com = command;
-            process.exit(0);
-            break;
-        case 'show':
-            printTable(TODOS);
-                // .map(todo => formatTodo(todo)));
-            break;
-        case 'important':
-            printTable(TODOS
-                .filter(todo => todo.importance > 0));
-                // .map(todo => formatTodo(todo)));
-            break;
-        case command.match(/^user [a-zа-я0-9_\s]+$/g) ? command : null:
-            const user = command.replace('user ', '').trim().toLowerCase();
-            printTable(TODOS
-                .filter(todo => todo.user && todo.user.toLowerCase() === user));
-                // .map(todo => formatTodo(todo)));
-            break;
-        case command.match(/^sort importance$/g) ? command : null:
-            printTable(TODOS
-                .sort((a, b) => b.importance - a.importance));
-                // .map(todo => formatTodo(todo)));
-            break;
-        case command.match(/^sort user$/g) ? command : null:
-            printTable(TODOS
-                .sort((a, b) => (a.user && b.user) ? (a.user).localeCompare(b.user, 'ru', {caseFirst: 'upper'}) :
-                    a.user ? -1 : b.user ? 1 : 0));
-                // .map(todo => formatTodo(todo)));
-            break;
-        case command.match(/^sort date$/g) ? command : null:
-            printTable(TODOS
-                .sort((a, b) => {
-                    return (a.date && b.date) ? b.date.date - a.date.date :
-                        a.date ? -1 : b.date ? 1 : 0;
-                }));
-                // .map(todo => formatTodo(todo)));
-            break;
-        case command.match(/^((date [0-9]{4}-[0-9]{2}-[0-9]{2}|date [0-9]{4}-[0-9]{2})|date [0-9]{4})$/g) ? command : null:
-            const date = new Date(command.match(/(([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}-[0-9]{2})|[0-9]{4})$/g)[0]);
-            printTable(TODOS
-                .filter(todo => todo.date && todo.date.date > date));
-                // .map(todo => formatTodo(todo)));
-            break;
-        default:
-            console.log('wrong command');
-            break;
+    const method = commandSearch(command);
+    if (method) {
+        method(command);
+    } else {
+        console.log('wrong command');
     }
 }
+
+function commandSearch(command) {
+    if (command === 'exit')
+        return COMMANDS.EXIT;
+    if (command === 'show')
+        return COMMANDS.SHOW;
+    if (command === 'important')
+        return COMMANDS.IMPORTANT;
+    if (command.match(/^user [a-zа-я0-9_\s]+$/g))
+        return COMMANDS.USER;
+    if (command.match(/^sort importance$/g))
+        return COMMANDS.SORT_IMPORTANCE;
+    if (command.match(/^sort user$/g))
+        return COMMANDS.SORT_USER;
+    if (command.match(/^sort date$/g))
+        return COMMANDS.SORT_DATE;
+    if (command.match(/^((date [0-9]{4}-[0-9]{2}-[0-9]{2}|date [0-9]{4}-[0-9]{2})|date [0-9]{4})$/g))
+        return COMMANDS.DATE;
+    return null;
+}
+
+function commandExit() {
+    process.exit(0);
+}
+
+function commandShow() {
+    createTable(TODOS);
+}
+
+function commandImportant() {
+    createTable(TODOS
+        .filter(todo => todo.importance > 0));
+}
+
+function commandUser(command) {
+    const user = command.replace('user ', '').trim().toLowerCase();
+    createTable(TODOS
+        .filter(todo => todo.user && todo.user.toLowerCase() === user));
+}
+
+function commandSortImportance() {
+    createTable(TODOS
+        .sort((a, b) => b.importance - a.importance));
+}
+
+function commandSortUser() {
+    createTable(TODOS
+        .sort((a, b) => (a.user && b.user) ? (a.user).localeCompare(b.user, 'ru', {caseFirst: 'upper'}) :
+            a.user ? -1 : b.user ? 1 : 0));
+}
+
+function commandSortDate() {
+    createTable(TODOS
+        .sort((a, b) => {
+            return (a.date && b.date) ? b.date.date - a.date.date :
+                a.date ? -1 : b.date ? 1 : 0;
+        }));
+}
+
+function commandDate(command) {
+    const date = new Date(command.match(/(([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}-[0-9]{2})|[0-9]{4})$/g)[0]);
+    createTable(TODOS
+        .filter(todo => todo.date && todo.date.date > date));
+}
+
 //toDo:Alex;2020-10;добавить writeLine!!!
 
 // TODO you can do it!
@@ -112,32 +142,23 @@ function getAllTodos(files) {
         }
         return formatTodo(newTodo);
     });
-    console.log(todos, todos.length);
+    // console.log(todos, todos.length);
     return todos;
 }
 
 function formatTodo(todo) {
     const ending = '…';
     const importance = todo.importance > 0 ? '!' : '';
-
-    let user = (todo.user ? todo.user : '');
-    if (user.length > 10) {
-        user = trimString(user, ending, 0, 10);
-    }
-
-    let date = '';
-    if (todo.date) {
-        if (todo.date.day && todo.date.month && todo.date.year) {
-            date = `${todo.date.year.toString().padStart(4, '0')}-${todo.date.month.toString().padStart(2, '0')}-${todo.date.day.toString().padStart(2, '0')}`;
-        } else if (todo.date.month && todo.date.year) {
-            date = `${todo.date.year.toString().padStart(4, '0')}-${todo.date.month.toString().padStart(2, '0')}`;
-        } else if (todo.date.year) {
-            date = `${todo.date.year.toString().padStart(4, '0')}`;
-        }
-    }
-
+    const user = todo.user ? todo.user.length > 10 ?
+        trimString(todo.user, ending, 0, 10)
+        : todo.user
+        : '';
+    const date = (todo.date && todo.date.year) ? (todo.date.day && todo.date.month) ?
+        `${todo.date.year.toString().padStart(4, '0')}-${todo.date.month.toString().padStart(2, '0')}-${todo.date.day.toString().padStart(2, '0')}`
+        : (todo.date.month) ? `${todo.date.year.toString().padStart(4, '0')}-${todo.date.month.toString().padStart(2, '0')}`
+            : `${todo.date.year.toString().padStart(4, '0')}`
+        : '';
     const text = todo.text.length > 50 ? trimString(todo.text, ending, 0, 50) : todo.text;
-
     const fileName = todo.fileName.length > 10 ? trimString(todo.fileName, ending, 0, 10) : todo.fileName;
 
     return {
@@ -163,7 +184,7 @@ function trimString(str, ending, start, length) {
     return str.slice(start, length - ending.length) + ending;
 }
 
-function printTable(todos) {
+function createTable(todos) {
     const head = formatTodo({
         importance: 1,
         user: 'user',
@@ -175,7 +196,15 @@ function printTable(todos) {
     const aggregate = ' ';
     const widthTable = maxI + maxU + maxD + maxT + maxF + 6 + 4 * 5;
 
-    console.log('RESULTS'.padStart(widthTable / 2 + 'RESULTS'.length / 2 - 1, '-').padEnd(widthTable, '-'));
+    function printRow(importance, user, date, text, fileName) {
+        console.log(`|  ${importance}  |  ${user}  |  ${date}  |  ${text}  |  ${fileName}  |`);
+    }
+
+    function centeringText(text, lineLength, filler = ' ') {
+        return text.padStart(lineLength / 2 + text.length / 2 - 1, filler).padEnd(lineLength, filler);
+    }
+
+    console.log(centeringText('RESULTS', widthTable, '-'));
     console.log('-'.repeat(widthTable));
     printRow(
         head.fieldsForPrint.importance.padEnd(maxI, aggregate),
@@ -196,38 +225,30 @@ function printTable(todos) {
             )
         });
     else
-        console.log(`|${'NO RESULTS'.padStart(widthTable / 2 + 'NO RESULTS'.length / 2 - 1, ' ').padEnd(widthTable - 2, ' ')}|`);
+        console.log(`|${centeringText('NO RESULTS', widthTable - 2, ' ')}|`);
     console.log('-'.repeat(widthTable));
 }
 
-function printRow(importance, user, date, text, fileName) {
-    console.log(`|  ${importance}  |  ${user}  |  ${date}  |  ${text}  |  ${fileName}  |`);
-}
-
 function getMaxLength(todos, maxImportance = 1, maxUser = 10, maxDate = 10, maxText = 50, maxFileName = 10) {
-    let lengthImportance = 0, lengthUser = 0, lengthDate = 0, lengthText = 0, lengthFileName = 0;
+    let currentSizeImportance = 0, currentSizeUser = 0, currentSizeDate = 0, currentSizeText = 0,
+        currentSizeFileName = 0;
     todos.forEach(todo => {
-        if (todo.fieldSize.importance > lengthImportance) {
-            lengthImportance = todo.fieldSize.importance;
-        }
-        if (todo.fieldSize.user > lengthUser) {
-            lengthUser = todo.fieldSize.user;
-        }
-        if (todo.fieldSize.date > lengthDate) {
-            lengthDate = todo.fieldSize.date;
-        }
-        if (todo.fieldSize.text > lengthText) {
-            lengthText = todo.fieldSize.text;
-        }
-        if (todo.fieldSize.fileName > lengthFileName) {
-            lengthFileName = todo.fieldSize.fileName;
-        }
+        currentSizeImportance = tryUpdateFieldSize(todo.fieldSize.importance, currentSizeImportance);
+        currentSizeUser = tryUpdateFieldSize(todo.fieldSize.user, currentSizeUser);
+        currentSizeDate = tryUpdateFieldSize(todo.fieldSize.date, currentSizeDate);
+        currentSizeText = tryUpdateFieldSize(todo.fieldSize.text, currentSizeText);
+        currentSizeFileName = tryUpdateFieldSize(todo.fieldSize.fileName, currentSizeFileName);
     });
+
+    function tryUpdateFieldSize(fieldSize, currentSize) {
+        return (fieldSize > currentSize) ? fieldSize : currentSize;
+    }
+
     return [
-        lengthImportance <= maxImportance ? lengthImportance : maxImportance,
-        lengthUser <= maxUser ? lengthUser : maxUser,
-        lengthDate <= maxDate ? lengthDate : maxDate,
-        lengthText <= maxText ? lengthText : maxText,
-        lengthFileName <= maxFileName ? lengthFileName : maxFileName
+        currentSizeImportance <= maxImportance ? currentSizeImportance : maxImportance,
+        currentSizeUser <= maxUser ? currentSizeUser : maxUser,
+        currentSizeDate <= maxDate ? currentSizeDate : maxDate,
+        currentSizeText <= maxText ? currentSizeText : maxText,
+        currentSizeFileName <= maxFileName ? currentSizeFileName : maxFileName
     ];
 }
