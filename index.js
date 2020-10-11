@@ -41,9 +41,10 @@ function getShow() {
     let result = []
     for (const file of files) {
         for (const line of file.content.split('\n')) {
-            const todoIndex = line.IndexOf(toDo);
+            const todoIndex = line.indexOf(toDo);
             if (todoIndex >= 0) {
-                const todo = line.substr(todoIndex + toDo.length);
+                const todoString = line.substr(todoIndex + toDo.length);
+                const todo = parseTodo(file.name, todoString);
                 result.push(todo)
             }      
         }
@@ -131,6 +132,13 @@ function getSort(argument){
         date.sort((comment1, comment2) => sortDate(comment1, comment2));
         return date.concat(string);
     }
+}
+
+function formatDate(date){
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
 }
 
 // TODO you can do it!
