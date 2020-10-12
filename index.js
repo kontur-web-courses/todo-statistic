@@ -16,18 +16,64 @@ function logElements(arr) {
         console.log(e);
 }
 
-function getUserName(todo) {
+/*
+function parseTODO(todo) {
+    let meta = {};
+    meta["user"] = "";
+    meta["date"] = "";
+    meta["comment"] = todo;
     try {
-
+        meta["importance"] = countItem(todo, '!');
     } catch(TypeError) {
-        
+        meta["importance"] = 0;
     }
+
+    let splittedTodo = todo.split(';');
+    if (splittedTodo.length != 3) return meta;
+
+    meta["user"] = splittedTodo[0].replace(/\/\/\W*todo\W+/gi, "").toLowerCase();
+    meta["date"] = new Date(splittedTodo[1].trim());
+    meta["comment"] = splittedTodo[2].trim();
+
+    return meta;
+}
+*/
+
+// user; date; importance
+function parseBy(todo, field = "user") {
+    let splittedTodo = todo.split(';');
+    if (splittedTodo.length === 3 || field === 'importance') {
+        switch (field) {
+            case 'user':
+                return splittedTodo[0].replace(/\/\/\W*todo\W+/gi, "").toLowerCase();
+            case 'date':
+                return new Date(splittedTodo[1].trim());
+            case 'importance':
+                return countItem(todo, '!')
+        }
+    }
+    return undefined;
+}
+
+function sortBy(a, b, field = 'user') {
+    let a_c = parseBy(a, field);
+    let b_c = parseBy(b, field)
+    let type = field === 'user' ? 'string' : field === 'date' ? 'object' : 'number';
+
+    if (typeof a_c === 'undefined' && typeof b_c !== 'undefined') return 1;
+    if (typeof a_c !== 'undefined' && typeof b_c === 'undefined') return -1;
+    if (typeof a_c === 'undefined' && typeof b_c === 'undefined') return 0;
+
+    if (type === 'string') return a_c.localeCompare(b_c);
+
+    return b_c - a_c
 }
 
 function processCommand(command) {
     switch (command) {
         case 'exit':
-            process.exit(0);
+            process.exit(0)
+            break;
         case 'show':
             logElements(getTodos());
             break;
@@ -36,9 +82,13 @@ function processCommand(command) {
             break;
         default:
             if (/^(user )/.test(command)) {
-                let username = command.substring(5);
-                logElements(getTodos(filterFunc = x => x.split(';')[0]));
-            } else 
+                let username = command.substring(5).toLowerCase();
+                logElements(getTodos(filterFunc = x => parseBy(x) === username));
+            } else if (/^(sort )/.test(command)) {
+                let type = command.substring(5);
+                let todos = getTodos()
+                logElements(todos.sort((a, b) => sortBy(a, b, type)));
+            } else
                 console.log('wrong command');
             break;
     }
@@ -55,5 +105,6 @@ function getTodos(filterFunc = x => x, sortFunc = (a, b) => countItem(b, '!') - 
 function countItem(string, item) {
     return string.split('').reduce((p, i) => i === item ? p + 1 : p, 0);
 }
+
 // TODO you can do it!
 // todo burn in Hell !
