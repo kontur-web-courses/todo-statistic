@@ -16,28 +16,6 @@ function logElements(arr) {
         console.log(e);
 }
 
-/*
-function parseTODO(todo) {
-    let meta = {};
-    meta["user"] = "";
-    meta["date"] = "";
-    meta["comment"] = todo;
-    try {
-        meta["importance"] = countItem(todo, '!');
-    } catch(TypeError) {
-        meta["importance"] = 0;
-    }
-
-    let splittedTodo = todo.split(';');
-    if (splittedTodo.length != 3) return meta;
-
-    meta["user"] = splittedTodo[0].replace(/\/\/\W*todo\W+/gi, "").toLowerCase();
-    meta["date"] = new Date(splittedTodo[1].trim());
-    meta["comment"] = splittedTodo[2].trim();
-
-    return meta;
-}
-*/
 
 // user; date; importance
 function parseBy(todo, field = "user") {
