@@ -59,7 +59,7 @@ function parseTODOArr(arr) {
 }
 
 function parseTODO(todo, filename) {
-    let [todoObject] = todo.matchAll(/\/\/\s*TODO\s*([a-zA-Z _]+)?\s*;?\s*((?:\d{4})-(?:\d{2})-(?:\d{2})|(?:\d{4})-(?:\d{2})|(?:\d{4}))?\s*;?\s*(.*)?/gi);
+    let [todoObject] = todo.matchAll(/\/\/\s*TODO\s*(?:([a-zA-Z _]+)?\s*;)?\s*((?:\d{4})-(?:\d{2})-(?:\d{2})|(?:\d{4})-(?:\d{2})|(?:\d{4}))?\s*;?\s*(.*)?/gi);
     let [user, date, comment] = [todoObject[1], todoObject[2], todoObject[3]];
     if (comment === undefined)
         comment = '';
@@ -112,15 +112,16 @@ function sortTODO(argument) {
             })
             return todoArray;
         case 'user':
-                let regex = /\/\/\s*TODO\s*([a-zA-Z _]+)?\s*;/gi;
-                todoArray = todoArray.sort(function(a,b){
-                    console.log(a.match(regex) + '  АГА  ' + b.match(regex));
-                    if (a.match(regex) === b.match(regex))
-                        return 1
-                    else
-                        return -1
-                })
-                return todoArray.reverse();
+            let users = [];
+            let nameless = [];
+            for (let string of todoArray)
+                if (string.indexOf(';') > -1)
+                    users.push(string);
+                else
+                    nameless.push(string);
+            return users.sort(function (a, b) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+            }).concat(nameless);
         case 'date':
             let datePattern = /(\d{4})?-?(\d{2})?-?(\d{2})/gi; // TODO 2020-09
             // TODO 2019-08-21
