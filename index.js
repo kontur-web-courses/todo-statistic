@@ -11,10 +11,99 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function getTodos() {
+    let result = []
+    for (let i of getFiles())
+        for (let j of i.split('\n')) {
+            let match = j.match(/\/\/ TODO .*/)
+            if (match)
+                result.push(match[0])
+        }
+
+    return result
+}
+
+function getImportantTodos() {
+    let result = []
+    for (let i of getFiles())
+        for (let j of i.split('\n')) {
+            let match = j.match(/\/\/ TODO .*!.*/)
+            if (match)
+                result.push(match[0])
+        }
+
+    return result
+}
+
+function getUserTodos(username) {
+    let result = []
+    let regex = new RegExp('\/\/ TODO ' + username + '.*')
+    for (let i of getFiles())
+        for (let j of i.split('\n')) {
+            let match = j.match(regex)
+            if (match)
+                result.push(match[0])
+        }
+    if (!result)
+        return 'Empty'
+    return result
+}
+
+function getSortedTodos(args){
+    let todos = getTodos()
+    function getSortedByImportance(){
+        todos = todos.sort(function(a,b){
+            if (a.match(/\/\/ TODO .*!.*/) && !b.match(/\/\/ TODO .*!.*/))
+                return -1
+            else if (b.match(/\/\/ TODO .*!.*/) && !a.match(/\/\/ TODO .*!.*/))
+                return 1
+            else return 0
+        })
+        return todos
+    }
+    function getSortedByUser(){
+        let regex = new RegExp('\/\/ TODO ' + args[2] + '.*')
+        todos = todos.sort(function(a,b){
+            if(a.match(regex) && !b.match(regex))
+                return -1
+            else if(b.match(regex) && !a.match(regex))
+                return 1
+            else return 0
+        })
+        return todos
+    }
+    function getSortedByDate(){
+
+    }
+    switch(args[1]){
+        case 'importance':
+            return getSortedByImportance()
+        case 'user':
+            return getSortedByUser()
+        case 'date':
+            return getSortedByDate()
+    }
+}
+
+// TODO david bla bla bla
+
 function processCommand(command) {
-    switch (command) {
+    let args = command.split(' ')
+    switch (args[0]) {
         case 'exit':
             process.exit(0);
+            break;
+        case 'show':
+            console.log(getTodos())
+            break;
+        case 'important':
+            console.log(getImportantTodos(args[1]))
+            break;
+        case 'user':
+            console.log(getUserTodos(args[1]))
+            break;
+        case 'sort':
+            console.log(getSortedTodos(args))
             break;
         default:
             console.log('wrong command');
