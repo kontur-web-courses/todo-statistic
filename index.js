@@ -24,21 +24,21 @@ function processCommand(line) {
             process.exit(0);
             break;
         case 'show':
-            printTable(parseTODOArr());
+            printTable(parseTODOArr(showTODO()));
             break;
         case 'important':
-            importantTODO();
+            printTable(parseTODOArr(importantTODO()));
             break;
         case 'user':
-            showUsersTODO(argument);
+            printTable(parseTODOArr(showUsersTODO(argument)));
             break;
         case 'sort':
             if (checkArg(argument, `Команда sort должна соответствовать виду 'sort {importance | user | date} 
             \n Вы ввели строку ${line}'`))
-                sortTODO(argument)
+                printTable(parseTODOArr(sortTODO(argument)));
             break;
         case 'date':
-            afterDateTODO(argument);
+            printTable(parseTODOArr(afterDateTODO(argument)));
             break;
         default:
             console.log('wrong command');
@@ -51,9 +51,9 @@ function createTODOArray() {
     return files.map(file => file.allStrings.match(regex)).flat().filter(string => string);
 }
 
-function parseTODOArr() {
+function parseTODOArr(arr) {
     let parsedTODOs = [];
-    for (let todo of createTODOArray())
+    for (let todo of arr)
         parsedTODOs.push(parseTODO(todo, this.name))
     return parsedTODOs;
 }
@@ -73,19 +73,21 @@ function parseTODO(todo, filename) {
     return [importance, user, date, comment, filename];
 }
 
+function showTODO() {
+    return createTODOArray();
+}
+
 function importantTODO() {
-    let todoArray = createTODOArray()
+    return createTODOArray()
         .filter(string => string.includes('!'))
         .filter(arr => arr.length > 0);
-    console.log(todoArray);
 }
 
 function showUsersTODO(username) {
-    let regex = `[\s:;]*${username};`; // TODO {user}; {date}; {info}
+    let regex = `[\s:;]*${username};`; // TODO {user}; {date}; {comment}
     regex = new RegExp(regex, "gi");
-    let todoArray = createTODOArray()
-        .filter(str => str.match(regex))
-    console.log(todoArray);
+    return createTODOArray()
+        .filter(str => str.match(regex));
 }
 
 function afterDateTODO(date) {
@@ -98,7 +100,7 @@ function afterDateTODO(date) {
         return (new Date(b.match(datePattern)) - new Date(a.match(datePattern)));
     })
 
-    console.log(todoArray);
+    return todoArray;
 }
 
 function sortTODO(argument) {
@@ -108,12 +110,17 @@ function sortTODO(argument) {
             todoArray.sort((a, b) => {
                 return (b.match(/!/gi) || []).length - (a.match(/!/gi) || []).length;
             })
-            console.log(todoArray);
-            break;
+            return todoArray;
         case 'user':
-            let userPattern = /\/\/ TODO[\s:;]*(\w+);/gi;
-
-            break;
+                let regex = /\/\/\s*TODO\s*([a-zA-Z _]+)?\s*;/gi;
+                todoArray = todoArray.sort(function(a,b){
+                    console.log(a.match(regex) + '  АГА  ' + b.match(regex));
+                    if (a.match(regex) === b.match(regex))
+                        return 1
+                    else
+                        return -1
+                })
+                return todoArray.reverse();
         case 'date':
             let datePattern = /(\d{4})?-?(\d{2})?-?(\d{2})/gi; // TODO 2020-09
             // TODO 2019-08-21
@@ -122,7 +129,7 @@ function sortTODO(argument) {
             todoArray.sort((a, b) => {
                 return (new Date(b.match(datePattern)) - new Date(a.match(datePattern)));
             })
-            console.log(todoArray);
+            return todoArray;
     }
 }
 
@@ -141,6 +148,12 @@ function printTable(arr) {
     for (let object of arr){
         object[0] = (object[0] > 0) ? '!' : ' ';
 
+        for (let file of files)
+            if (file.allStrings.includes(object[3])) {
+                object[4] = file.name;
+                break;
+            }
+
         for (let i = 1; i < currentSizes.length; i++) {
             if (object[i] === undefined)
                 object[i] = '';
@@ -153,6 +166,7 @@ function printTable(arr) {
                 currentSizes[i] = object[i].length;
             }
         }
+
         table.push(object);
     }
 
