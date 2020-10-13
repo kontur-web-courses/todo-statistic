@@ -1,8 +1,6 @@
+const path = require("path");
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
-const {userTODO} = require('./userTODO');
-const {sort} = require('./sort');
-const {afterDate} = require('./afterDate');
 
 const files = getFiles();
 
@@ -11,7 +9,12 @@ readLine(processCommand);
 
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
-    return filePaths.map(path => readFile(path));
+    return filePaths.map(filePath => {
+        return {
+            name: path.win32.basename(filePath),
+            allStrings: readFile(filePath),
+        }
+    });
 }
 
 function processCommand(line) {
@@ -21,7 +24,7 @@ function processCommand(line) {
             process.exit(0);
             break;
         case 'show':
-            showTODO();
+            printTable(parseTODOArr());
             break;
         case 'important':
             importantTODO();
@@ -45,12 +48,29 @@ function processCommand(line) {
 
 function createTODOArray() {
     let regex = /\/\/ TODO.*/gi; // TODO{...}
-    return files.map(file => file.match(regex)).flat().filter(string => string);
+    return files.map(file => file.allStrings.match(regex)).flat().filter(string => string);
 }
 
-function showTODO() {
-    let todoArray = createTODOArray();
-    console.log(todoArray);
+function parseTODOArr() {
+    let parsedTODOs = [];
+    for (let todo of createTODOArray())
+        parsedTODOs.push(parseTODO(todo, this.name))
+    return parsedTODOs;
+}
+
+function parseTODO(todo, filename) {
+    let [todoObject] = todo.matchAll(/\/\/\s*TODO\s*([a-zA-Z _]+)?\s*;?\s*((?:\d{4})-(?:\d{2})-(?:\d{2})|(?:\d{4})-(?:\d{2})|(?:\d{4}))?\s*;?\s*(.*)?/gi);
+    let [user, date, comment] = [todoObject[1], todoObject[2], todoObject[3]];
+    if (comment === undefined)
+        comment = '';
+
+    let importance = comment.includes('!')
+        ? comment
+            .split('')
+            .reduce((p, i) => i === '!' ? p + 1 : p, 0)
+        :
+            0;
+    return [importance, user, date, comment, filename];
 }
 
 function importantTODO() {
@@ -112,27 +132,41 @@ function checkArg(argument, errorMessage) {
     return true;
 }
 
-function getInfo(todo) {
-    return [
-        string.importance > 0 ? '!' : '',
-
-
-    ];
-}
-
-function convertStringToTODOObject(arr) {
-
-}
-
 function printTable(arr) {
     let table = [];
     const header = ['!', 'user', 'date', 'comment', 'file'];
+    table.push(header)
+    let currentSizes = [1, 4, 4, 7, 4];
+    let maxSizes = [1, 10, 10, 50, 50];
+    for (let object of arr){
+        object[0] = (object[0] > 0) ? '!' : ' ';
 
-    table.push(header);
-    for (let string of arr)
-        table.push(getInfo(string));
+        for (let i = 1; i < currentSizes.length; i++) {
+            if (object[i] === undefined)
+                object[i] = '';
+            if (object[i].length > currentSizes[i]) {
+                if (object[i].length > maxSizes[i]) {
+                    object[i] = object[i].slice(0, maxSizes[i] - 3) + '...';
+                    currentSizes[i] = maxSizes[i];
+                }
+                else
+                currentSizes[i] = object[i].length;
+            }
+        }
+        table.push(object);
+    }
 
-
+    let rowWidth = currentSizes[0] + currentSizes[1] + currentSizes[2] + currentSizes[3] + currentSizes[4] + 5 * 3 - 1;
+    for (let row of table){
+        console.log(row[0].padEnd(currentSizes[0]) + ' | ' +
+            row[1].padEnd(currentSizes[1]) + ' | ' +
+            row[2].padEnd(currentSizes[2]) + ' | ' +
+            row[3].padEnd(currentSizes[3]) + ' | ' +
+            row[4].padEnd(currentSizes[4]) + ' | ')
+        if (row[2] === 'date')
+            console.log('-'.repeat(rowWidth));
+    }
+    console.log('-'.repeat(rowWidth));
 }
 
 // TODO you can do it!
