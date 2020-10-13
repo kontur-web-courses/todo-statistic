@@ -19,7 +19,6 @@ function getTodos() {
             if (match)
                 result.push(match[0])
         }
-
     return result
 }
 
@@ -31,7 +30,6 @@ function getImportantTodos() {
             if (match)
                 result.push(match[0])
         }
-
     return result
 }
 
@@ -44,8 +42,6 @@ function getUserTodos(username) {
             if (match)
                 result.push(match[0])
         }
-    if (!result)
-        return 'Empty'
     return result
 }
 
@@ -73,7 +69,20 @@ function getSortedTodos(args){
         return todos
     }
     function getSortedByDate(){
-
+        let regex = /^\/\/ TODO.*(0?[1-9]|1[012])[\/\-]\d{4}(0?[1-9]|[12][0-9]|3[01])[\/\-].*$/
+        let dateRegex = /^(0?[1-9]|1[012])[\/\-]\d{4}(0?[1-9]|[12][0-9]|3[01])[\/\-]$/
+        todos = todos.sort(function(a,b){
+            if(a.match(regex) && !b.match(regex))
+                return -1
+            else if(b.match(regex) && !a.match(regex))
+                return 1
+            else {
+                let adate = a.match(dateRegex)
+                let bdate = b.match(dateRegex)
+                // TODO david Допилить когда нибудь сравнение дат
+            }
+        })
+        return todos
     }
     switch(args[1]){
         case 'importance':
