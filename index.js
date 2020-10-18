@@ -1,11 +1,12 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
-const TODO_REGEXP = new RegExp('^\\/\\/ TODO .*$');
+const TODO_REGEXP = new RegExp('^\\/\\/ TODO .*$'); //add .* at the start of regexp for more complicated lines
 const TODO_FORMATTED_REGEXP = new RegExp('^\\/\\/ TODO (.*);\\s*(.*);\\s*(.*).*$');
 const COMMAND_NO_ARGS_REGEXP = new RegExp('^(exit|show|important)$');
-const COMMAND_WITH_ARGS_REGEXP = new RegExp('^(user|sort) (\\w+[\\w\\s]*)$');
+const COMMAND_WITH_ARGS_REGEXP = new RegExp('^(user|sort|date) ([\\d\\w-]+[\\d\\w\\s-]*)$');
 const SORT_ARGS_REGEXP = new RegExp('^(importance|user|date)$');
+const DATE_ARGS_REGEXP = new RegExp('^(\\d{4}(-\\d{2}){0,2})$');  // checks format but not date validity
 // TODO {Имя автора}; {Дата комментария}; {текст комментария}
 
 let TODO = function (fullString, importance, comment = "", user = "", date = 0) {
@@ -94,6 +95,19 @@ function processCommand(input) {
             }
             console.log(result);
             break;
+        case 'date':
+            let date = command[2].match(DATE_ARGS_REGEXP);
+            if (!date) {
+                console.log('wrong command');
+                return;
+            }
+            date = new Date(date[1]);
+
+            if(isNaN(date)) {
+                console.log('wrong command');
+                return;
+            }
+            console.log(getTodos().filter(todo=>todo.date>=date.getTime()).map(todo=>todo.fullString));
     }
 }
 // TODO you can do it!
