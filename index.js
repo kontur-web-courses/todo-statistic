@@ -1,17 +1,19 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
+const path = require("path");
 
-const TODO_REGEXP = new RegExp('^\\/\\/ TODO (.*$)'); //add .* at the start of regexp for more complicated lines
+const TODO_REGEXP = new RegExp('^.*\\/\\/[ ]?TODO[:\\s]?\\s*(.*$)', 'i'); // todo add .* at the start of regexp for more complicated lines
 const TODO_FORMATTED_REGEXP = new RegExp('^(.*);\\s*(.*);\\s*(.*).*$');
 const COMMAND_NO_ARGS_REGEXP = new RegExp('^(exit|show|important)$');
 const COMMAND_WITH_ARGS_REGEXP = new RegExp('^(user|sort|date) ([\\d\\w-]+[\\d\\w\\s-]*)$');
 const SORT_ARGS_REGEXP = new RegExp('^(importance|user|date)$');
-const DATE_ARGS_REGEXP = new RegExp('^(\\d{4}(-\\d{2}){0,2})$');  // checks format but not date validity
-// TODO {Имя автора}; {Дата комментария}; {текст комментария}
+const DATE_ARGS_REGEXP = new RegExp('^(\\d{4}(-\\d{2}){0,2})$');  //tOdo checks format but not date validity
+//ToDO: {Имя автора}; {Дата комментария}; {текст комментария}
 
-let TODO = function (importance, comment, user = "", date = 0,dateStr= "") {
-    this.comment = comment;
+let TODO = function (importance, comment, fileName, user = "", date = 0, dateStr = "") {
     this.importance = importance;
+    this.comment = comment;
+    this.fileName = fileName;
     this.user = user;
     this.date = date;
     this.dateStr = dateStr;
@@ -24,59 +26,79 @@ readLine(processCommand);
 
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
-    return filePaths.map(path => readFile(path));
+    return filePaths.map(p => {
+        return {
+            fileName: path.basename(p),
+            lines: readFile(p)
+        }
+    });
 }
 
 function getTodos() {
     let files = getFiles();
-    let todos = files.flatMap(file =>
-        file.split("\n").filter(line => line.match(TODO_REGEXP)).map(line => line.match(TODO_REGEXP)[1])
+    let todos = files.flatMap(file => file.lines
+        .split("\n")
+        .filter(line => line.match(TODO_REGEXP))
+        .map(line => {
+            return {
+                str: line.match(TODO_REGEXP)[1],
+                fileName: file.fileName
+            }
+        })
     );
-    return todos.map(str => {
+
+    return todos.map(line => {
+        let str = line.str;
         let importance = (str.match(/!/gi) || "").length;
-        let result = new TODO(importance, str);
+        let result = new TODO(importance, str, line.fileName);
         let match = str.match(TODO_FORMATTED_REGEXP);
         if (match) {
             let date = Date.parse(match[2]) || 0;
-            let dateStr = date? match[2] : "";
-            result = new TODO(importance, match[3], match[1].toLowerCase(), date, dateStr);
+            let dateStr = date ? match[2] : "";
+            result = new TODO(importance, match[3], line.fileName, match[1].toLowerCase(), date, dateStr);
         }
         return result;
     })
 }
 
 function createTableOutput(todos) {
-    if (todos.length===0)
+    if (todos.length === 0)
         return "No todos";
     const IMPORTANT = "!";
     const USER = "user";
     const DATE = "date";
     const COMMENT = "comment";
+    const FILE = "file";
 
     let importantLength = IMPORTANT.length;
 
-    let userLength = todos.reduce((a,b) => a.user.length>b.user.length? a:b).user.length;
-    userLength = Math.min(10,userLength);
+    let userLength = todos.reduce((a, b) => a.user.length > b.user.length ? a : b).user.length;
+    userLength = Math.min(10, userLength);
     userLength = Math.max(userLength, USER.length);
 
-    let dateLength =  todos.reduce((a,b) => a.dateStr.length>b.dateStr.length? a:b).dateStr.length;
-    dateLength = Math.min(10,dateLength);
+    let dateLength = todos.reduce((a, b) => a.dateStr.length > b.dateStr.length ? a : b).dateStr.length;
+    dateLength = Math.min(10, dateLength);
     dateLength = Math.max(dateLength, DATE.length);
 
-    let commentLength = todos.reduce((a,b) => a.comment.length>b.comment.length? a:b).comment.length;
-    commentLength = Math.min(50,commentLength);
+    let commentLength = todos.reduce((a, b) => a.comment.length > b.comment.length ? a : b).comment.length;
+    commentLength = Math.min(50, commentLength);
     commentLength = Math.max(commentLength, COMMENT.length);
+
+    let fileLength = todos.reduce((a, b) => a.fileName.length > b.fileName.length ? a : b).fileName.length;
+    fileLength = Math.min(10, fileLength);
+    fileLength = Math.max(fileLength, FILE.length);
 
     let tableRows = todos.map(todo => {
         let importantCol = todo.importance > 0 ? "!" : " ".repeat(importantLength);
-        let userCol = todo.user.length > userLength ? todo.user.slice(0, userLength-1) + "…" : todo.user + " ".repeat(userLength - todo.user.length);
-        let dateCol = todo.date === 0 ? " ".repeat(dateLength) : todo.dateStr+" ".repeat(dateLength - todo.dateStr.length);
-        let commentCol = todo.comment.length > commentLength ? todo.comment.slice(0, commentLength-1) + "…" : todo.comment + " ".repeat(commentLength - todo.comment.length);
-        return ` ${importantCol}  |  ${userCol}  |  ${dateCol}  |  ${commentCol}  `;
+        let userCol = todo.user.length > userLength ? todo.user.slice(0, userLength - 1) + "…" : todo.user + " ".repeat(userLength - todo.user.length);
+        let dateCol = todo.date === 0 ? " ".repeat(dateLength) : todo.dateStr + " ".repeat(dateLength - todo.dateStr.length);
+        let commentCol = todo.comment.length > commentLength ? todo.comment.slice(0, commentLength - 1) + "…" : todo.comment + " ".repeat(commentLength - todo.comment.length);
+        let fileCol = todo.fileName.length > fileLength ? todo.fileName.slice(0, fileLength - 1) + "…" : todo.fileName + " ".repeat(fileLength - todo.fileName.length);
+        return ` ${importantCol}  |  ${userCol}  |  ${dateCol}  |  ${commentCol}  |  ${fileCol} `;
     });
 
     tableRows.unshift(".".repeat(tableRows[0].length));
-    tableRows.unshift(` ${IMPORTANT+" ".repeat(importantLength-IMPORTANT.length)}  |  ${USER+" ".repeat(userLength-USER.length)}  |  ${DATE+" ".repeat(dateLength-DATE.length)}  |  ${COMMENT+" ".repeat(commentLength-COMMENT.length)}  `)
+    tableRows.unshift(` ${IMPORTANT + " ".repeat(importantLength - IMPORTANT.length)}  |  ${USER + " ".repeat(userLength - USER.length)}  |  ${DATE + " ".repeat(dateLength - DATE.length)}  |  ${COMMENT + " ".repeat(commentLength - COMMENT.length)}  |  ${FILE + " ".repeat(fileLength - FILE.length)} `)
     tableRows.push(".".repeat(tableRows[0].length));
     return tableRows.join("\n");
     //tableRows.
