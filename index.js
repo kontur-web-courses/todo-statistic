@@ -29,7 +29,7 @@ function getFiles() {
 function getTodos() {
     let files = getFiles();
     let todos = files.flatMap(file =>
-        file.split("\n").filter(line => line.match(TODO_REGEXP)).map(line=>line.match(TODO_REGEXP)[1])
+        file.split("\n").filter(line => line.match(TODO_REGEXP)).map(line => line.match(TODO_REGEXP)[1])
     );
     return todos.map(str => {
         let importance = (str.match(/!/gi) || "").length;
@@ -42,11 +42,18 @@ function getTodos() {
 }
 
 function createTableOutput(todos) {
+    let importantLength = todos.some(todo => todo.importance > 0) ? 1 : 0;
+    let userLength = todos.reduce((a,b) => a.user.length>b.user.length? a:b).user.length;
+    userLength = Math.min(10,userLength);
+    let dateLength = todos.some(todo => todo.date > 0) ? 10 : 0;
+    let commentLength = todos.reduce((a,b) => a.comment.length>b.comment.length? a:b).comment.length;
+    commentLength = Math.min(50,commentLength);
+
     return todos.map(todo => {
-        let importantCol = todo.importance > 0 ? "!" : " ";
-        let userCol = todo.user.length > 10 ? todo.user.slice(0, 9) + "…" : todo.user + " ".repeat(10 - todo.user.length);
-        let dateCol = todo.date === 0 ? " ".repeat(10) : new Date(todo.date).toISOString().slice(0, 10);
-        let commentCol = todo.comment.length > 50 ? todo.comment.slice(0, 49) + "…" : todo.comment + " ".repeat(50 - todo.comment.length);
+        let importantCol = todo.importance > 0 ? "!" : " ".repeat(importantLength);
+        let userCol = todo.user.length > userLength ? todo.user.slice(0, userLength-1) + "…" : todo.user + " ".repeat(userLength - todo.user.length);
+        let dateCol = todo.date === 0 ? " ".repeat(dateLength) : new Date(todo.date).toISOString().slice(0, dateLength);
+        let commentCol = todo.comment.length > commentLength ? todo.comment.slice(0, commentLength-1) + "…" : todo.comment + " ".repeat(commentLength - todo.comment.length);
         return `${importantCol}  |  ${userCol}  |  ${dateCol}  |  ${commentCol}  |  `;
     }).join("\n");
 }
@@ -89,15 +96,6 @@ function processCommand(input) {
                     break;
                 case "user":
                     todos = todos.sort((a, b) => b.user.localeCompare(a.user));
-                    /*let currentUser = todos[0].user;
-                    result = todos.map(todo => {
-                        if (todo.user === currentUser)
-                            return todo.fullString;
-                        else {
-                            currentUser = todo.user;
-                            return "\n" + todo.fullString;
-                        }
-                    }).join("\n");*/
                     break;
                 case "date":
                     todos = todos.sort((a, b) => b.date - a.date);
