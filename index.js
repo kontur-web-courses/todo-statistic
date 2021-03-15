@@ -27,7 +27,12 @@ function processCommand(command) {
         case 'sort':
             switch (input[1]){
                 case 'date':
-                    break;
+                    allTodo.sort(function(a,b){
+                        return new Date(get_date(b)) - new Date(get_date(a));
+                    for (let todo of allTodo)
+                        console.log(todo)
+                    });
+                    break
                 case 'user':
                     let usersTodos = groupBy(allTodo, x => x.split(';').length > 1  ? x.split(';')[0].substr(8) : 'other');
                     for (let i in usersTodos) {
@@ -37,7 +42,7 @@ function processCommand(command) {
                             }
                         }
                     }
-                    for (let todo of usersTodos['others']) {
+                    for (let todo of usersTodos['other']) {
                         console.log(todo);
                     }
                     break;
@@ -86,6 +91,11 @@ function processCommand(command) {
 
 // TODO you can do it!
 // TODO Jopa; 2015-08-10; you can do it!
+
+function sort_data(array) {
+
+    return array;
+}
 
 function compare(a, b) {
     if (a.match(/!/g).length > b.match(/!/g).length) {
