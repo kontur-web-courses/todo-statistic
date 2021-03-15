@@ -108,7 +108,33 @@ function sortByDate(arr) {
         return getDateFromTodo(e1) <= getDateFromTodo(e2) ? -1 : 1;
     })
     
-    return todos;
+    return todos.map((e)=>e.trim());
+}
+function* sortUser(arr) {
+    const allWithNames = []
+    const reg = new RegExp("(todo (.+);(.+);(.+))\n", "gi")
+    for (let obj in arr) {
+        let allMatches = arr[obj].matchAll(reg)
+        for (let mat of allMatches) {
+            allWithNames.push(mat[1]);
+        }
+    }
+    allWithNames.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    for (let obj of allWithNames) {
+        yield obj;
+    }
+}
+
+function* todoAfterDate(arr,date){
+    const reg = new RegExp("(todo (.+);(.+);(.+))\n", "gi");
+    for (let obj of arr) {
+        let allMatches = obj.matchAll(reg)
+        for (let mat of allMatches) {
+            if(new Date(mat[3].trim())>=date){
+                yield mat[1];
+            }
+        }
+    }
 }
 
 function processCommand(input) {
@@ -127,8 +153,18 @@ function processCommand(input) {
                 console.log(obj)
             }
             break;
+        case 'date':
+            const date = new Date(param);
+            for(let obj of todoAfterDate(files,date)){
+                console.log(obj);
+            }
+            break;
         case 'sort':
             switch (param) {
+                case 'user':
+                    for (let obj of sortUser(files)) {
+                        console.log(obj)
+                    }
                 case 'importance':
                     for (let obj of sortParam(files, param)) {
                         console.log(obj)
@@ -140,6 +176,7 @@ function processCommand(input) {
                     }
                     break;
             }
+            break;
         case 'important':
             for (let obj of parseTODOwithParam(files, regImp)) {
                 console.log(obj);
