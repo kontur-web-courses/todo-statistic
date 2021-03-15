@@ -128,6 +128,42 @@ function getCommentsAfterDate(date) {
     return result;
 }
 
+function commentToString(comment) {
+    let imp = comment.indexOf('!');
+    let importance = '   ';
+    if (imp !== -1) {
+        importance = '!  ';
+    }
+    let dateName = comment.match(/\/\/ TODO (.+?);\s*(.+?);\s*(.+?)/);
+    let name = ' '.padEnd(14);
+    let date = ' '.padEnd(14);
+    let com;
+    if (dateName !== null) {
+        let n = dateName[1].trim();
+        let d = dateName[2].trim();
+        let c = comment.substring(comment.lastIndexOf(';') + 1).trim();
+        if (n.length > 10) {
+            n = n.substr(0, 9) + '…';
+        }
+        if (d.length > 10) {
+            d = d.substr(0, 9) + '…';
+        }
+        if (c.length > 50) {
+            c = c.substr(0, 49) + '…';
+        }
+        name = `  ${n.padEnd(10)}  `;
+        date = `  ${d.padEnd(10)}  `;
+        com = `  ${c.padEnd(50)}  `;
+    } else {
+        let c = comment.substring(8).trim();
+        if (c.length > 50) {
+            c = c.substr(0, 49) + '…';
+        }
+        com = `  ${c.padEnd(50)}  `;
+    }
+    return `${importance}|${name}|${date}|${com}`;
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
@@ -135,39 +171,39 @@ function processCommand(command) {
             break;
         case 'show':
             for (let comment of getComments()) {
-                console.log(comment);
+                console.log(commentToString(comment));
             }
             break;
         case 'important':
             for (let comment of getImportantComments()) {
-                console.log(comment);
+                console.log(commentToString(comment));
             }
             break;
         case `user ${name = command.split(' ')[1]}`:
             for (let comment of getUserComments(name)) {
-                console.log(comment);
+                console.log(commentToString(comment));
             }
             break;
         case `sort ${arg = command.split(' ')[1]}`:
             if (arg === 'importance') {
                 for (let comment of getSortedCommentsByImportance()) {
-                    console.log(comment);
+                    console.log(commentToString(comment));
                 }
-            }
-            if (arg === 'user') {
+            } else if (arg === 'user') {
                 for (let comment of getSortedCommentsByUser()) {
-                    console.log(comment);
+                    console.log(commentToString(comment));
                 }
-            }
-            if (arg === 'date') {
+            } else if (arg === 'date') {
                 for (let comment of getSortedCommentsByDate()) {
-                    console.log(comment);
+                    console.log(commentToString(comment));
                 }
+            } else {
+                console.log('wrong command');
             }
             break;
         case `date ${date = command.split(' ')[1]}`:
             for (let comment of getCommentsAfterDate(date)) {
-                console.log(comment);
+                console.log(commentToString(comment));
             }
             break;
         default:
