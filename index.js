@@ -21,24 +21,30 @@ function processCommand(command) {
             break;
         case 'show':
             for (let todo of todos) {
-                console.log(todo.original);
+                formatTodo(todo);
             }
             break;
         case 'important':
             for (let todo of todos.filter(t => t.importance > 0)){
-                console.log(todo['original']);
+                formatTodo(todo);
             }
             break;
         case 'user':
             let user = parts[1].toLowerCase();
             for (let todo of todos.filter(t => t.user === user)){
-                console.log(todo.original);
+                formatTodo(todo);
             }
             break;
         case 'sort':
             todos.sort((a, b) => compareFunc(a[parts[1]], b[parts[1]]));
             for (let todo of todos) {
-                console.log(todo.original);
+                formatTodo(todo);
+            }
+            break;
+        case 'date':
+            let date = Date.parse(parts[1]);
+            for (let todo of todos.filter(t => t.date > date)){
+                formatTodo(todo);
             }
             break;
         default:
@@ -67,8 +73,8 @@ function getMetaData(todo) {
         original: todo,
         importance: (todo.match(/!/g) || []).length,
         user: peaces.length < 3 ? undefined : peaces[0].replace('// TODO ', '').toLowerCase(),
-        date: peaces.length < 3 ? undefined : Date.parse(peaces[1].replace(' ', '')),
-        text: peaces[2],
+        date: peaces.length < 3 ? undefined : new Date(peaces[1].replace(' ', '')),
+        text: peaces[2] || peaces[0].replace('// TODO ', ''),
     };
 }
 
@@ -77,4 +83,34 @@ function compareFunc(a, b) {
         return a.localeCompare(b);
     }
     return b - a;
+}
+
+function truncateString (str, len) {
+    if (str === undefined)
+    {
+        return '';
+    }
+    if (str.length <= len) {
+        return str;
+    }
+    return str.substr(0, len - 1) + '…';
+}
+
+function formatDate (date) {
+    if (date === undefined)
+    {
+        return '';
+    }
+    let day = date.getDate().toString().padStart(2, '0');
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}-${month}-${date.getFullYear()}`;
+}
+
+function formatTodo(todo) {
+    let parts = [];
+    parts[0] = todo.importance > 0 ? '!' : ' ';
+    parts[1] = truncateString(todo.user, 10).padEnd(10);
+    parts[2] = truncateString(formatDate(todo.date), 10).padEnd(10);
+    parts[3] = truncateString(todo.text, 50).padEnd(50);
+    console.log(parts.join('  |  '))
 }
