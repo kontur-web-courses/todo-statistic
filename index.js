@@ -28,10 +28,10 @@ function processCommand(command) {
             switch (input[1]){
                 case 'date':
                     allTodo.sort(function(a,b){
-                        return new Date(get_date(b)) - new Date(get_date(a));
+                        return new Date(getStringDate(b)) - new Date(getStringDate(a));
+                    });
                     for (let todo of allTodo)
                         console.log(todo)
-                    });
                     break
                 case 'user':
                     let usersTodos = groupBy(allTodo, x => x.split(';').length > 1  ? x.split(';')[0].substr(8) : 'other');
