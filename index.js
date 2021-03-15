@@ -3,7 +3,10 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 
+let whileTrue = 1;
+
 console.log('Please, write your command!');
+
 readLine(processCommand);
 
 function getFiles() {
@@ -12,20 +15,24 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let input = String(command).split(" ");
+    let allTodo = getAllTodo();
+    switch (input[0]) {
         case 'sort':
             break
         case 'user':
+            let usersTodos = allTodo.filter(x => x.split(';')[0].substr(8).toLowerCase() === input[1].toLowerCase())
+            for(let userTodo of usersTodos){
+                console.log(userTodo);
+            }
             break;
         case 'important':
-            let allTodos = getAllTodos()
-            allTodos.filter(x => x.search('!') !== -1)
-            for (let t of allTodos)
+            let rightTodos = allTodo.filter(x => x.search('!') !== -1)
+            for (let t of rightTodos)
                 console.log(t)
             break;
         case 'show':
-            let todos = getAllTodo();
-            for (let todo of todos)
+            for (let todo of allTodo)
                 console.log(todo)
             break;
         case 'exit':
