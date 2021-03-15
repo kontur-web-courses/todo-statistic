@@ -32,13 +32,18 @@ function sortOutput(command){
     switch (command) {
         case 'importance':
             return parsedData
-                .map(x => [x, x.matchAll(/(!+)\n/g)[1] || ''])
+                .map(x => [x, x.match(/!*\n/g)[0].slice(0, -1)])
                 .map(x => [x[0], x[1].length])
                 .sort((a, b) => b[1] - a[1])
                 .map(a => a[0])
                 .join("");
         case 'user':
-            break
+            let a =  parsedData.map(x => [x.match(/\/\/\sTODO ([A-z]*;)?/g), x]);
+            let b = a.map(x => [x[0].join('').toLowerCase(), x[1]]);
+            let c = b.sort();
+            let d = c.map(a => a[1]);
+            let e = d.join("");
+            return e;
         case 'date':
             break
     }
