@@ -47,7 +47,7 @@ function parseComment(comment) {
     if (match === null)
         return null;
 
-    const [_, name, date, text] = match;
+    const [_, name, date, text] = match; 
     const dateDate = (date !== undefined) ? parseDate(date) : undefined;
     const importance = (text.match(/!/g) || []).length;
     return {
