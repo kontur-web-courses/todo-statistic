@@ -10,7 +10,7 @@ const files = getFiles();
 const regWthoutImp=/\/\/ (TODO .+[^!])[^!]\n/g
 const regAll = /\/\/(TODO .+)\n/g
 const regImp =/\/\/ (TODO .+!)\n/g
-const formatRegexp = new RegExp("\/\/ todo (.+);(.+);(.+)\n","g")
+const formatRegexp = new RegExp("\/\/ TODO (.+);(.+);(.+)\n","g")
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -81,7 +81,33 @@ function* parseUser(arr, user) {
             yield match[3];
         }
     }
-    todos.forEach(e => (console.log(Array.from(e.matchAll(formatRegexp)))));
+}
+
+function getTodosWithFormat(arr) {
+    const todos = [];
+    for (file of arr) {
+        const matches = file.matchAll(formatRegexp);
+        for (match of matches) {
+            todos.push(match[0]);
+        }
+    }
+    
+    return todos;
+}
+
+function getDateFromTodo(e) {
+    const [year, month, date] = Array.from(e.matchAll(formatRegexp))[0][2].trim().split('-');
+    const curDate = new Date(year, month, date);
+
+    return curDate;
+}
+
+function sortByDate(arr) {
+    const todos = getTodosWithFormat(arr);
+    todos.sort((e1, e2) => {
+        return getDateFromTodo(e1) <= getDateFromTodo(e2) ? -1 : 1;
+    })
+    
     return todos;
 }
 
@@ -102,10 +128,18 @@ function processCommand(input) {
             }
             break;
         case 'sort':
-            for (let obj of sortParam(files, param)) {
-                console.log(obj)
+            switch (param) {
+                case 'importance':
+                    for (let obj of sortParam(files, param)) {
+                        console.log(obj)
+                    }
+                    break;
+                case 'date':
+                    for (let obj of sortByDate(files)) {
+                        console.log(obj);
+                    }
+                    break;
             }
-            break
         case 'important':
             for (let obj of parseTODOwithParam(files, regImp)) {
                 console.log(obj);
