@@ -2,12 +2,9 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-const todos = getToDos();
 
-while (true) {
-    console.log('Please, write your command!');
-    readLine(processCommand);
-}
+console.log('Please, write your command!');
+readLine(processCommand);
 
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
@@ -20,9 +17,7 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            for (let todo of todos) {
-                console.log(todo);
-            }
+            showToDos();
             break;
         default:
             console.log('wrong command');
@@ -32,16 +27,14 @@ function processCommand(command) {
 
 // TODO you can do it!
 
-function getToDos(){
-    let result = [];
+function showToDos(){
     for (let file of files){
         for (let str of file.split(`\n`)){
             let com = str.match("// TODO (.+)");
             if (com) {
-                result.push(com[0])
+                console.log(com[0]);
             }
         }
     }
-    return result;
 }
 
