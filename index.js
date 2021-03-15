@@ -13,21 +13,26 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    getToDos();
+    let parts = command.split(' ');
+    switch (parts[0]) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            getToDos()
-            for (let s of todos){
-                console.log(s)
+            for (let todo of todos) {
+                console.log(todo.original);
             }
             break;
         case 'important':
-            getToDos()
-            for (let s of todos){
-                if ((s.match(/!/g) || []).length > 0)
-                    console.log(s)
+            for (let todo of todos.filter(t => t.importance > 0)){
+                console.log(todo.original);
+            }
+            break;
+        case 'user':
+            let user = parts[1].toLowerCase();
+            for (let todo of todos.filter(t => t.user === user)){
+                console.log(todo.original);
             }
             break;
         default:
@@ -43,18 +48,19 @@ function getToDos(){
         for (let str of file.split(`\n`)){
             let com = str.match("// TODO (.+)");
             if (com) {
-                todos.push(com[0]);
+                todos.push(getMetaData(com[0]));
             }
         }
     }
 }
 
 function getMetaData(todo) {
-    let importance = (todo.match(/!/g) || []).length;
     let peaces = todo.split(';');
     return {
-        user: peaces[0].replace('// TODO ', ''),
-        date: Date.parse(peaces[1].replace(' ', '')),
+        original: todo,
+        importance: (todo.match(/!/g) || []).length,
+        user: peaces[0] && peaces[0].replace('// TODO ', '').toLowerCase(),
+        date: peaces[1] && Date.parse(peaces[1].replace(' ', '')),
         text: peaces[2],
     };
 }
