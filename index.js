@@ -1,11 +1,15 @@
-const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
-const {readLine} = require('./console');
+const {
+    getAllFilePathsWithExtension,
+    readFile
+} = require('./fileSystem');
+const {
+    readLine
+} = require('./console');
 
 const files = getFiles();
-const regWthoutImp=/\/\/ (TODO .+[^!])[^!]\n/g
-const regAll = /\/\/(TODO .+)\n/g
-const regImp =/\/\/ (TODO .+!)\n/g
-const formatRegexp = new RegExp("\/\/ todo (.+);(.+);(.+)\n","gi")
+const regWthoutImp = /(todo .+[^!])[^!]\n/gi
+const regAll = /(todo .+)\n/gi
+const regImp = /(todo .+!)\n/gi
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -15,101 +19,97 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
-function compareImp(a,b) {
-    return b.match(/!/g).length-a.match(/!/g).length
+function compareImp(a, b) {
+    return b.match(/!/g).length - a.match(/!/g).length
 }
 
-function* parseTODOwithParam(arr, regex){
+function* parseTODOwithParam(arr, regex) {
     for (let obj in arr) {
-        let y = arr[obj].matchAll(regex)
-        for (const match of y) {
+        let allMatches = arr[obj].matchAll(regex)
+        for (const match of allMatches) {
             yield match[1];
         }
     }
 }
+
 function* sortImp(arr) {
-    let strWithImp= []
-    for (let obj of parseTODOwithParam(arr,regImp)){
+    let strWithImp = []
+    for (let obj of parseTODOwithParam(arr, regImp)) {
         strWithImp.push(obj)
     }
-
     strWithImp.sort(compareImp)
-    for (let obj of strWithImp){
+    for (let obj of strWithImp) {
         yield obj
     }
-
-    for (let obj of parseTODOwithParam(arr,regWthoutImp)){
+    for (let obj of parseTODOwithParam(arr, regWthoutImp)) {
         yield obj
     }
 }
 
-function* parseUser(arr,user){
-    for (let obj in arr){
-        let y=arr[obj].matchAll(formatRegexp);
-        for (const match of y) {
+
+function* sortUser(arr) {
+    const allWithNames = []
+    const reg = new RegExp("(todo (.+);(.+);(.+))\n", "gi")
+    for (let obj in arr) {
+        let allMatches = arr[obj].matchAll(reg)
+        for (let mat of allMatches) {
+            allWithNames.push(mat[1]);
+        }
+    }
+    allWithNames.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    for (let obj of allWithNames) {
+        yield obj;
+    }
+}
+
+function sortParam(arr, param) {
+    if (param === 'user') {
+        return sortUser(arr)
+    } else if (param === 'important') {
+        return sortImp(arr)
+    }else if (param === 'date'){
+
+    }
+}
+
+function* parseUser(arr, user) {
+    const reg = new RegExp("todo (" + user + ");(.+);(.+)\n", "gi")
+    for (let obj in arr) {
+        let allMatches = arr[obj].matchAll(reg)
+        for (const match of allMatches) {
             yield match[3];
         }
     }
-}
-
-function* getTODOsWithFormat(arr) {
-    const regExp = new RegExp("todo (.+);(.+);(.+)\n","gi");
-    for (let str of arr) {
-        let todos = str.matchAll(regExp);
-        for (let todo of todos) {
-            yield todo[0];
-        }
-    }
-}
-
-function sortByDate(arr) {
-    const todos = [];
-    for (var todo of getTODOsWithFormat(arr)) {
-        todos.push(todo);
-    }
-    todos.forEach(e => console.log(Array.from(e.matchAll(formatRegexp))[0][2].trim()));
-    return todos;
 }
 
 function processCommand(input) {
     let data = input.match(/^[^ ]*|(?<= ).*/g);
     const command = data[0]
     const param = data[1]
-    switch (command.split(' ')[0]) {
+    switch (command) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            let files =getFiles();
-            for(let obj of parseTODOwithParam(files,regWthoutImp)){
+            for (let obj of parseTODOwithParam(files, regImp)) {
+                console.log(obj)
+            }
+            for (let obj of parseTODOwithParam(files, regWthoutImp)) {
                 console.log(obj)
             }
             break;
         case 'sort':
-            switch (param) {
-                case 'importance':
-                    let j = getFiles();
-                    for(let obj of sortImp(j)){
-                        console.log(obj)
-                    }
-                    break;
-                case 'date':
-                    let files = getFiles();
-                    for (let todo of sortByDate(files)) {
-                        // console.log(todo);
-                    }
-                    break;
+            for (let obj of sortParam(files, param)) {
+                console.log(obj)
             }
-            break;
+            break
         case 'important':
-            let b = getFiles();
-            for(let obj of parseTODOwithParam(b,regImp)){
+            for (let obj of parseTODOwithParam(files, regImp)) {
                 console.log(obj);
             }
             break;
         case 'user':
-            let c = getFiles();
-            for(let obj of parseUser(c,param)){
+            for (let obj of parseUser(files, param)) {
                 console.log(obj)
             }
             break;
