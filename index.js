@@ -2,7 +2,13 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-
+const groupBy = (arr, fn) =>
+    arr
+        .map(typeof fn === 'function' ? fn : val => val[fn])
+        .reduce((acc, val, i) => {
+            acc[val] = (acc[val] || []).concat(arr[i]);
+            return acc;
+        }, {});
 let whileTrue = 1;
 
 console.log('Please, write your command!');
@@ -19,7 +25,28 @@ function processCommand(command) {
     let allTodo = getAllTodo();
     switch (input[0]) {
         case 'sort':
-            break
+            switch (input[1]){
+                case 'date':
+                    break;
+                case 'user':
+                    let usersTodos = groupBy(allTodo, x => x.split(';').length > 1  ? x.split(';')[0].substr(8) : 'other');
+                    for (let i in usersTodos) {
+                        if (i !== "other") {
+                            for (let todo of usersTodos[i]) {
+                                console.log(todo);
+                            }
+                        }
+                    }
+                    for (let todo of usersTodos['others']) {
+                        console.log(todo);
+                    }
+                    break;
+                case 'important':
+                    let importantTodo = getImortantTodo(allTodo).sort(compare)
+                    console.log(importantTodo)
+                    break;
+            }
+            break;
         case 'user':
             let usersTodos = allTodo.filter(x => x.split(';')[0].substr(8).toLowerCase() === input[1].toLowerCase())
             for(let userTodo of usersTodos){
@@ -27,7 +54,7 @@ function processCommand(command) {
             }
             break;
         case 'important':
-            let rightTodos = allTodo.filter(x => x.search('!') !== -1)
+            let rightTodos = getImortantTodo(allTodo)
             for (let t of rightTodos)
                 console.log(t)
             break;
@@ -45,6 +72,21 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+
+function compare(a, b) {
+    if (a.match(/!/g).length > b.match(/!/g).length) {
+        return -1;
+    }
+    if (a.match(/!/g).length < b.match(/!/g).length) {
+        return 1;
+    }
+    return 0;
+}
+
+
+function getImortantTodo(allTodo){
+    return allTodo.filter(x => x.search('!') !== -1);
+}
 
 function getAllTodo(){
     let keyword = 'TODO';
