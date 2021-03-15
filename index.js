@@ -53,6 +53,19 @@ function processCommand(command) {
                 console.log(userTodo);
             }
             break;
+        case 'date':
+            let rule = new Date(input[1]);
+            let type = 'all';
+            if (input[1].split('-').length === 2) {
+                type = 'year-month';
+            } else {
+                type = 'year';
+            }
+            let dataTodos = allTodo.filter(x => dateComparator(x, rule, type));
+            for (let dateTodo of dataTodos){
+                console.log(dateTodo);
+            }
+            break;
         case 'important':
             let rightTodos = getImortantTodo(allTodo)
             for (let t of rightTodos)
@@ -72,6 +85,7 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+// TODO Jopa; 2015-08-10; you can do it!
 
 function compare(a, b) {
     if (a.match(/!/g).length > b.match(/!/g).length) {
@@ -114,4 +128,22 @@ function getAllTodo(){
         });
     }
     return todos;
+}
+
+function dateComparator(input, rule, type){
+    let tmp = '';
+    try {
+        tmp = String(input.split(';')[1].substr(1))
+    } catch {
+        return false
+    }
+    let dateString = new Date(tmp);
+    switch (type){
+        case 'year':
+            return dateString.getFullYear() === rule.getFullYear();
+        case 'all':
+            return dateString.getDate() === rule.getDate()
+        case 'year-month':
+            return dateString.getFullYear() === rule.getFullYear() && dateString.getMonth() === rule.getMonth();
+    }
 }
