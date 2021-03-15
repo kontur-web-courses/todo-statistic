@@ -66,6 +66,26 @@ function symbolAmount(str, symb) {
     return str.split(symb).length - 1
 }
 
+function commentAfterDate(date) {
+    let todoList = extractTODOs(getFiles())
+    let extractedUserList = getOnlyFormattedTODOs(todoList)
+
+    extractedUserList.sort(function (x, y) {
+        if (x.date < y.date) {
+            return -1
+        }
+        if (x.date > y.date) {
+            return 1
+        }
+        return 0
+    })
+    let dateRes = []
+    extractedUserList.forEach((elem) => {if (elem.date > date) {
+        dateRes.push(elem.comment);
+    }});
+    return dateRes;
+}
+
 function processCommand(command) {
     let parsedCommand = command.split(' ')
     switch (parsedCommand[0]) {
@@ -112,6 +132,11 @@ function processCommand(command) {
                     console.log(dateRes.join('\n'))
             }
             break
+        
+        case 'date':
+            let dateAfter = new Date(parsedCommand[1])
+            console.log(commentAfterDate(dateAfter).join('\n'));
+            break;
 
         case 'exit':
             process.exit(0)
