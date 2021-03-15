@@ -23,3 +23,14 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+
+function getToDos(){
+    for (let file of files){
+        for (let str of file.split(`\n`)){
+            let com = str.match("// TODO (.+)");
+            if (com)
+                console.log(com[0]);
+        }
+    }
+}
+
