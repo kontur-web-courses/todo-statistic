@@ -35,7 +35,9 @@ function processCommand(command) {
                 type = 'year';
             }
             let dataTodos = allTodo.filter(x => dateComparator(x, rule, type));
-            console.log(dataTodos)
+            for (let dateTodo of dataTodos){
+                console.log(dateTodo);
+            }
             break;
         case 'important':
             let rightTodos = allTodo.filter(x => x.search('!') !== -1)
@@ -87,7 +89,6 @@ function getAllTodo(){
 }
 
 function dateComparator(input, rule, type){
-    console.log(input)
     let tmp = '';
     try {
         tmp = String(input.split(';')[1].substr(1))
