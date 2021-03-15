@@ -5,7 +5,7 @@ const files = getFiles();
 const regWthoutImp=/\/\/ (TODO .+[^!])[^!]\n/g
 const regAll = /\/\/(TODO .+)\n/g
 const regImp =/\/\/ (TODO .+!)\n/g
-const formatRegexp = new RegExp("\/\/ todo (.+);(.+);(.+)\n","gi")
+const formatRegexp = new RegExp("\/\/ todo (.+);(.+);(.+)\n","g")
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -67,7 +67,7 @@ function sortByDate(arr) {
     for (var todo of getTODOsWithFormat(arr)) {
         todos.push(todo);
     }
-    todos.forEach(e => console.log(Array.from(e.matchAll(formatRegexp))[0][2].trim()));
+    todos.forEach(e => (console.log(Array.from(e.matchAll(formatRegexp)))));
     return todos;
 }
 
