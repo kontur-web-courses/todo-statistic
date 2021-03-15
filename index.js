@@ -26,12 +26,18 @@ function processCommand(command) {
             break;
         case 'important':
             for (let todo of todos.filter(t => t.importance > 0)){
-                console.log(todo.original);
+                console.log(todo['original']);
             }
             break;
         case 'user':
             let user = parts[1].toLowerCase();
             for (let todo of todos.filter(t => t.user === user)){
+                console.log(todo.original);
+            }
+            break;
+        case 'sort':
+            todos.sort((a, b) => compareFunc(a[parts[1]], b[parts[1]]));
+            for (let todo of todos) {
                 console.log(todo.original);
             }
             break;
@@ -56,11 +62,19 @@ function getToDos(){
 
 function getMetaData(todo) {
     let peaces = todo.split(';');
+
     return {
         original: todo,
         importance: (todo.match(/!/g) || []).length,
-        user: peaces[0] && peaces[0].replace('// TODO ', '').toLowerCase(),
-        date: peaces[1] && Date.parse(peaces[1].replace(' ', '')),
+        user: peaces.length < 3 ? undefined : peaces[0].replace('// TODO ', '').toLowerCase(),
+        date: peaces.length < 3 ? undefined : Date.parse(peaces[1].replace(' ', '')),
         text: peaces[2],
     };
+}
+
+function compareFunc(a, b) {
+    if (typeof a === "string") {
+        return a.localeCompare(b);
+    }
+    return b - a;
 }
