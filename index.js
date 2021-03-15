@@ -18,6 +18,10 @@ function processCommand(command) {
         case 'user':
             break;
         case 'important':
+            let todos = getAllTodos()
+            todos.filter(x => x.search('!') !== -1)
+            for (let t of todos)
+                console.log(t)
             break;
         case 'show':
             break;
