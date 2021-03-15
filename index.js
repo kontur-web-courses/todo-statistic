@@ -3,26 +3,38 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 const comments = getComments()
-console.log(comments);
 
 function getComments() {
     let res = [];
+    const regular_todo = /\/\/ TODO .+/g
     for (let file of files) {
-        const regular_todo = /\/\/ TODO .+/g
         let answ = file.match(regular_todo);
         res = res.concat(answ);
     }
     return res;
 }
 
-
 function getImportant() {
     const res = [];
-    let important = comments.filter(x => x.indexOf('!') !== -1);
+    const important = comments.filter(x => x.indexOf('!') !== -1);
     res.push(important.join('\n'));
     return res.join('\n');
 }
 
+function getUser(user) {
+    const result = [];
+    for (let line of comments) {
+        let answ = line.split(';');
+        if (answ.length !== 3) {
+            continue;
+        }
+        const name = answ[0].split(" ");
+        if (name[2] === user) {
+            result.push(answ[2]);
+        }
+    }
+    return result.join('\n');
+}
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -33,7 +45,11 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    const commands = command.split(' ');
+    switch (commands[0]) {
+        case 'user':
+            console.log(getUser(commands[1]));
+            break;
         case 'important':
             console.log(getImportant());
             break;
@@ -48,5 +64,3 @@ function processCommand(command) {
             break;
     }
 }
-
-// TODO you can do it!
