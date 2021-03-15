@@ -77,8 +77,7 @@ function processCommand(command) {
                 console.log(t)
             break;
         case 'show':
-            for (let todo of allTodo)
-                console.log(todo)
+            formatTableOutput(allTodo)
             break;
         case 'exit':
             process.exit(0);
@@ -140,13 +139,19 @@ function getAllTodo(){
     return todos;
 }
 
-function dateComparator(input, rule, type){
-    let tmp = '';
+function getStringDate(string){
+    let tmp;
     try {
-        tmp = String(input.split(';')[1].substr(1))
+        return  String(string.split(';')[1].substr(1));
     } catch {
-        return false
+        return -1;
     }
+}
+
+function dateComparator(input, rule, type){
+    let tmp = getStringDate(input);
+    if (tmp === -1)
+        return false;
     let dateString = new Date(tmp);
     switch (type){
         case 'year':
@@ -157,3 +162,21 @@ function dateComparator(input, rule, type){
             return dateString.getFullYear() === rule.getFullYear() && dateString.getMonth() === rule.getMonth();
     }
 }
+/*
+function formatTableOutput(comments){
+    for(let comment of comments){
+        let splitedComment = comment.substr(8).split(';');
+        console.log(comment, splitedComment.length, splitedComment);
+        let first = '!';
+        let user = '';
+        let date = '';
+        let text = '';
+        switch (splitedComment.length){
+            case 1:
+                break;
+        }
+        console.log(`${first}|${user}.`)
+    }
+
+}
+*/
