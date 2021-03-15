@@ -148,13 +148,11 @@ function showCommandsFromUser(user) {
 function getDate(curDate){
     let res = [];
     let all_commands = showCommand();
-    let dates = curDate.split('-');
-    if (dates.length === 1){
-        for (let item of all_commands){
-            let thisDate = get_date(item);
-            if (new Date(get_date(thisDate)) - new Date(get_date(curDate)) >= 0)
-                res.push(this);
-        }
+    for (let item of all_commands){
+        let thisDate = get_date(item);
+        if (get_date(item) !== -1)
+            if (new Date(get_date(thisDate)) - new Date(curDate) >= 0)
+                res.push(item);
     }
     return res;
 }
