@@ -58,7 +58,7 @@ function processCommand(command) {
 function getToDos(){
     for (let file of files){
         for (let str of file.split(`\n`)){
-            let com = str.match("// TODO (.+)");
+            let com = str.match(/\/\/ TODO (.+)/);
             if (com) {
                 todos.push(getMetaData(com[0]));
             }
@@ -72,9 +72,9 @@ function getMetaData(todo) {
     return {
         original: todo,
         importance: (todo.match(/!/g) || []).length,
-        user: peaces.length < 3 ? undefined : peaces[0].replace('// TODO ', '').toLowerCase(),
+        user: peaces.length < 3 ? undefined : peaces[0].replace(/\/\/ TODO /, '').toLowerCase(),
         date: peaces.length < 3 ? undefined : new Date(peaces[1].replace(' ', '')),
-        text: peaces[2] || peaces[0].replace('// TODO ', ''),
+        text: peaces[2] || peaces[0].replace(/\/\/ TODO /, ''),
     };
 }
 
