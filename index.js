@@ -109,6 +109,25 @@ function getSortedCommentsByDate() {
     return comments;
 }
 
+function getCommentsAfterDate(date) {
+    let d = date.split('-');
+    if (d.length === 1) {
+        date += '-01';
+    }
+    let time = new Date(date);
+    let comments = getComments();
+    let result = [];
+    for (let comment of comments) {
+        let m1 = comment.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
+        if (m1 !== null) {
+            if (new Date(m1[2]) > time) {
+                result.push(comment);
+            }
+        }
+    }
+    return result;
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
@@ -144,6 +163,11 @@ function processCommand(command) {
                 for (let comment of getSortedCommentsByDate()) {
                     console.log(comment);
                 }
+            }
+            break;
+        case `date ${date = command.split(' ')[1]}`:
+            for (let comment of getCommentsAfterDate(date)) {
+                console.log(comment);
             }
             break;
         default:
