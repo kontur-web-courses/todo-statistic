@@ -2,38 +2,51 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-const comments = getComments()
+const comments = getComments();
+const objects = getObjects();
 
 function getComments() {
     let res = [];
     const regular_todo = /\/\/ TODO .+/g
     for (let file of files) {
         let answ = file.match(regular_todo);
+        if (answ === null)
+            continue;
         res = res.concat(answ);
     }
     return res;
 }
 
-function getImportant() {
-    const res = [];
-    const important = comments.filter(x => x.indexOf('!') !== -1);
-    res.push(important.join('\n'));
-    return res.join('\n');
+function getObjects() {
+    return comments.map(comment => {
+            return {
+                importance: getImportance(comment),
+                user: getUser(comment),
+                date: getDate(comment),
+                text: comment
+            }
+        }
+    );
 }
 
-function getUser(user) {
-    const result = [];
-    for (let line of comments) {
-        let answ = line.split(';');
-        if (answ.length !== 3) {
-            continue;
-        }
-        const name = answ[0].split(" ");
-        if (name[2] === user) {
-            result.push(answ[2]);
-        }
+function getImportance(comment) {
+    return (comment.match('!') || []).length;
+}
+
+function getUser(comment) {
+    let parts = comment.split(';');
+    if (parts === undefined || parts.length !== 3) {
+        return undefined;
     }
-    return result.join('\n');
+    return (parts[0].split(' '))[2].toLowerCase();
+}
+
+function getDate(comment) {
+    let parts = comment.split(':');
+    if (parts === undefined || parts.length !== 3) {
+        return undefined;
+    }
+    return Date.parse(parts[1]);
 }
 
 console.log('Please, write your command!');
@@ -45,13 +58,28 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    const commands = command.split(' ');
-    switch (commands[0]) {
+    const args = command.split(' ');
+    switch (args[0]) {
+        // case 'sort':
+        //     switch (args[1]) {
+        //         case 'user':
+        //             console.log(
+        //                 objects.
+        //             )
+        //     }
+        //     break;
         case 'user':
-            console.log(getUser(commands[1]));
+            const user = args[1].toLowerCase();
+            console.log(objects
+                .filter(obj => obj.user === user)
+                .map(obj => obj.text)
+                .join('\n'));
             break;
         case 'important':
-            console.log(getImportant());
+            console.log(objects
+                .filter(obj => obj.importance !== 0)
+                .map(obj => obj.text)
+                .join('\n'));
             break;
         case 'show':
             console.log(comments);
