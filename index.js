@@ -43,13 +43,13 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            console.log(getComments())
+            formattingOutput(getComments());
             break;
         case 'important':
-            console.log(getComments().filter(x => x.indexOf('!') !== -1))
+            formattingOutput(getComments().filter(x => x.indexOf('!') !== -1))
             break;
         case `user ${name = command.split(' ')[1]}`:
-            console.log(getComments().filter(x => {
+            formattingOutput(getComments().filter(x => {
                 let s = x.match(/\/\/ TODO (.+?);\s*(.+?);\s*/)
                 return s !== null && s[1].toLowerCase() === name.toLowerCase();
             }))
@@ -59,7 +59,7 @@ function processCommand(command) {
                 const sortedComm = getComments()
                     .sort((x, y) =>
                         y.split('').filter(y => y === '!').length - x.split('').filter(y => y === '!').length);
-                console.log(sortedComm)
+                formattingOutput(sortedComm)
             } else if (arg === 'user') {
                 const sortedComm = getComments()
                     .sort((x, y) => {
@@ -74,7 +74,7 @@ function processCommand(command) {
                             }
                         }
                     );
-                console.log(sortedComm)
+                formattingOutput(sortedComm)
             } else if (arg === 'date') {
                 const sortedComm = getComments()
                     .sort((x, y) => {
@@ -89,12 +89,38 @@ function processCommand(command) {
                         }
                     });
 
-                console.log(sortedComm)
+                formattingOutput(sortedComm)
             }
+            break;
+        case `date ${date = command.split(' ')[1]}`:
+            formattingOutput(getComments().filter(x => {
+                const s = x.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
+                return s !== null ? s[2] > date : false;
+            }));
             break;
         default:
             console.log('wrong command');
             break;
+    }
+}
+
+function formattingOutput(array) {
+    for (const str of array) {
+        let s = str.match(/\/\/ TODO (.+?);\s*(.+?);\s*(.+)(\r\n)*/);
+        const i = str.split('').filter(y => y === '!').length > 0 ? '!' : ' ';
+
+        if (s !== null) {
+            const name = s[1].length > 10 ? s[1].substr(0, 9) + '…' : s[1].padEnd(10, ' ');
+            const date = s[2].padEnd(10, ' ');
+            const message = s[3].length > 50 ? s[3].substr(0, 49) + '…' : s[3].padEnd(50, ' ');
+            console.log([i, name, date, message].join('  |  '));
+        } else {
+            s = str.match(/\/\/ TODO (.+)(\r\n)*/);
+            const name = ''.padEnd(10, ' ');
+            const date = ''.padEnd(10, ' ');
+            const message = s[1].length > 50 ? s[1].substr(0, 49) + '…' : s[1].padEnd(50, ' ');
+            console.log([i, name, date, message].join('  |  '));
+        }
     }
 }
 
