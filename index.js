@@ -23,10 +23,10 @@ function processCommand(command) {
                 console.log(s)
             }
             break;
-        case 'important ':
+        case 'important':
             getToDos()
             for (let s of todos){
-                if ((s.match(/is/g) || []).length > 0)
+                if ((s.match(/!/g) || []).length > 0)
                     console.log(s)
             }
             break;
@@ -47,4 +47,14 @@ function getToDos(){
             }
         }
     }
+}
+
+function getMetaData(todo) {
+    let importance = (todo.match(/!/g) || []).length;
+    let peaces = todo.split(';');
+    return {
+        user: peaces[0].replace('// TODO ', ''),
+        date: Date.parse(peaces[1].replace(' ', '')),
+        text: peaces[2],
+    };
 }
