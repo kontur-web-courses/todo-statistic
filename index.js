@@ -13,6 +13,14 @@ function getFiles() {
 
 function processCommand(command) {
     switch (command) {
+        case 'sort':
+            break
+        case 'user':
+            break;
+        case 'important':
+            break;
+        case 'show':
+            break;
         case 'exit':
             process.exit(0);
             break;
