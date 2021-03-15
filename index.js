@@ -20,6 +20,9 @@ function processCommand(command) {
         case 'important':
             break;
         case 'show':
+            let todos = getAllTodo();
+            for (let todo of todos)
+                console.log(todo)
             break;
         case 'exit':
             process.exit(0);
@@ -31,3 +34,31 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+
+function getAllTodo(){
+    let keyword = 'TODO';
+    const regex = new RegExp(
+        // exclude TODO in string value with matching quotes:
+        '^(?!.*([\'"]).*\\b' + keyword + '\\b.*\\1)' +
+        // exclude TODO.property access:
+        '(?!.*\\b' + keyword + '\\.\\w)' +
+        // exclude TODO = assignment
+        '(?!.*\\b' + keyword + '\\s*=)' +
+        // final TODO match
+        '.*\\b' + keyword + '\\b'
+    );
+
+    let files = getFiles();
+    let todos = [];
+    for(let file of files) {
+        file.split('\n').forEach((file) => {
+            let m = regex.test(file);
+            if (m) {
+                let rightString = file.substr(file.indexOf('// TODO'));
+                if (rightString.length > 6)
+                    todos.push(rightString);
+            }
+        });
+    }
+    return todos;
+}
