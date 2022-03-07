@@ -11,15 +11,13 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+const commands = {
+    exit: () => process.exit(0),
+    show: () => console.log()
+};
+
 function processCommand(command) {
-    switch (command) {
-        case 'exit':
-            process.exit(0);
-            break;
-        default:
-            console.log('wrong command');
-            break;
-    }
+    return commands[command];
 }
 
 // TODO you can do it!
