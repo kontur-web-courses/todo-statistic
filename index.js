@@ -41,15 +41,18 @@ function importantTODO() {
     }
 }
 
-function sortImportantTODO(){
-    let mapTODO= new Map();
-    
+function sortImportantTODO() {
+    let mapTODO = new Map();
+
     for (const todo of todos) {
         mapTODO.set(todo, todo.split("").filter(x => x === '!').length);
     }
-    
+
     const mapTODOSort = new Map([...mapTODO.entries()].sort((a, b) => b[1] - a[1]));
-    console.log(mapTODOSort);
+
+    for (const todo of mapTODOSort) {
+        console.log(todo[0]);
+    }
 }
 
 function userTODO(username) {
@@ -66,13 +69,18 @@ function processCommand(command) {
     makeTODO();
 
     switch (command.split(" ")[0]) {
+
         case 'user':
             let userName = command.split(" ")[1];
             if (userName != undefined) {
                 userTODO(userName.toLowerCase());
             }
             break;
-        case 'sort': 
+        case 'sort':
+            let sorting = command.split(" ")[1];
+            if (sorting === "importance") {
+                sortImportantTODO();
+            }
             break;
         case 'show':
             showTODO();
