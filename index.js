@@ -74,10 +74,24 @@ function processCommand(input) {
         case 'user':
             showAllUserComments(argument);
             break;
-        default:
-            for (let line of getSpecialLabeledTodoLines()){
-                console.log(line);
+        case 'sort':
+            switch (argument) {
+                case 'importance':
+                    for (let importantLine of getSpecialLabeledTodoLines()){
+                        specialLabelRegex[Symbol.match](importantLine);
+                        if (importantLine.includes("!"))
+                            console.log(specialLabelRegex.exec(importantLine).groups["comment"]);
+                    }
+                    for (let notImportantLine of getSpecialLabeledTodoLines()){
+                        specialLabelRegex[Symbol.match](notImportantLine);
+                        if (!notImportantLine.includes("!"))
+                            console.log(specialLabelRegex.exec(notImportantLine).groups["comment"]);
+                    }
+                    break;
+                default:
             }
+            break;
+        default:
             console.log('wrong command');
             break;
     }
