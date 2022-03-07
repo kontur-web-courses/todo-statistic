@@ -22,9 +22,12 @@ function processCommand(command) {
     } else if (command.indexOf("user ") === 0){
         let username = command.split(' ')[1].toLowerCase();
         let todos = getTODOs(files)
-            .filter(todo => todo.username.toLowerCase() === username.toLowerCase());
+            .filter(todo => todo.username.toLowerCase() === username);
 
         showSelection(todos);
+    } else if (command.indexOf("sort ") === 0){
+        let argument = command.split(' ')[1];
+        console.log("False");
     } else {
         console.log('wrong command');
     }
@@ -39,6 +42,7 @@ function showSelection(selection)
 function Todo(username, dateStr, text) {
     this.username = username;
     this.dateStr = dateStr;
+    this.date = new Date(dateStr);
     this.text = text;
 
     this.toString = () => {
