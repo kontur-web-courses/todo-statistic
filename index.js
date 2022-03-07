@@ -45,7 +45,7 @@ function sortImportantTODO(){
     let mapTODO= new Map();
     
     for (const todo of todos) {
-        mapTODO.set(todo, todo.filter(x => x === '!').length);
+        mapTODO.set(todo, todo.split("").filter(x => x === '!').length);
     }
     
     const mapTODOSort = new Map([...mapTODO.entries()].sort((a, b) => b[1] - a[1]));
