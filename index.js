@@ -38,8 +38,13 @@ class TODO{
     constructor(inp){
         this.text = inp;
         this.important = inp.match(/[!]/g).length;
-        this.date;
-        this.name;
+        this.date = NaN;
+        this.name = NaN;
+        let data = inp.split(';');
+        if(data.length === 3){
+            this.name = data[0];
+            this.date = new date(data[1]);
+        }
     }
 }
 // TODO you can do it!
