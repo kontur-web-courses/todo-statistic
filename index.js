@@ -13,6 +13,9 @@ function getFiles() {
 
 function processCommand(command) {
     switch (command) {
+        case 'show':
+            getToDoLines().map(item => console.log(item));
+            break;
         case 'exit':
             process.exit(0);
             break;
@@ -22,4 +25,15 @@ function processCommand(command) {
     }
 }
 
-// TODO you can do it!
+function getToDoLines() {
+    let todos = [];
+    for (let file of getFiles()) {
+        let lines = file.split('\r\n');
+        for (let line of lines) {
+            let match = /\/\/ TODO/.exec(line);
+            if (match != null)
+                todos.push(line.slice(match.index));
+        }
+    }
+    return todos;
+}
