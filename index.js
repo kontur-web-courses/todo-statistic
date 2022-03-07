@@ -57,6 +57,10 @@ function processCommand(command) {
         case 'user' + command.slice(command.indexOf(' ')):
             user(command.slice(command.indexOf(' ')).trim());
             break;
+        case 'sort user':
+            userSort();
+            show();
+            break;
         default:
             console.log('wrong command');
             break;
@@ -88,6 +92,18 @@ function sortDate(){
             return true;
         return x1.date > x2.date;
     })
+}
+
+function userSort(){
+    todo.sort((x, y) => {
+        if (!x.name){
+            return true;
+        }
+        if (!y.name){
+            return false;
+        }
+        return x.name.toLowerCase() > y.name.toLowerCase();
+    });
 }
 
 // TODO you can do it!
