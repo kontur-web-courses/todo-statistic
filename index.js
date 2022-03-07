@@ -24,18 +24,25 @@ function getAllTodo() {
 
 function processCommand(command) {
     const reg = command.match('user (.*)')
+    let username0 = null
     if (reg != null){
-        const username = reg[1];
+        const username0 = reg[1];
         command = 'name'
     }
 
     switch (command) {
         case 'name':
-            const reg = command.match('(.*?);(.*?);(.*)')
-            if (reg != null){
-                let [username, date, text] = [reg[1], reg[2], reg[3]]
-                console.log(reg[1], reg[2], reg[3])
-            }
+            getAllTodo().filter( x =>
+            {
+                const reg = x.match('(.*?);(.*?);(.*)')
+                if (reg != null){
+                    let [username, date, text] = [reg[1], reg[2], reg[3]]
+                    console.log(reg[1], reg[2], reg[3])
+                    if (username === username0) return true
+                }
+                return false;
+            }).map(function(x) {console.log(x.replaceAll('!', ""))});
+
             break;
         case 'important':
             getAllTodo()
