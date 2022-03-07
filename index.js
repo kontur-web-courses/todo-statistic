@@ -19,11 +19,22 @@ function* getAllLines(){
     }
 }
 
+function* getTODOLines(){
+    let result = [];
+    for(line of getAllLines()){
+        if(line.includes('// TODO')){
+            let res = line.slice(line.indexOf('// TODO')+7);
+        }
+    }
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'todo':
+            console.log(Array.from(getTODOLines()));
         default:
             console.log('wrong command');
             break;
