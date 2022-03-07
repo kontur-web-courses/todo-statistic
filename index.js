@@ -15,14 +15,23 @@ function getAllTodo() {
     let result = []
     for (let f of files){
         const regex = '\/\/ TODO (.*)'
-        const r =
         let found = [...f.matchAll(regex)].map(x => x[1])
         result.push(...found)
     }
+    result = result.map(function (x) {
+        const reg = x.match('(.*?);(.*?);(.*)')
+        if (reg != null){
+            let [username, date, text] = [reg[1], reg[2], reg[3]]
+        }
+        let [username, date, text] = [null, null, x]
+        return [username, date, text]
+    })
     return result;
 }
 
 function processCommand(command) {
+    console.log(getAllTodo());
+    return null;
     let [exactCommand, argument] = command.split(' ')
     switch (exactCommand) {
         case 'user':
