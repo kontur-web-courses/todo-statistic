@@ -40,6 +40,15 @@ function important(){
     }
 }
 
+function* FormatSpecialLabeledLine(line){
+    const importance = line.includes('!')? '!'.padEnd(3, ' '): '   ';
+    let match = pass;
+    console.log(`${importance}
+    |${match.username.padStart(2, ' ').padEnd(14, ' ')}
+    |${match.date.padStart(2, ' ').padEnd(14, ' ')}
+    |${match.comment.padStart(2, ' ').padEnd(54, ' ')}`);
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
