@@ -2,10 +2,9 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles().map(f => f.split('\r\n'));
-
+const todos = getTODOs(files)
 console.log('Please, write your command!');
 readLine(processCommand);
-
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
     return filePaths.map(path => readFile(path));
@@ -15,13 +14,13 @@ function processCommand(command) {
     if (command === 'exit') {
         process.exit(0);
     } else if (command === 'show') {
-        showSelection(getTODOs(files));
+        showSelection(todos);
     } else if (command === 'important') {
-        showSelection(getTODOs(files)
+        showSelection(todos
             .filter(item => item.indexOf('!') !== -1));
     } else if (command.indexOf("user ") === 0) {
         let username = command.split(' ')[1].toLowerCase();
-        let todos = getTODOs(files)
+        let todos = todos
             .filter(
                 todo => todo.username !== null && todo.username.toLowerCase() === username);
 
@@ -49,7 +48,11 @@ function processCommand(command) {
         } else {
             console.log("wrong argument value");
         }
-    } else {
+    } else if (command.indexOf('date') === 0) {
+        let date = command.split(' ');
+        showTodoAfterDate(date);
+    }
+    else {
         console.log('wrong command');
     }
 }
@@ -86,6 +89,17 @@ function Compare(i1, i2, keySelector) {
         return 0;
 
     return 1;
+}
+
+function showTodoAfterDate(date){
+    let dt = new Date(date);
+    let toShow = []
+    for (let todo of todos) {
+        if (todo.date <= dt)
+            continue;
+        toShow.push(todo);
+    }
+    showSelection(toShow);
 }
 
 function Todo(username, dateStr, text) {
