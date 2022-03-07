@@ -11,16 +11,60 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function getImportantTODOs(todos) {
+    let importantTODOs = []
+
+    for (let todo of todos) {
+        if (todo.includes('!')) {
+            importantTODOs.push(todo)
+        }
+    }
+    return importantTODOs
+}
+
+function getUserTODOs(todos, user) {
+    let userTODOs = []
+
+    for (let todo of todos) {
+        let data = todo.split(';')
+
+        if (data[0].toLowerCase() !== user) continue
+
+        let todoText = data[2];
+        if (todoText[0] === ' '){
+            todoText = todoText.slice(1)
+        }
+
+        userTODOs.push(todoText)
+    }
+
+    return userTODOs
+}
+
 function processCommand(command) {
+    let todos = getTODOs()
+    let user;
+
     switch (command) {
+        case 'show':
+            console.log(todos)
+            break;
         case 'exit':
-            getTODOs()
             process.exit(0);
+            break;
+        case 'important':
+            let importantTODOs = getImportantTODOs(todos)
+            console.log(importantTODOs)
+            break;
+        case `user ${user}`:
+            let userTODOs = getUserTODOs(todos, user.toLowerCase())
+            console.log(userTODOs)
             break;
         default:
             console.log('wrong command');
             break;
     }
+
 }
 
 function getTODOs() {
@@ -32,8 +76,7 @@ function getTODOs() {
             continue;
         res = res.concat(ans);
     }
-    console.log(res)
+
     return res;
 }
 // TODO you can do it!
-getTODOs(files)
