@@ -50,19 +50,14 @@ function processCommand(command) {
 function getUserComments(lines) {
     let dict = new Map();
     for (let line of lines) {
-        let arr = line.split(';');
-        arr = arr.map(item => item.trimStart());
-        if (arr.length == 3) {
-            let [name, , comment] = arr;
-            name = name.slice(8);
-            name = name.toLowerCase();
-            name.toLowerCase();
-            if (!dict.has(name)) {
-                dict.set(name, []);
+        let com = parseComment(line);
+        if (com != null) {
+            if (!dict.has(com.user)) {
+                dict.set(com.user, []);
             }
-            let value = dict.get(name);
-            value.push(comment);
-            dict.set(name, value);
+            let value = dict.get(com.user);
+            value.push(com.comment);
+            dict.set(com.user, value);
         }
     }
     return dict;
@@ -84,7 +79,7 @@ function getToDoLines() {
 function conditionSort(a, b, condition) {
     switch (condition) {
         case 'importance':
-            return b.split('!').length - a.split('!').length;
+            return a.split('!').length - a.split('!').length;
         case 'user':
             return parseComment(a).user.localeCompare(parseComment(b).user);
         case 'date':
