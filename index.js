@@ -22,4 +22,14 @@ function processCommand(command) {
     }
 }
 
+
+function getImportant(todos) {
+    let ans = []
+    for (const todo of todos) {
+        if (todo.contains("!")) {
+            ans.push(todo);
+        }
+    }
+    return ans;
+}
 // TODO you can do it!
