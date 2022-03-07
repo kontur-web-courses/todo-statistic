@@ -1,6 +1,5 @@
-const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
-
+const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const files = getFiles();
 const todos = [];
 const important = [];
@@ -43,9 +42,17 @@ function processCommand(command) {
             for (element of important) console.log(element);
             break;
         default:
-            console.log('wrong command');
+            let sCommand = command.split(' ');
+            if (sCommand[0] == 'user'){
+                let name = sCommand[1];
+                for (element of todos) {
+                    if (element.substring(0, 9 + name.length) === `// TODO ${name};`) console.log(element)
+                }
+            }
+            else console.log('wrong command');
             break;
     }
 }
 
 // TODO you can do it!
+// TODO Semyon; 11.11.11; {текст комментария}lcxmbvcb
