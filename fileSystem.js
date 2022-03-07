@@ -10,7 +10,7 @@ function getAllFilePathsWithExtension(directoryPath, extension, filePaths) {
         if (fs.statSync(filePath).isDirectory()) {
             getAllFilePathsWithExtension(filePath, filePaths);
         } else if (filePath.endsWith(`.${extension}`)) {
-            filePaths.push(filePath);
+            filePaths.push(filePath); // TODO whatever!
         }
     }
     return filePaths;
