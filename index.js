@@ -13,55 +13,53 @@ function getFiles() {
 }
 
 function makeTODO() {
-    for (let file of files) {
-        file = file.split("\n");
-        for (const line of file) {
-            let idx = line.indexOf("// TODO ");
-            if (idx > -1) {
-                let todo = line.substring(idx);
-                todos.push(todo);
+    if (todos.length == 0) {
+        for (let file of files) {
+            file = file.split("\n");
+            for (const line of file) {
+                let idx = line.indexOf("// TODO ");
+                if (idx > -1) {
+                    let todo = line.substring(idx);
+                    todos.push(todo);
+                }
             }
         }
     }
 }
 
 function showTODO() {
-    if (todos.length === 0) {
-        makeTODO();
-    }
     for (const todo of todos) {
         console.log(todo);
     }
 }
 
 function importantTODO() {
-    if (todos.length === 0) {
-        makeTODO();
-    }
     for (const todo of todos) {
-        if (todo.indexOf("!") > -1){
+        if (todo.indexOf("!") > -1) {
             console.log(todo);
         }
     }
 }
 
-function userTODO(username){
-    if (todos.length === 0) {
-        makeTODO();
-    }
+function userTODO(username) {
     for (const todo of todos) {
         const splitStr = todo.split(";");
-        if (splitStr.length == 3 & splitStr[0].indexOf(" " + username + ";") > -1){
+        if (splitStr.length == 3 & splitStr[0].indexOf(username) > -1) {
             console.log(todo);
         }
-        
+
     }
 }
 
 function processCommand(command) {
+    makeTODO();
+
     switch (command.split(" ")[0]) {
         case 'user':
-            userTODO(command.split(" ")[1]);
+            let userName = command.split(" ")[1];
+            if (userName != undefined) {
+                userTODO(userName.toLowerCase());
+            }
             break;
         case 'show':
             showTODO();
@@ -77,4 +75,3 @@ function processCommand(command) {
             break;
     }
 }
-
