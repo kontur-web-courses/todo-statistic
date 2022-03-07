@@ -13,6 +13,25 @@ function getFiles() {
 
 function processCommand(command) {
     switch (command) {
+        case 'show':
+            let files = getFiles();
+            let comments = []
+            for (file of files){
+                let current = [];
+                let toDoIndex = file.indexOf('// TODO ');
+                let newLineIndex = file.indexOf('\r', toDoIndex);
+                while (toDoIndex != -1) {
+                    //console.log(toDoIndex, newLineIndex);
+                    current.push(file.slice(toDoIndex, newLineIndex));
+                    
+                    toDoIndex = file.indexOf('// TODO ', newLineIndex);
+                    newLineIndex = file.indexOf('\r', toDoIndex); 
+                    //console.log(current);
+                }
+                
+                comments.push(current);
+            }
+            console.log(comments);
         case 'exit':
             process.exit(0);
             break;
