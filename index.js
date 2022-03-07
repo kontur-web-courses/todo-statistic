@@ -4,6 +4,7 @@ const {readLine} = require('./console');
 const files = getFiles();
 
 const TODO_REGEX = new RegExp("\\/\\/ TODO ([\\w\\- ]+);\\s*([\\w\\-]+);\\s*(.*)$");
+const IMPORTANT_SYMBOL = '!';
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -24,7 +25,7 @@ function processCommand(command) {
             console.log(todos);
             break;
         case 'important':
-            console.log(todos.filter(t => t.includes('!')))
+            console.log(todos.filter(t => t.includes(IMPORTANT_SYMBOL)))
             break;
         case 'user':
             let user = splitCommand[1]
@@ -34,7 +35,7 @@ function processCommand(command) {
             switch (splitCommand[1]) {
                 case 'importance':
                     console.log(todos.sort(
-                        (a, b) => countSymbols(b, '!') - countSymbols(a, '!')));
+                        (a, b) => countSymbols(b, IMPORTANT_SYMBOL) - countSymbols(a, IMPORTANT_SYMBOL)));
                     break;
                 case 'user':
                     let obj = {'noName': []};
