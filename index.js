@@ -83,6 +83,31 @@ function sortUserTODO() {
     console.log(userTODO);
 }
 
+function sortDateTODO() {
+    let dateTODO = new Map();
+    let dateless = [];
+
+    for (const todo of todos) {
+        const splitStr = todo.split(";");
+        let date = "";
+        if (splitStr.length == 3) {
+            date = splitStr[1];
+
+            if (!dateTODO.has(date)) {
+                dateTODO.set(date, []);
+            }
+            dateTODO.get(date).push(todo);
+        } else {
+            dateless.push(todo);
+        }
+    }
+
+    let sortedDateTODO = new Map([...dateTODO.entries()].sort().reverse());
+    sortedDateTODO.set("", dateless);
+
+    console.log(sortedDateTODO);
+}
+
 function processCommand(command) {
     makeTODO();
 
@@ -100,6 +125,8 @@ function processCommand(command) {
                 sortImportantTODO();
             } else if (sorting === "user") {
                 sortUserTODO();
+            } else if (sorting === "date") {
+                sortDateTODO();
             }
             break;
         case 'show':
