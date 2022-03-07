@@ -51,7 +51,7 @@ function userTODO(username){
     }
     for (const todo of todos) {
         const splitStr = todo.split(";");
-        if (splitStr.length == 3 & splitStr[0].indexOf(username) > -1){
+        if (splitStr.length == 3 & splitStr[0].indexOf(" " + username + ";") > -1){
             console.log(todo);
         }
         
