@@ -2,6 +2,7 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
+const specialLabelRegex = new RegExp("(?<username>.*); (?<date>(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})); (?<comment>.*)", "gi");
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -22,7 +23,7 @@ function* getAllLines(){
 function* getTODOLines(){
     for (let line of getAllLines()){
         if (line.includes('// TODO')){
-            yield line.slice(line.indexOf('// TODO')+7);
+            yield line.slice(line.indexOf('// TODO')+8);
         }
     }
 }
@@ -48,8 +49,25 @@ function* FormatSpecialLabeledLine(line){
     |${match.date.padStart(2, ' ').padEnd(14, ' ')}
     |${match.comment.padStart(2, ' ').padEnd(54, ' ')}`);
 }
+function* getSpecialLabeledTodoLines(){
+    for (let todoLine of getTODOLines()){
+        if (specialLabelRegex.exec(todoLine)) yield todoLine;
+    }
+}
 
-function processCommand(command) {
+function showAllUserComments(username){
+    for (let line of getSpecialLabeledTodoLines()){
+        let match = specialLabelRegex.exec(line);
+        if (match.groups["username"].toLowerCase() === username.toLowerCase()){
+            console.log(match.groups["comment"]);
+        }
+    }
+}
+
+function processCommand(input) {
+    let splittedInput = input.split(" ", 2);
+    let command = splittedInput[0];
+    let argument = splittedInput[1];
     switch (command) {
         case 'exit':
             process.exit(0);
@@ -60,7 +78,14 @@ function processCommand(command) {
         case 'important':
             important();
             break;
+        case 'user':
+            console.log(argument);
+            showAllUserComments(argument);
+            break;
         default:
+            for (let line of getSpecialLabeledTodoLines()){
+                console.log(line);
+            }
             console.log('wrong command');
             break;
     }
