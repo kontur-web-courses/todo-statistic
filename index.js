@@ -11,6 +11,16 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+
+const comments = getComments();
+
+function getComments(){
+    //for (let i = 0; i < files.length; i++) {
+    let myRe = /\/\/TODO*\n/;
+    let myArray = myRe.exec(files[0]);
+    return myArray;
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
@@ -21,5 +31,7 @@ function processCommand(command) {
             break;
     }
 }
+
+
 
 // TODO you can do it!
