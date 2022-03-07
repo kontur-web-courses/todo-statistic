@@ -31,6 +31,20 @@ function processCommand(command) {
             for (let s of arr)
                 console.log(s);
             break;
+        case 'important':
+            for (let s of arr) {
+                if(s.indexOf('!') > -1)
+                    console.log(s);
+            }
+            break;
+        case /user \w+/:
+            username = command.split()[1];
+            for (let s of arr) {
+                let indexUserName = s.indexOf(username)
+                if((username + /;( )?\d{4}-\d{2}-\d{2}\;(.)+/).test(s))
+                    console.log(s);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
