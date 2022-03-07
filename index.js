@@ -2,6 +2,7 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
+const specialLabelRegex = new RegExp("(?:<username>.*); (?:<date>(?:<year>\d{4})-(?:<month>\d{2})-(?:<day>\d{2}); (?:<comment>.*))", "g");
 
 console.log('Please, write your command!');
 readLine(processCommand);
