@@ -45,8 +45,24 @@ function importantTODO() {
     }
 }
 
+function userTODO(username){
+    if (todos.length === 0) {
+        makeTODO();
+    }
+    for (const todo of todos) {
+        const splitStr = todo.split(";");
+        if (splitStr.length == 3 & splitStr[0].indexOf(username) > -1){
+            console.log(todo);
+        }
+        
+    }
+}
+
 function processCommand(command) {
-    switch (command) {
+    switch (command.split(" ")[0]) {
+        case 'user':
+            userTODO(command.split(" ")[1]);
+            break;
         case 'show':
             showTODO();
             break;
