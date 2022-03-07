@@ -14,6 +14,7 @@ function getFiles() {
 function processCommand(command) {
     switch (command) {
         case 'exit':
+            getTODOs()
             process.exit(0);
             break;
         default:
@@ -22,4 +23,17 @@ function processCommand(command) {
     }
 }
 
+function getTODOs() {
+    let res = [];
+    const pattern = /\/\/ TODO .+/g
+    for (let file of files) {
+        let ans = file.match(pattern);
+        if (ans === null)
+            continue;
+        res = res.concat(ans);
+    }
+    console.log(res)
+    return res;
+}
 // TODO you can do it!
+getTODOs(files)
