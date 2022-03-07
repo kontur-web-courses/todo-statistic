@@ -49,6 +49,7 @@ function* getSpecialLabeledTodoLines(){
 
 function showAllUserComments(username){
     for (let line of getSpecialLabeledTodoLines()){
+        specialLabelRegex[Symbol.match](line);
         let match = specialLabelRegex.exec(line);
         if (match.groups["username"].toLowerCase() === username.toLowerCase()){
             console.log(match.groups["comment"]);
@@ -71,7 +72,6 @@ function processCommand(input) {
             important();
             break;
         case 'user':
-            console.log(argument);
             showAllUserComments(argument);
             break;
         default:
