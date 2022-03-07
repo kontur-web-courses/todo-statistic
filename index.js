@@ -27,13 +27,30 @@ function* getTODOLines(){
     }
 }
 
+function show(){
+    for(let line of getTODOLines()){
+        console.log(line.trim());
+    }
+}
+
+function important(){
+    for(let line of getTODOLines()){
+        if(line.includes('!'))
+            console.log(line.trim());
+    }
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
             process.exit(0);
             break;
-        case 'todo':
-            console.log(Array.from(getTODOLines()));
+        case 'show':
+            show();
+            break;
+        case 'important':
+            important();
+            break;
         default:
             console.log('wrong command');
             break;
