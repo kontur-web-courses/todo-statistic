@@ -20,8 +20,8 @@ function* getAllLines(){
 }
 
 function* getTODOLines(){
-    for(line of getAllLines()){
-        if(line.includes('// TODO')){
+    for (let line of getAllLines()){
+        if (line.includes('// TODO')){
             yield line.slice(line.indexOf('// TODO')+7);
         }
     }
