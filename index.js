@@ -54,7 +54,7 @@ function processCommand(command) {
         case 'important':
             important();
             break;
-        case /user .*$/:
+        case 'user' + command.slice(command.indexOf(' ')):
             user(command.slice(command.indexOf(' ')).trim());
             break;
         default:
@@ -65,17 +65,18 @@ function processCommand(command) {
 }
 
 function show(){
-    todo.forEach(element => console.log(element));
+    todo.forEach(element => console.log(element.text));
 }
 
 function important(){
-    todo.filter(element => element.important > 0).forEach(element => console.log(element));
+    todo.filter(element => element.important > 0).forEach(element => console.log(element.text));
 }
 
 function  user(userName){
-    for (let i = 0; i < todo.length; i ++){
-        if (userName.toLowerCase() === todo[i].name.toLowerCase())
-            console.log(todo.text);
+    for (let i = 0; i < todo.length; i++){
+
+        if (userName.toLowerCase() === (todo[i].name || '').toLowerCase())
+            console.log(todo[i].text);
     }
 }
 
