@@ -39,7 +39,7 @@ function importantTODO() {
         makeTODO();
     }
     for (const todo of todos) {
-        if (todo.indexOf("!") > 0){
+        if (todo.indexOf("!") > -1){
             console.log(todo);
         }
     }
