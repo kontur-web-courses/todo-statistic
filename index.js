@@ -33,6 +33,12 @@ function showSelection(selection)
         console.log(item);
 }
 
+function Todo(username, dateStr, text) {
+    this.username = username;
+    this.dateStr = dateStr;
+    this.text = text;
+}
+
 function getTODOs(files){
     let todos = [];
     let re = /(\/\/ TODO .+?$)/;
@@ -43,6 +49,6 @@ function getTODOs(files){
                 todos.push(match[0])
         }
     }
-    return todos
+    return todos;
 }
 // TODO you can do it!
