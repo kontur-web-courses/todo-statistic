@@ -26,11 +26,12 @@ function processCommand(command) {
             break;
         case 'important':
             for (let line of todoLines)
-                console.log(line);
+                if (line[line.length - 1] === '!')
+                    console.log(line);
             break;
         case 'user':
             for (let line of todoLines)
-                if (line.indexOf(secondArgument) !== -1)
+                if (line.indexOf(` ${secondArgument};`) !== -1)
                     console.log(line);
             break;
         case 'sort':
