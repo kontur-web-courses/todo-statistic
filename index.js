@@ -43,7 +43,7 @@ function processCommand(command) {
                         let matched = todo.match(TODO_REGEX);
                         let user = 'noName';
                         if (matched !== null)
-                            user = matched[1];
+                            user = matched[1].toLowerCase();
                         if (!(user in obj))
                             obj[user] = [];
                         obj[user].push(todo);
