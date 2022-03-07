@@ -2,7 +2,6 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-const allToDO = getAllTodo();
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -23,22 +22,16 @@ function getAllTodo() {
 }
 
 function processCommand(command) {
-    const reg = command.match('user (.*)')
-    let username0 = null
-    if (reg != null){
-        const username0 = reg[1];
-        command = 'name'
-    }
-
-    switch (command) {
-        case 'name':
+    let [exactCommand, argument] = command.split(' ')
+    switch (exactCommand) {
+        case 'user':
             getAllTodo().filter( x =>
             {
                 const reg = x.match('(.*?);(.*?);(.*)')
                 if (reg != null){
                     let [username, date, text] = [reg[1], reg[2], reg[3]]
                     console.log(reg[1], reg[2], reg[3])
-                    if (username === username0) return true
+                    if (username === argument) return true
                 }
                 return false;
             }).map(function(x) {console.log(x.replaceAll('!', ""))});
@@ -57,12 +50,12 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'sort':
+            break;
         default:
             console.log('wrong command');
             break;
     }
 }
-
-
 
 // TODO you can do it!
