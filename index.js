@@ -5,7 +5,7 @@ class TODO{
 
     constructor(inp){
         this.text = inp;
-        this.important = (inp.match(/[!]/g) ?? []).length;
+        this.important = (inp.match(/[!]/g) || []).length;
         this.date = NaN;
         this.name = NaN;
         let data = inp.split(';');
