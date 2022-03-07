@@ -45,8 +45,17 @@ function getTODOs(files){
     for (let file of files) {
         for (let line of file){
             let match = line.match(re);
-            if (match !== null)
-                todos.push(match[0])
+            if (match === null)
+                continue;
+            let parse = match[0].split(';');
+            if (parse.length < 3){
+                todos.push(new Todo(null, null, match[0].slice(8)));
+                continue;
+            }
+            let date = parse[1].trimStart();
+            let name = parse[0].split(' ')[2];
+            let text = parse[2].trimStart();
+            todos.push(new Todo(name, date, text))
         }
     }
     return todos;
