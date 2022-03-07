@@ -13,7 +13,11 @@ function getFiles() {
 
 
 function processCommand(command) {
-    switch (command) {
+    command = command.split(' ');
+    switch (command[0]) {
+        case 'user':
+            showUserTODO(command[1]);
+            break;
         case 'important':
             showImportantTODO();
             break;
@@ -37,7 +41,7 @@ function findTODO() {
             const index = line.indexOf('// ' +
                 'TODO');
             if(index === -1) continue;
-            allTODO.push(line.slice(index + 8, line.length));
+            allTODO.push(line.slice(index + 8, line.length).split(';'));
         }
     }
     return allTODO;
@@ -45,14 +49,22 @@ function findTODO() {
 
 function showTODO() {
     for(const el of findTODO()){
-        console.log(el);
+        console.log(el.join(';'));
     }
 }
 
 function showImportantTODO() {
-    for(const el of findTODO()){
+    for(let el of findTODO()){
+        el = el.join(';');
         if(el.indexOf('!') + 1)
             console.log(el);
+    }
+}
+
+function showUserTODO(name){
+    for(const el of findTODO()){
+        if(el[0].toLowerCase().trim() === name)
+            console.log(el[2].trim());
     }
 }
 // TODO you can do it!
