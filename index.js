@@ -43,19 +43,19 @@ function getTodoComments() {
 }
 
 function filterImportantTodos(sourceComments) {
-    return sourceComments.filter(todo => todo.includes(IMPORTANT_MARK))
+    return sourceComments.filter(todo => todo.important_count > 0)
 }
 
 function sortByDate(aTodo, bTodo) {
     if (!aTodo.date) {
-        return -1;
-    }
-
-    if (!bTodo.date) {
         return 1;
     }
 
-    return aTodo.date - bTodo.date;
+    if (!bTodo.date) {
+        return -1;
+    }
+
+    return bTodo.date - aTodo.date;
 }
 
 
@@ -80,7 +80,7 @@ function processSortByUser() {
 function processSortByDate() {
     const allTodos = getTodoComments();
 
-    allTodos.sort(sortByDate).reverse().forEach(f => console.log(f.original));
+    allTodos.sort(sortByDate).forEach(f => console.log(f.original));
 }
 
 function processSortByImportance() {
@@ -103,7 +103,7 @@ function processSort(command) {
             processSortByUser();
             break;
         case "importance":
-            
+            processSortByImportance();
             break;
         case "date":
             processSortByDate();
@@ -115,8 +115,8 @@ function processSort(command) {
 
 const commands = {
     exit: (c) => process.exit(0),
-    show: (c) => getTodoComments().forEach(t => console.log(t)),
-    important: (c) => filterImportantTodos(getTodoComments()).forEach(todo => console.log(todo)),
+    show: (c) => getTodoComments().forEach(t => console.log(t.original)),
+    important: (c) => filterImportantTodos(getTodoComments()).forEach(todo => console.log(todo.original)),
     sort: processSort,
 }
 
