@@ -1,7 +1,6 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
-const files = getFiles();
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -26,8 +25,10 @@ function getTodo(path='./', regexp = all_todo_re){
 }
 
 
+
 function processCommand(command) {
-    switch (command) {
+    command = command.split(' ');
+    switch (command[0]) {
         case 'exit':
             process.exit(0);
             break;
