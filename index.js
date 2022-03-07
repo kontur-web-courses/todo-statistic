@@ -15,6 +15,7 @@ function printTodos(todos) {
         console.log(todo);
     }
 }
+
 function processCommand(command) {
     switch (command) {
 
@@ -49,6 +50,18 @@ function* findTODO() {
                 yield line.substring(index);
             }
         }
+    }
+}
+
+function sort(array, command) {
+    if (command === 'importance'){
+        return array.sort((x, y) => y.importance - x.importance);
+    }
+    if (command === 'user'){
+        return array.sort((x, y) => x.user.localeCompare(y.user));
+    }
+    if (command === 'date'){
+        return array.sort((x, y) => x.date.localeCompare(y.date));
     }
 }
 
