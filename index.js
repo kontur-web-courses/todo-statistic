@@ -22,7 +22,6 @@ function processCommand(command) {
     }
 }
 
-
 function getImportant(todos) {
     let ans = []
     for (const todo of todos) {
@@ -32,4 +31,16 @@ function getImportant(todos) {
     }
     return ans;
 }
+
+function * findTODO() {
+    for (const file of files) {
+        for (const line of file.split('\n')) {
+            let index = line.indexOf('// TODO');
+            if (index !== -1) {
+                yield line.substring(index);
+            }
+        }
+    }
+}
+
 // TODO you can do it!
