@@ -9,9 +9,9 @@ function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
     return filePaths.map(path => readFile(path));
 }
-let all_todo_re = new RegExp("\/\/ TODO [^\\n\\r]+", "gi");
+let allTODORegex = new RegExp("\/\/ TODO [^\\n\\r]+", "gi");
 
-function getTodo(path='./', regexp = all_todo_re){
+function getTodo(path='./', regexp = allTODORegex){
     let todos = [];
     for (let str of getFiles(path)) {
         for (let strElement of str.split('\n')) {
@@ -49,8 +49,8 @@ function processCommand(command) {
                 console.log("Enter user name on this command");
                 break;
             }
-            let user_todo_re = new RegExp(`\/\/ TODO ${command[1]}; ?(.)+; ?[^\\n\\r]+`, 'gi')
-            for (let todo of getTodo('./', user_todo_re)) {
+            let userTODORegex = new RegExp(`\/\/ TODO ${command[1]}; ?(.)+; ?[^\\n\\r]+`, 'gi')
+            for (let todo of getTodo('./', userTODORegex)) {
                 console.log(todo);
             }
             break;
@@ -67,8 +67,8 @@ function processCommand(command) {
                     let users = {};
                     let another = [];
                     for (let todoForUse of todos) {
-                        let user_data_todo_re = new RegExp("\/\/ TODO (.+); ?(.+); ?.+", 'gi');
-                        let groups = user_data_todo_re.exec(todoForUse);
+                        let userDateSelectTODORegex = new RegExp("\/\/ TODO (.+); ?(.+); ?.+", 'gi');
+                        let groups = userDateSelectTODORegex.exec(todoForUse);
                         if (groups){
                             let user = groups[1].toLowerCase();
                             if (!(user in users))
@@ -89,23 +89,23 @@ function processCommand(command) {
                     }
                     break;
                 case 'date':
-                    let todo_dates = [];
-                    let not_date = [];
+                    let todoDates = [];
+                    let notDate = [];
                     for (let todo of todos) {
-                        let user_data_todo_re = new RegExp("\/\/ TODO (.+); ?(.+); ?.+", 'gi');
-                        let groups = user_data_todo_re.exec(todo);
+                        let userDateTODORegex = new RegExp("\/\/ TODO (.+); ?(.+); ?.+", 'gi');
+                        let groups = userDateTODORegex.exec(todo);
                         if (groups) {
-                            todo_dates.push({todo, date: new Date(groups[2])})
+                            todoDates.push({todo, date: new Date(groups[2])})
                         }
                         else {
-                            not_date.push(todo);
+                            notDate.push(todo);
                         }
                     }
-                    todo_dates.sort((a, b) => a.date - b.date)
-                    for (let todo_date of todo_dates) {
-                        console.log(todo_date.todo)
+                    todoDates.sort((a, b) => a.date - b.date)
+                    for (let todoDate of todoDates) {
+                        console.log(todoDate.todo)
                     }
-                    for (let todo of not_date) {
+                    for (let todo of notDate) {
                         console.log(todo);
                     }
                     break;
