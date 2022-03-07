@@ -15,9 +15,9 @@ function processCommand(command) {
     if (command === 'exit') {
         process.exit(0);
     } else if (command === 'show') {
-        showSelection(getTodos());
+        showSelection(getTODOs(files));
     } else if (command === 'important') {
-        showSelection(getTodos()
+        showSelection(getTODOs(files)
             .filter(item => item.indexOf('!') !== -1));
     } else if (command.indexOf("user ") === 0){
         let username = command.split(' ')[1].toLowerCase();
