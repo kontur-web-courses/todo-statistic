@@ -40,9 +40,8 @@ function getDateOfComment(comment) {
     return Date.parse(rawDate);
 }
 
-let maxDate = new Date(8640000000000000);
 function sortCommentsByDate(comments) {
-    return comments.sort((a, b) => (a ?? maxDate) - (b ?? maxDate));
+    return comments.sort((a, b) => (getDateOfComment(b) - getDateOfComment(a)));
 }
 
 function sortCommentsByImportance(comments) {
@@ -76,9 +75,10 @@ function processCommand(command) {
             comments = getTodos();
             if (splitted[1] === 'importance'){
                 comments = sortCommentsByImportance(comments);
-            }
-            if (splitted[1] === 'user'){
+            } else if (splitted[1] === 'user'){
                 comments = sortCommentsByUserNames(comments);
+            } else if (splitted[1] === 'date'){
+                comments = sortCommentsByDate(comments);
             }
             console.log(comments);
             break;
