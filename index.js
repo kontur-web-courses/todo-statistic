@@ -32,15 +32,26 @@ function getTodos() {
     return comments;
 }
 
+let commentWithAuthorRegex = (/\/\/ TODO (?<name>[^;]+);\s?(?<date>[^;]+);\s?(?<comment>[^;]+)/);
+function isCommentOfUser(comment, userName) {
+    return comment.match(commentWithAuthorRegex)?.groups.name == userName;
+}
+
 function processCommand(command) {
-    switch (command) {
+    let splitted = command.split(' ');
+    let comments;
+    switch (splitted[0]) {
         case 'show':
-            let comments = getTodos();
+            comments = getTodos();
             console.log(comments);
             break;
         case 'important':
-            let impComments = getTodos();
-            console.log(impComments.filter(x => x.indexOf('!') != -1));
+            comments = getTodos();
+            console.log(comments.filter(x => x.indexOf('!') != -1));
+            break;
+        case 'user':
+            comments = getTodos();
+            console.log(comments.filter(x => isCommentOfUser(x, splitted[1])));
             break;
         case 'exit':
             process.exit(0);
