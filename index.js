@@ -2,11 +2,6 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-let s = "    // TODO Anonymous Developer; 2016-03-17; Необходимо переписать этот код и использовать асинхронные версии функций для чтения из файла\n";
-let data = s.match(/\/\/ TODO (.*?);\s*(.*?); (.*)/);
-console.log(data);
-let data1 = Date.parse(data[2]);
-console.log(data1)
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -14,6 +9,7 @@ function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
     return filePaths.map(path => readFile(path));
 }
+
 function printTodos(todos) {
     for (const todo of todos) {
         console.log(todo);
@@ -21,16 +17,27 @@ function printTodos(todos) {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let parsed = command.split(" ");
+    switch (parsed[0]) {
 
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-           printTodos(findTODO());
+            printTodos(findTODO());
             break;
         case 'important':
             printTodos(getImportant(findTODO()));
+            break;
+        case 'user':
+            printTodos(getCleverTodos(findTODO()).filter(x => x.name === parsed[1].toLowerCase()).map(x => x.text));
+            break;
+        case 'sort':
+            printTodos(sort(getCleverTodos(findTODO()), parsed[1]).map(x => x.text));
+            break;
+        case 'date':
+            let dateParsed = Date.parse(parsed[1])
+            printTodos(sort(getCleverTodos(findTODO()).filter(x => x.date >= dateParsed), 'date').map(x => x.text));
             break;
         default:
             console.log('wrong command');
@@ -58,36 +65,38 @@ function* findTODO() {
 }
 
 function sort(array, command) {
-    if (command === 'importance'){
+    if (command === 'importance') {
         return array.sort((x, y) => y.importance - x.importance);
     }
-    if (command === 'user'){
-        return array.sort((x, y) => x.user.localeCompare(y.user));
+    if (command === 'user') {
+        return array.sort((x, y) => x.name.localeCompare(y.name));
     }
-    if (command === 'date'){
-        return array.sort((x, y) => x.date.localeCompare(y.date));
+    if (command === 'date') {
+        return array.sort((x, y) => y.date - x.date);
     }
 }
 
-function* getCleverTodos(todos){
-    for (const todo of todos){
+function getCleverTodos(todos) {
+    let ans = [];
+    for (const todo of todos) {
         let matched = todo.match(/\/\/ TODO (.*?);\s*(.*?); (.*)/);
-        if(matched !== null){
-            yield {
+        if (matched !== null) {
+            ans.push({
                 importance: (todo.match(/!/g) || []).length,
-                name: matched[1],
+                name: matched[1].toLowerCase(),
                 date: Date.parse(matched[2]),
-                text: matched[3]
-            }
+                text: todo
+            });
         } else {
-            yield {
+            ans.push({
                 importance: (todo.match(/!/g) || []).length,
                 name: "",
                 date: 0,
                 text: todo
-            }
+            });
         }
     }
+    return ans;
 }
 
 
