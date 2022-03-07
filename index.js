@@ -80,4 +80,14 @@ function  user(userName){
     }
 }
 
+function sortDate(){
+    todo.sort((x1, x2) => {
+        if(!x1.date)
+            return false;
+        if(!x2.date)
+            return true;
+        return x1.date > x2.date;
+    })
+}
+
 // TODO you can do it!
