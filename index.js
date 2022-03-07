@@ -57,6 +57,10 @@ function processCommand(command) {
         case 'user' + command.slice(command.indexOf(' ')):
             user(command.slice(command.indexOf(' ')).trim());
             break;
+        case 'sort date':
+            sortDate();
+            show();
+            break;
         case 'sort user':
             userSort();
             show();
@@ -87,10 +91,10 @@ function  user(userName){
 function sortDate(){
     todo.sort((x1, x2) => {
         if(!x1.date)
-            return false;
-        if(!x2.date)
             return true;
-        return x1.date > x2.date;
+        if(!x2.date)
+            return false;
+        return -x1.date.getTime() + x2.date.getTime();
     })
 }
 
