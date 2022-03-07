@@ -15,8 +15,7 @@ function getImportantTODOs(todos) {
     let importantTODOs = []
 
     for (let todo of todos) {
-        let countExclamation = (todo.match(/!/) || []).length;
-        if (countExclamation > 1) {
+        if (todo.includes('!')) {
             importantTODOs.push(todo)
         }
     }
