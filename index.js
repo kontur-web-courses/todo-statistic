@@ -15,7 +15,6 @@ function getAllTodo() {
     let result = []
     for (let f of files){
         const regex = '\/\/ TODO (.*)'
-        const r =
         let found = [...f.matchAll(regex)].map(x => x[1])
         result.push(...found)
     }
@@ -49,6 +48,20 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'sort':
+            switch (argument) {
+                case ('importance'):
+                    printImportant();
+                    printNotImportant();
+                    break;
+                case ('user'):
+                    break;
+                case ('date'):
+                    break;
+
+                default:
+                    console.log('wrong command');
+                    break;
+            }
             break;
         default:
             console.log('wrong command');
