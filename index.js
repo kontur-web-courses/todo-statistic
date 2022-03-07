@@ -21,7 +21,10 @@ function processCommand(command) {
             .filter(item => item.indexOf('!') !== -1));
     } else if (command.indexOf("user ") === 0){
         let username = command.split(' ')[1].toLowerCase();
-        console.log("No more!");
+        let todos = getTODOs(files)
+            .filter(todo => todo.username.toLowerCase() === username.toLowerCase());
+
+        showSelection(todos);
     } else {
         console.log('wrong command');
     }
@@ -30,13 +33,21 @@ function processCommand(command) {
 function showSelection(selection)
 {
     for (const item of selection)
-        console.log(item);
+        console.log(item.toString());
 }
 
 function Todo(username, dateStr, text) {
     this.username = username;
     this.dateStr = dateStr;
     this.text = text;
+
+    this.toString = () => {
+        let todoBody = [this.username, this.dateStr, this.text]
+            .filter(item => item !== null)
+            .join('; ');
+
+        return "// TODO " + todoBody;
+    }
 }
 
 function getTODOs(files){
