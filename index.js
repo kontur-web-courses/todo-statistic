@@ -15,6 +15,7 @@ function getAllTodo() {
     let result = []
     for (let f of files){
         const regex = '\/\/ TODO (.*)'
+        const r =
         let found = [...f.matchAll(regex)].map(x => x[1])
         result.push(...found)
     }
@@ -37,9 +38,7 @@ function processCommand(command) {
             break;
 
         case 'important':
-            getAllTodo()
-                .filter(x => x.indexOf('!') !== -1)
-                .map(function(x) {console.log(x.replaceAll('!', ""))});
+            printImportant();
             readLine(processCommand);
             break;
         case 'show':
@@ -55,6 +54,18 @@ function processCommand(command) {
             console.log('wrong command');
             break;
     }
+}
+
+function printImportant(){
+    getAllTodo()
+        .filter(x => x.indexOf('!') !== -1)
+        .map(function(x) {console.log(x.replaceAll('!', ""))});
+}
+
+function printNotImportant(){
+    getAllTodo()
+        .filter(x => x.indexOf('!') === -1)
+        .map(function(x) {console.log(x.replaceAll('!', ""))});
 }
 
 // TODO you can do it!
