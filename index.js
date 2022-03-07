@@ -46,6 +46,18 @@ function filterImportantTodos(sourceComments) {
     return sourceComments.filter(todo => todo.includes(IMPORTANT_MARK))
 }
 
+function sortByDate(aTodo, bTodo) {
+    if (!aTodo.date) {
+        return -1;
+    }
+
+    if (!bTodo.date) {
+        return 1;
+    }
+
+    return aTodo.date - bTodo.date;
+}
+
 
 function sortByUser(aTodo, bTodo) {
     if (!aTodo.user) {
@@ -65,6 +77,18 @@ function processSortByUser() {
     allTodos.sort(sortByUser).reverse().forEach(f => console.log(f.original));
 }
 
+function processSortByDate() {
+    const allTodos = getTodoComments();
+
+    allTodos.sort(sortByDate).reverse().forEach(f => console.log(f.original));
+}
+
+function processSortByImportance() {
+    const allTodos = getTodoComments();
+
+    allTodos.sort((a, b) => a.important_count - b.important_count).reverse().forEach(f => console.log(f.original));
+}
+
 function processSort(command) {
     const splitCommand = command.split(" ");
     if (splitCommand.length !== 2) {
@@ -79,8 +103,10 @@ function processSort(command) {
             processSortByUser();
             break;
         case "importance":
+            
             break;
         case "date":
+            processSortByDate();
             break;
         default:
             console.log("wrong command");
