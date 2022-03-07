@@ -17,7 +17,10 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            showAllTODOs();
+            console.log(getAllTodos());
+            break;
+        case 'important':
+            console.log(getAllTodos().filter(t => t.includes('!')))
             break;
         default:
             console.log('wrong command');
@@ -25,15 +28,18 @@ function processCommand(command) {
     }
 }
 
-function showAllTODOs() {
-    // console.log(files);
+function getAllTodos() {
+    let result = [];
     for (let file of files) {
         for (let line of file.split('\n')) {
             let todoIndex = line.indexOf("// TODO ");
-            if (todoIndex === -1) continue;
+            if (todoIndex === -1)
+                continue;
             let todo = line.slice(todoIndex)
-            console.log(todo);
+            result.push(todo);
         }
     }
+    return result;
 }
+
 // TODO you can do it!
