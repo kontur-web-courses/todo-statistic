@@ -29,6 +29,12 @@ function getTodos() {
     return comments;
 }
 
+let commentWithAuthorRegex = (/\/\/ TODO (?<name>[^;]+);\s?(?<date>[^;]+);\s?(?<comment>[^;]+)/);
+function isCommentOfUser(comment, userName) {
+    return userName.toUpperCase() ==
+           comment.match(commentWithAuthorRegex)?.groups.name.toUpperCase();
+}
+
 function processCommand(command) {
     let splitted = command.split(' ');
     let comments;
@@ -52,6 +58,9 @@ function processCommand(command) {
                 comments.sort((a, b) => cnts[b] - cnts[a]);
             }
             console.log(comments);
+        case 'user':
+            comments = getTodos();
+            console.log(comments.filter(x => isCommentOfUser(x, splitted[1])));
             break;
         case 'exit':
             process.exit(0);
