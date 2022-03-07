@@ -38,6 +38,10 @@ function processCommand(command) {
             let comments = getTodos();
             console.log(comments);
             break;
+        case 'important':
+            let impComments = getTodos();
+            console.log(impComments.filter(x => x.indexOf('!') != -1));
+            break;
         case 'exit':
             process.exit(0);
             break;
