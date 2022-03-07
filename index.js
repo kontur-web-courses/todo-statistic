@@ -10,11 +10,22 @@ function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
     return filePaths.map(path => readFile(path));
 }
-
+function printTodos(todos) {
+    for (const todo of todos) {
+        console.log(todo);
+    }
+}
 function processCommand(command) {
     switch (command) {
+
         case 'exit':
             process.exit(0);
+            break;
+        case 'show':
+           printTodos(findTODO());
+            break;
+        case 'important':
+            printTodos(getImportant(findTODO()));
             break;
         default:
             console.log('wrong command');
@@ -22,17 +33,15 @@ function processCommand(command) {
     }
 }
 
-function getImportant(todos) {
-    let ans = []
+function* getImportant(todos) {
     for (const todo of todos) {
-        if (todo.contains("!")) {
-            ans.push(todo);
+        if (todo.indexOf("!") !== -1) {
+            yield todo;
         }
     }
-    return ans;
 }
 
-function * findTODO() {
+function* findTODO() {
     for (const file of files) {
         for (const line of file.split('\n')) {
             let index = line.indexOf('// TODO');
