@@ -34,11 +34,25 @@ function showTODO() {
     }
 }
 
+function importantTODO() {
+    if (todos.length === 0) {
+        makeTODO();
+    }
+    for (const todo of todos) {
+        if (todo.indexOf("!") > 0){
+            console.log(todo);
+        }
+    }
+}
+
 function processCommand(command) {
     switch (command) {
         case 'show':
             showTODO();
             break;
+        case 'important':
+            importantTODO();
+            breal;
         case 'exit':
             process.exit(0);
             break;
