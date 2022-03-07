@@ -34,7 +34,8 @@ function getTodos() {
 
 let commentWithAuthorRegex = (/\/\/ TODO (?<name>[^;]+);\s?(?<date>[^;]+);\s?(?<comment>[^;]+)/);
 function isCommentOfUser(comment, userName) {
-    return comment.match(commentWithAuthorRegex)?.groups.name == userName;
+    return userName.toUpperCase() ==
+           comment.match(commentWithAuthorRegex)?.groups.name.toUpperCase();
 }
 
 function processCommand(command) {
