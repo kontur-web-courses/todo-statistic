@@ -11,27 +11,33 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function getTodos() {
+    let files = getFiles();
+    let comments = []
+    for (file of files){
+        let current = [];
+        let toDoIndex = file.indexOf('// TODO ');
+        let newLineIndex = file.indexOf('\r', toDoIndex);
+        while (toDoIndex != -1) {
+            //console.log(toDoIndex, newLineIndex);
+            current.push(file.slice(toDoIndex, newLineIndex));
+            
+            toDoIndex = file.indexOf('// TODO ', newLineIndex);
+            newLineIndex = file.indexOf('\r', toDoIndex); 
+            //console.log(current);
+        }
+        
+        comments.push(current);
+    }
+    return comments;
+}
+
 function processCommand(command) {
     switch (command) {
         case 'show':
-            let files = getFiles();
-            let comments = []
-            for (file of files){
-                let current = [];
-                let toDoIndex = file.indexOf('// TODO ');
-                let newLineIndex = file.indexOf('\r', toDoIndex);
-                while (toDoIndex != -1) {
-                    //console.log(toDoIndex, newLineIndex);
-                    current.push(file.slice(toDoIndex, newLineIndex));
-                    
-                    toDoIndex = file.indexOf('// TODO ', newLineIndex);
-                    newLineIndex = file.indexOf('\r', toDoIndex); 
-                    //console.log(current);
-                }
-                
-                comments.push(current);
-            }
+            let comments = getTodos();
             console.log(comments);
+            break;
         case 'exit':
             process.exit(0);
             break;
