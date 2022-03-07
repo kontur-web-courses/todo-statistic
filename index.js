@@ -48,13 +48,35 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            show();
+            break;
+        case 'important':
+            important();
+            break;
+        case /user .*$/:
+            user(command.slice(command.indexOf(' ')).trim());
+            break;
         default:
             console.log('wrong command');
             break;
+
     }
 }
 
+function show(){
+    todo.forEach(element => console.log(element));
+}
 
+function important(){
+    todo.filter(element => element.important > 0).forEach(element => console.log(element));
+}
 
+function  user(userName){
+    for (let i = 0; i < todo.length; i ++){
+        if (userName.toLowerCase() === todo[i].name.toLowerCase())
+            console.log(todo.text);
+    }
+}
 
 // TODO you can do it!
