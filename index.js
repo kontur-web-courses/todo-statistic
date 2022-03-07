@@ -19,18 +19,54 @@ function processCommand(command) {
     } else if (command === 'important') {
         showSelection(getTODOs(files)
             .filter(item => item.indexOf('!') !== -1));
-    } else if (command.indexOf("user ") === 0){
+    } else if (command.indexOf("user ") === 0) {
         let username = command.split(' ')[1].toLowerCase();
         let todos = getTODOs(files)
             .filter(
                 todo => todo.username !== null && todo.username.toLowerCase() === username);
 
         showSelection(todos);
-    } else if (command.indexOf("sort ") === 0){
+    } else if (command.indexOf("sort ") === 0) {
+        let todos = getTODOs(files);
         let argument = command.split(' ')[1];
-        console.log("False");
+
+        if (argument === "importance") {
+            showSelection(
+                todos.sort((i1, i2) => -Compare(i1, i2, item => {
+                    return item === null ? null : item.priority;
+                }))
+            )
+        } else if (argument === "user") {
+            showSelection(
+                todos.sort((i1, i2) => Compare(i1, i2, item => {
+                    return item === null ? null : item.username;
+                })));
+        } else if (argument === "date") {
+            showSelection(
+                todos.sort((i1, i2) => -Compare(i1, i2, item => {
+                    return item === null ? null : item.date
+                })));
+        } else {
+            console.log("wrong argument value");
+        }
     } else {
         console.log('wrong command');
+    }
+}
+
+function groupBy(arr, keySelector) {
+    return arr.reduce((item, obj) => {
+        let key = keySelector(item);
+        if (!(key in obj))
+            obj[key] = [];
+
+        obj[key].push(item);
+    }, {});
+}
+
+function showGroups(groups) {
+    for (const key in groups) {
+        showSelection(groups[key]);
     }
 }
 
@@ -40,11 +76,24 @@ function showSelection(selection)
         console.log(item.toString());
 }
 
+function Compare(i1, i2, keySelector) {
+    let [key1, key2] = [keySelector(i1), keySelector(i2)];
+
+    if (key1 !== null && key2 !== null && key1 < key2)
+        return -1;
+
+    if (key1 === key2)
+        return 0;
+
+    return 1;
+}
+
 function Todo(username, dateStr, text) {
     this.username = username;
     this.dateStr = dateStr;
-    this.date = new Date(dateStr);
+    this.date = dateStr !== null ? new Date(dateStr) : null;
     this.text = text;
+    this.priority = text.split("").filter(item => item === "!").length;
 
     this.toString = () => {
         let todoBody = [this.username, this.dateStr, this.text]
