@@ -49,15 +49,21 @@ function processCommand(command) {
             break;
         case 'sort':
             comments = getTodos();
-            let cnts = comments.reduce((obj, val) => {
-                let count = val.split("!").length - 1;
-                obj[val] = (count || 0) + 1;
-                return obj;
-            }, {} );
             if (splitted[1] === 'importance'){
+                let cnts = comments.reduce((obj, val) => {
+                    let count = val.split("!").length - 1;
+                    obj[val] = (count || 0) + 1;
+                    return obj;
+                }, {} );
                 comments.sort((a, b) => cnts[b] - cnts[a]);
             }
+            if (splitted[1] === 'user'){
+                comments.sort((a, b) =>
+                a.match(commentWithAuthorRegex)?.groups.name.toLowerCase()
+                ?.localeCompare(b.match(commentWithAuthorRegex)?.groups.name.toLowerCase()));
+            }
             console.log(comments);
+            break;
         case 'user':
             comments = getTodos();
             console.log(comments.filter(x => isCommentOfUser(x, splitted[1])));
