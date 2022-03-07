@@ -41,13 +41,9 @@ function important(){
     }
 }
 
-function* FormatSpecialLabeledLine(line){
+function formatSpecialLabeledLine(line, match){
     const importance = line.includes('!')? '!'.padEnd(3, ' '): '   ';
-    let match = pass;
-    console.log(`${importance}
-    |${match.username.padStart(2, ' ').padEnd(14, ' ')}
-    |${match.date.padStart(2, ' ').padEnd(14, ' ')}
-    |${match.comment.padStart(2, ' ').padEnd(54, ' ')}`);
+    return `${importance}|${match.groups.username.padStart(2, ' ').padEnd(14, ' ')}|${match.groups.date.padStart(2, ' ').padEnd(14, ' ')}|${match.groups.comment.padStart(2, ' ').padEnd(54, ' ')}`
 }
 function* getSpecialLabeledTodoLines(){
     for (let todoLine of getTODOLines()){
@@ -60,7 +56,7 @@ function showAllUserComments(username){
         specialLabelRegex[Symbol.match](line);
         let match = specialLabelRegex.exec(line);
         if (match.groups["username"].toLowerCase() === username.toLowerCase()){
-            console.log(match.groups["comment"]);
+            console.log(formatSpecialLabeledLine(line, match));
         }
     }
 }
