@@ -93,24 +93,43 @@ function sortTODOs(type){
             iCommentsMap.set(todo, m.length);
         }
         let iComments = [...iCommentsMap].sort((a,b) => a-b);
-        console.log(iComments);
+        printArr(iComments);
     }
 
     function sortByUser() {
-        for (let todo of todos){
-            let data = todo.split(';')
-            let username = data[0].split(' ')[2]
-            let usertodos = getUserTODOs(todos, username)
-            console.log(username)
-            console.log(usertodos)
-
+        const sortedTodos = todos
+            .sort((x, y) => {
+                    const s1 = x.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
+                    const s2 = y.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
+                    if (s1 === null) {
+                        return s2 !== null ? s2[1].length : -1
+                    } else if (s2 !== null) {
+                        return s1[1].toLowerCase() > s2[1].toLowerCase() ? s1.length : -1;
+                    } else {
+                        return s1[1].length
+                    }
+                }
+            );
+        printArr(sortedTodos)
         }
+
+    function sortByDate() {
+        const sortedTodos = todos
+            .sort((x, y) => {
+                    const s1 = x.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
+                    const s2 = y.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
+                    if (s1 === null) {
+                        return s2 !== null ? s2[2].length : -1
+                    } else if (s2 !== null) {
+                        return s1[2].toLowerCase() < s2[2].toLowerCase() ? s1.length : -1;
+                    } else {
+                        return s1[2].length
+                    }
+                }
+            );
+        printArr(sortedTodos)
     }
-    function sortByDate () {
-        let sortedList = todos.slice();
-        sortedList.sort((a,b) => a-b);
-        console.log(sortedList);
-    }
+
 
     switch (type) {
         case 'importance':
@@ -124,8 +143,11 @@ function sortTODOs(type){
             sortByDate()
             break
 
-
     }
+}
+function printArr(arr){
+    for (let i of arr)
+        console.log(i)
 }
 
 // TODO you can do it!
