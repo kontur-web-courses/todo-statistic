@@ -60,6 +60,14 @@ function processCommand(command) {
         case 'sort importance':
             sortImportance();
             break;
+        case 'sort date':
+            sortDate();
+            show();
+            break;
+        case 'sort user':
+            userSort();
+            show();
+            break;
         default:
             console.log('wrong command');
             break;
@@ -83,6 +91,27 @@ function  user(userName){
     }
 }
 
+function sortDate(){
+    todo.sort((x1, x2) => {
+        if(!x1.date)
+            return true;
+        if(!x2.date)
+            return false;
+        return -x1.date.getTime() + x2.date.getTime();
+    })
+}
+
+function userSort() {
+    todo.sort((x, y) => {
+        if (!x.name) {
+            return true;
+        }
+        if (!y.name) {
+            return false;
+        }
+        return x.name.toLowerCase() > y.name.toLowerCase();
+    });
+}
 function sortImportance(){
     todo.sort((a, b) => b.important - a.important);
     show();
