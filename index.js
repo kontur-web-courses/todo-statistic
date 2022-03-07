@@ -30,13 +30,12 @@ function processCommand(command) {
                 const reg = x.match('(.*?);(.*?);(.*)')
                 if (reg != null){
                     let [username, date, text] = [reg[1], reg[2], reg[3]]
-                    console.log(reg[1], reg[2], reg[3])
                     if (username === argument) return true
                 }
                 return false;
             }).map(function(x) {console.log(x.replaceAll('!', ""))});
-
             break;
+
         case 'important':
             getAllTodo()
                 .filter(x => x.indexOf('!') != -1)
