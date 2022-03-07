@@ -27,7 +27,7 @@ function getTodos() {
             //console.log(current);
         }
         
-        comments.push(current);
+        Array.prototype.push.apply(comments, current);
     }
     return comments;
 }
