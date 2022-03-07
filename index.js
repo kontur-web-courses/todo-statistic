@@ -37,13 +37,19 @@ function processCommand(command) {
                     console.log(s);
             }
             break;
-        case /user \w+/:
-            username = command.split()[1];
+        case command.match(/user \w+/)?.input:
+            let username = command.split(" ")[1];
             for (let s of arr) {
-                let indexUserName = s.indexOf(username)
-                if((username + /;( )?\d{4}-\d{2}-\d{2}\;(.)+/).test(s))
+                if((new RegExp("// TODO " + username + ";( )?\\d{4}-\\d{2}-\\d{2}\\;(.)+")).test(s))
                     console.log(s);
             }
+            break;
+        case command.match(/sort (importance)|(user)|(date)/)?.input:
+
+
+
+
+            console.log("khren'");
             break;
         default:
             console.log('wrong command');
