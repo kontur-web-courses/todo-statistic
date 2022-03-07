@@ -14,6 +14,7 @@ for (let i=0; i<files.length; i++) {
     }
 }
 
+
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -45,10 +46,6 @@ function processCommand(command) {
             }
             break;
         case command.match(/sort (importance)|(user)|(date)/)?.input:
-
-
-
-
             console.log("khren'");
             break;
         default:
