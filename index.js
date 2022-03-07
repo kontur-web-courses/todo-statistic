@@ -45,6 +45,21 @@ function sortCommentsByDate(comments) {
     return comments.sort((a, b) => (a ?? maxDate) - (b ?? maxDate));
 }
 
+function sortCommentsByImportance(comments) {
+    let cnts = comments.reduce((obj, val) => {
+        let count = val.split("!").length - 1;
+        obj[val] = (count || 0) + 1;
+        return obj;
+    }, {} );
+    return comments.sort((a, b) => cnts[b] - cnts[a]);
+}
+
+function sortCommentsByUserNames(comments) {
+    return comments.sort((a, b) =>
+                a.match(commentWithAuthorRegex)?.groups.name.toLowerCase()
+                ?.localeCompare(b.match(commentWithAuthorRegex)?.groups.name.toLowerCase()));
+}
+
 function processCommand(command) {
     let splitted = command.split(' ');
     let comments;
@@ -60,17 +75,10 @@ function processCommand(command) {
         case 'sort':
             comments = getTodos();
             if (splitted[1] === 'importance'){
-                let cnts = comments.reduce((obj, val) => {
-                    let count = val.split("!").length - 1;
-                    obj[val] = (count || 0) + 1;
-                    return obj;
-                }, {} );
-                comments.sort((a, b) => cnts[b] - cnts[a]);
+                comments = sortCommentsByImportance(comments);
             }
             if (splitted[1] === 'user'){
-                comments.sort((a, b) =>
-                a.match(commentWithAuthorRegex)?.groups.name.toLowerCase()
-                ?.localeCompare(b.match(commentWithAuthorRegex)?.groups.name.toLowerCase()));
+                comments = sortCommentsByUserNames(comments);
             }
             console.log(comments);
             break;
