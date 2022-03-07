@@ -1,8 +1,12 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
+
+const DEBUG = true
+
 const files = getFiles();
 const comments = getComments();
+console.log(comments)
 const todo = comments.map((str) => new TODO(str));
 
 console.log('Please, write your command!');
@@ -14,12 +18,15 @@ function getFiles() {
 }
 
 function getComments(){
-    //for (let i = 0; i < files.length; i++) {
-    let myRe = /\/\/ TODO.*\n/gim;
-    console.log(files[0])
-    let myArray = files[0].match(myRe);
-    console.log(myArray)
-    return myArray;
+    let comments = [];
+    files.forEach((file) => {
+        comments = [...comments, ...file.match(/\/\/ TODO.*$/gim)];
+    })
+    if (DEBUG) {
+        console.log(files[0]);
+        console.log(comments);
+    }
+    return comments;
 }
 
 function processCommand(command) {
