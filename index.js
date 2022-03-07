@@ -1,12 +1,26 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
+class TODO{
 
-const DEBUG = true
+    constructor(inp){
+        this.text = inp;
+        this.important = (inp.match(/[!]/g) ?? []).length;
+        this.date = NaN;
+        this.name = NaN;
+        let data = inp.split(';');
+        if(data.length === 3){
+            this.name = data[0].slice(8);
+            this.date = new Date(data[1]);
+        }
+    }
+}
+
+const DEBUG = false
 
 const files = getFiles();
 const comments = getComments();
-console.log(comments)
+//console.log(comments)
 const todo = comments.map((str) => new TODO(str));
 
 console.log('Please, write your command!');
@@ -42,18 +56,5 @@ function processCommand(command) {
 
 
 
-class TODO{
 
-    constructor(inp){
-        this.text = inp;
-        this.important = inp.match(/[!]/g).length;
-        this.date = NaN;
-        this.name = NaN;
-        let data = inp.split(';');
-        if(data.length === 3){
-            this.name = data[0];
-            this.date = new date(data[1]);
-        }
-    }
-}
 // TODO you can do it!
