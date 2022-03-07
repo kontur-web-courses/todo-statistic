@@ -33,7 +33,16 @@ function processCommand(command) {
                 result.get(user).map(item => console.log(item));
                 break;
             }
-            console.log('wrong command');
+            else {
+                if (command.slice(0, 4) === 'sort') {
+                    let condition = command.slice(5);
+                    console.log(condition);
+                    lines.sort((a, b) => conditionSort(a, b, condition)).map(item => console.log(item));
+                }
+                else {
+                    console.log('wrong command');
+                }
+            }
             break;
     }
 }
@@ -51,9 +60,9 @@ function getUserComments(lines) {
             if (!dict.has(name)) {
                 dict.set(name, []);
             }
-            let hui = dict.get(name);
-            hui.push(comment);
-            dict.set(name, hui);
+            let value = dict.get(name);
+            value.push(comment);
+            dict.set(name, value);
         }
     }
     return dict;
@@ -72,20 +81,25 @@ function getToDoLines() {
     return todos;
 }
 
-function todoSort(lines, conditions) {
-    return lines.sort();
-}
-
-function sorting(a, b, conditions) {
-    return;
-}
-
 function conditionSort(a, b, condition) {
     switch (condition) {
         case 'importance':
-            return a.split('!').length - b.split('!').length;
+            return b.split('!').length - a.split('!').length;
         case 'user':
-            return a.toLowerCase().localeCompare(b.toLowerCase());
+            return parseComment(a).user.localeCompare(parseComment(b).user);
+        case 'date':
+            return parseComment(a).date - parseComment(b).date;
     }
 }
 
+function parseComment(line) {
+    let arr = line.split(';').map(item => item.trimStart());
+    if (arr.length === 3) {
+        return {
+            'user': arr[0].toLowerCase().slice(8),
+            'date': new Date(arr[1].trimStart()),
+            'comment': arr[2]
+        }
+    }
+    return null;
+}
