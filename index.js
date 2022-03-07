@@ -90,7 +90,7 @@ function sortDate(){
             return true;
         if(!x2.date)
             return false;
-        return x1.date - x2.date;
+        return -x1.date.getTime() + x2.date.getTime();
     })
 }
 
