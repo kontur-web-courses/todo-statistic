@@ -3,6 +3,8 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 
+const TODO_REGEX = new RegExp("\\/\\/ TODO ([\\w\\-]+);\\s*([\\w\\-]+);\\s*(.*)$");
+
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -12,7 +14,8 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let splitCommand = command.split(' ');
+    switch (splitCommand[0]) {
         case 'exit':
             process.exit(0);
             break;
@@ -21,6 +24,13 @@ function processCommand(command) {
             break;
         case 'important':
             console.log(getAllTodos().filter(t => t.includes('!')))
+            break;
+        case 'user':
+            let user = splitCommand[1]
+            console.log(getAllTodos()
+                .map(t => t.match(TODO_REGEX))
+                .filter(t => t !== null && t[1].toLowerCase() === user.toLowerCase())
+                .map(t => t[0]));
             break;
         default:
             console.log('wrong command');
