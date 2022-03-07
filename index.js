@@ -15,7 +15,8 @@ function getImportantTODOs(todos) {
     let importantTODOs = []
 
     for (let todo of todos) {
-        if (todo.includes('!')) {
+        let countExclamation = (todo.match(/!/) || []).length;
+        if (countExclamation > 1) {
             importantTODOs.push(todo)
         }
     }
@@ -43,7 +44,7 @@ function getUserTODOs(todos, user) {
 
 function processCommand(command) {
     let todos = getTODOs()
-    let user;
+    let parameter = command.split(' ')[1];
 
     switch (command) {
         case 'show':
@@ -56,8 +57,8 @@ function processCommand(command) {
             let importantTODOs = getImportantTODOs(todos)
             console.log(importantTODOs)
             break;
-        case `user ${user}`:
-            let userTODOs = getUserTODOs(todos, user.toLowerCase())
+        case `user ${parameter}`:
+            let userTODOs = getUserTODOs(todos, parameter.toLowerCase())
             console.log(userTODOs)
             break;
         default:
