@@ -16,6 +16,11 @@ function processCommand(command) {
         case 'show':
             getToDoLines().map(item => console.log(item));
             break;
+        case 'important':
+            getToDoLines()
+                .filter(item => item.includes('!'))
+                .map(item => console.log(item));
+            break;
         case 'exit':
             process.exit(0);
             break;
