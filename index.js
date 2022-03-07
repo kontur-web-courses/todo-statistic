@@ -13,11 +13,11 @@ function getFiles() {
 
 const commands = {
     exit: () => process.exit(0),
-    show: () => console.log()
-};
+    show: () => console.log(),
+}
 
 function processCommand(command) {
-    return commands[command];
+    commands[command] | console.log('wrong command');
 }
 
 // TODO you can do it!
