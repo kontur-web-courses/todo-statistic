@@ -6,15 +6,9 @@ const TODO_REGEX = /\/\/ TODO (.*)/gm;
 const IMPORTANT_MARK = "!";
 const USER_DATE_COMMENT_REGEX = /(?:\s)*\/\/\sTODO\s(.+);\s(.+);\s(.+)/gm;
 
-const TODO_OBJECT = {
-    original: "",
-    comment: "",
-    date: "", // dateObject
-    user: "",
-    important_count: 0,
-}
-
 console.log('Please, write your command!');
+const allTodos = getTodoComments();
+
 readLine(processCommand);
 
 function getFiles() {
@@ -29,8 +23,8 @@ function convertToTodoObject(todo){
         user: matched[1],
         date: new Date(matched[2]),
         comment: matched[3],
-        important_count: todo.split("!").length - 1,
-    }
+        important_count: todo.split(IMPORTANT_MARK).length - 1,
+    };
 }
 
 function getTodoComments() {
@@ -42,9 +36,6 @@ function getTodoComments() {
     return allComments;
 }
 
-function filterImportantTodos(sourceComments) {
-    return sourceComments.filter(todo => todo.important_count > 0)
-}
 
 function sortByDate(aTodo, bTodo) {
     if (!aTodo.date) {
@@ -72,20 +63,14 @@ function sortByUser(aTodo, bTodo) {
 }
 
 function processSortByUser() {
-    const allTodos = getTodoComments();
-
     allTodos.sort(sortByUser).reverse().forEach(f => console.log(f.original));
 }
 
 function processSortByDate() {
-    const allTodos = getTodoComments();
-
     allTodos.sort(sortByDate).forEach(f => console.log(f.original));
 }
 
 function processSortByImportance() {
-    const allTodos = getTodoComments();
-
     allTodos.sort((a, b) => a.important_count - b.important_count).reverse().forEach(f => console.log(f.original));
 }
 
@@ -114,9 +99,9 @@ function processSort(command) {
 }
 
 const commands = {
-    exit: (c) => process.exit(0),
-    show: (c) => getTodoComments().forEach(t => console.log(t.original)),
-    important: (c) => filterImportantTodos(getTodoComments()).forEach(todo => console.log(todo.original)),
+    exit: (_) => process.exit(0),
+    show: (_) => allTodos.forEach(t => console.log(t.original)),
+    important: (_) => allTodos.filter(t => t.important_count > 0).forEach(todo => console.log(todo.original)),
     sort: processSort,
 }
 
