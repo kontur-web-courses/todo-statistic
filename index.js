@@ -11,8 +11,12 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+
 function processCommand(command) {
     switch (command) {
+        case 'important':
+            showImportantTODO();
+            break;
         case 'exit':
             process.exit(0);
             break;
@@ -31,7 +35,7 @@ function findTODO() {
         const lines = file.split('\n');
         for(const line of lines){
             const index = line.indexOf('// ' +
-                'TODO', 0);
+                'TODO');
             if(index === -1) continue;
             allTODO.push(line.slice(index + 8, line.length));
         }
@@ -42,6 +46,13 @@ function findTODO() {
 function showTODO() {
     for(const el of findTODO()){
         console.log(el);
+    }
+}
+
+function showImportantTODO() {
+    for(const el of findTODO()){
+        if(el.indexOf('!') + 1)
+            console.log(el);
     }
 }
 // TODO you can do it!
