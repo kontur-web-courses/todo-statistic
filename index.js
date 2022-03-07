@@ -19,12 +19,9 @@ function getTodos() {
         let toDoIndex = file.indexOf('// TODO ');
         let newLineIndex = file.indexOf('\r', toDoIndex);
         while (toDoIndex != -1) {
-            //console.log(toDoIndex, newLineIndex);
             current.push(file.slice(toDoIndex, newLineIndex));
-            
             toDoIndex = file.indexOf('// TODO ', newLineIndex);
             newLineIndex = file.indexOf('\r', toDoIndex); 
-            //console.log(current);
         }
         
         Array.prototype.push.apply(comments, current);
@@ -33,14 +30,28 @@ function getTodos() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let splitted = command.split(' ');
+    let comments;
+    switch (splitted[0]) {
         case 'show':
-            let comments = getTodos();
+            comments = getTodos();
             console.log(comments);
             break;
         case 'important':
-            let impComments = getTodos();
-            console.log(impComments.filter(x => x.indexOf('!') != -1));
+            comments = getTodos();
+            console.log(comments.filter(x => x.indexOf('!') != -1));
+            break;
+        case 'sort':
+            comments = getTodos();
+            let cnts = comments.reduce((obj, val) => {
+                let count = val.split("!").length - 1;
+                obj[val] = (count || 0) + 1;
+                return obj;
+            }, {} );
+            if (splitted[1] === 'importance'){
+                comments.sort((a, b) => cnts[b] - cnts[a]);
+            }
+            console.log(comments);
             break;
         case 'exit':
             process.exit(0);
