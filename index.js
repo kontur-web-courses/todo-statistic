@@ -46,7 +46,7 @@ function processCommand(command) {
             break;
         case 'user':
             if (!command[1]) {
-                console.log("Enter user name on this command");
+                console.log("Enter user name for this command");
                 break;
             }
             let userTODORegex = new RegExp(`\/\/ TODO ${command[1]}; ?(.)+; ?[^\\n\\r]+`, 'gi')
@@ -55,6 +55,10 @@ function processCommand(command) {
             }
             break;
         case 'sort':
+            if (!command[1]) {
+                console.log("Enter type for this command");
+                break;
+            }
             let todos = getTodo();
             switch (command[1]) {
                 case 'importance':
