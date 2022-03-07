@@ -39,7 +39,7 @@ function processCommand(command) {
             break;
         case 'important':
             getAllTodo()
-                .filter(x => x.indexOf('!') != -1)
+                .filter(x => x.indexOf('!') !== -1)
                 .map(function(x) {console.log(x.replaceAll('!', ""))});
             readLine(processCommand);
             break;
