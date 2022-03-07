@@ -1,6 +1,5 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
-let commentData = [];
 
 const files = getFiles();
 
@@ -40,6 +39,13 @@ function processCommand(command) {
                 console.log(nameList.join('\n\n'));
             }
             break;
+        case 'sort':
+            console.log();
+            let sort = DataFind(arg[1]);
+            if (sort.length !== 0){
+                console.log(sort.join('\n\n'));
+            }
+            break;
         default:
             console.log('wrong command');
             break;
@@ -73,10 +79,8 @@ function ImportantFind(){
 function NameFind(name){
     let list = ToDoFind();
     let nameList = [];
-    commentData = [];
     for (let line of list){
         if (line.indexOf(`;`) !== -1){
-            commentData = commentData.concat(line);
             let splitLine = line.split(';');
             let nameToLower = splitLine[0].slice(8).toLowerCase();
             if (nameToLower === name) {
@@ -94,8 +98,13 @@ function DataFind(arg){
             - x.split('').filter(t => t === '!').length);
         }
     else if (arg === 'user'){
-        let nameList = list.sort( (x,y) => x.split(';')[0].toLowerCase() < y.split(';')[0].toLowerCase()
+        return list.sort( (x,y) => x.split(';')[0].toLowerCase() < y.split(';')[0].toLowerCase()
             ? -1 : x.split(';')[0].toLowerCase() > y.split(';')[0].toLowerCase() ? 1 : 0)
+            .sort((x,y) => y.split(';').length - x.split(';').length);
+    }
+    else if (arg === 'date'){
+         return  list.sort( (x,y) => x.split(';')[1] < y.split(';')[1]
+            ? 1 : x.split(';')[1] > y.split(';')[1] ? -1 : 0)
             .sort((x,y) => y.split(';').length - x.split(';').length);
     }
 }
