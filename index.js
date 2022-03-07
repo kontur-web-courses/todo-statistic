@@ -15,8 +15,10 @@ function getFiles() {
 
 function getComments(){
     //for (let i = 0; i < files.length; i++) {
-    let myRe = /\/\/TODO*\n/;
-    let myArray = myRe.exec(files[0]);
+    let myRe = /\/\/ TODO.*\n/gim;
+    console.log(files[0])
+    let myArray = files[0].match(myRe);
+    console.log(myArray)
     return myArray;
 }
 
