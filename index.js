@@ -11,6 +11,14 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function* getAllLines(){
+    for (let fileLines of getFiles()){
+        for (let line of fileLines.split('\n')) {
+            yield line;
+        }
+    }
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
