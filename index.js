@@ -2,7 +2,8 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-const TODO_REGEX = /\/\/ TODO (.*)/gm
+const TODO_REGEX = /\/\/ TODO (.*)/gm;
+const IMPORTANT_MARK = "!";
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -22,9 +23,14 @@ function getTodoComments() {
     return allComments;
 }
 
+function filterImportantTodos(sourceComments) {
+    return sourceComments.filter(todo => todo.includes(IMPORTANT_MARK))
+}
+
 const commands = {
-    exit: () => process.exit(0),
-    show: () => console.log(getTodoComments()),
+    exit: (c) => process.exit(0),
+    show: (c) => getTodoComments().forEach(t => console.log(t)),
+    important: (c) => filterImportantTodos(getTodoComments()).forEach(todo => console.log(todo)),
 }
 
 function processCommand(command) {
@@ -33,7 +39,7 @@ function processCommand(command) {
         return
     }
 
-    commands[command]();
+    commands[command](command);
 }
 
 // TODO you can do it!
