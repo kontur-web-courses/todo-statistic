@@ -33,7 +33,7 @@ function processCommand(command) {
 function getToDoLines() {
     let todos = [];
     for (let file of getFiles()) {
-        let lines = file.split('\r\n');
+        let lines = file.split('\n');
         for (let line of lines) {
             let match = /\/\/ TODO/.exec(line);
             if (match != null)
@@ -42,3 +42,21 @@ function getToDoLines() {
     }
     return todos;
 }
+
+function todoSort(lines, conditions) {
+    return lines.sort();
+}
+
+function sorting(a, b, conditions) {
+    return;
+}
+
+function conditionSort(a, b, condition) {
+    switch (condition) {
+        case 'importance':
+            return a.split('!').length - b.split('!').length;
+        case 'user':
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+    }
+}
+
