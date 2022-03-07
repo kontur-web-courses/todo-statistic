@@ -65,6 +65,24 @@ function userTODO(username) {
     }
 }
 
+function sortUserTODO() {
+    let userTODO = new Map();
+
+    for (const todo of todos) {
+        const splitStr = todo.split(";");
+        let userName = "";
+        if (splitStr.length == 3) {
+            userName = splitStr[0].substring(8).toLowerCase();
+        }
+        if (!userTODO.has(userName)) {
+            userTODO.set(userName, []);
+        }
+        userTODO.get(userName).push(todo);
+    }
+
+    console.log(userTODO);
+}
+
 function processCommand(command) {
     makeTODO();
 
@@ -80,6 +98,8 @@ function processCommand(command) {
             let sorting = command.split(" ")[1];
             if (sorting === "importance") {
                 sortImportantTODO();
+            } else if (sorting === "user") {
+                sortUserTODO();
             }
             break;
         case 'show':
