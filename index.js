@@ -23,7 +23,7 @@ function getFiles() {
 }
 
 function convertToTodoObject(todo){
-    const matched = [...todo.matchAll(USER_DATE_COMMENT_REGEX)][0] ?? [];
+    const matched = [...todo.matchAll(USER_DATE_COMMENT_REGEX)][0] ?? ["", null, ""];
     return {
         original: todo,
         user: matched[1],
@@ -46,19 +46,64 @@ function filterImportantTodos(sourceComments) {
     return sourceComments.filter(todo => todo.includes(IMPORTANT_MARK))
 }
 
+
+function sortByUser(aTodo, bTodo) {
+    if (!aTodo.user) {
+        return -1;
+    }
+
+    if (!bTodo.user) {
+        return 1;
+    }
+
+    return aTodo.user.localeCompare(bTodo.user);
+}
+
+function processSortByUser() {
+    const allTodos = getTodoComments();
+
+    allTodos.sort(sortByUser).reverse().forEach(f => console.log(f.original));
+}
+
+function processSort(command) {
+    const splitCommand = command.split(" ");
+    if (splitCommand.length !== 2) {
+        console.log("wrong command");
+        return;
+    }
+
+    const argument = splitCommand[1];
+
+    switch (argument) {
+        case "user":
+            processSortByUser();
+            break;
+        case "importance":
+            break;
+        case "date":
+            break;
+        default:
+            console.log("wrong command");
+    }
+}
+
 const commands = {
     exit: (c) => process.exit(0),
     show: (c) => getTodoComments().forEach(t => console.log(t)),
     important: (c) => filterImportantTodos(getTodoComments()).forEach(todo => console.log(todo)),
+    sort: processSort,
 }
 
 function processCommand(command) {
-    if (!commands.hasOwnProperty(command))  {
+    const splitCommand = command.split(" ");
+
+
+    if (!commands.hasOwnProperty(splitCommand[0]))  {
         console.log('wrong command');
         return
     }
 
-    commands[command](command);
+    commands[splitCommand[0]](command);
 }
 
 // TODO you can do it!
