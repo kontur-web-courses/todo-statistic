@@ -23,11 +23,11 @@ function getFiles() {
 }
 
 function convertToTodoObject(todo){
-    let matched = todo.matchAll(USER_DATE_COMMENT_REGEX);
+    const matched = [...todo.matchAll(USER_DATE_COMMENT_REGEX)][0] ?? [];
     return {
         original: todo,
         user: matched[1],
-        date: matched[2],
+        date: new Date(matched[2]),
         comment: matched[3],
         important_count: todo.split("!").length - 1,
     }
@@ -36,8 +36,8 @@ function convertToTodoObject(todo){
 function getTodoComments() {
     const allComments = [];
     for (const file of files) {
-        const matched = file.matchAll(TODO_REGEX).map(match => convertToTodoObject(match[0]));
-        allComments.push(...matched.map(match => match[0]));
+        const matched = [...file.matchAll(TODO_REGEX)].map(match => convertToTodoObject(match[0]));
+        allComments.push(...matched);
     }
     return allComments;
 }
