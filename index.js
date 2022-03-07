@@ -35,6 +35,16 @@ function isCommentOfUser(comment, userName) {
            comment.match(commentWithAuthorRegex)?.groups.name.toUpperCase();
 }
 
+function getDateOfComment(comment) {
+    let rawDate = comment.match(commentWithAuthorRegex)?.groups.date;
+    return Date.parse(rawDate);
+}
+
+let maxDate = new Date(8640000000000000);
+function sortCommentsByDate(comments) {
+    return comments.sort((a, b) => (a ?? maxDate) - (b ?? maxDate));
+}
+
 function processCommand(command) {
     let splitted = command.split(' ');
     let comments;
@@ -58,6 +68,7 @@ function processCommand(command) {
                 comments.sort((a, b) => cnts[b] - cnts[a]);
             }
             console.log(comments);
+            break;
         case 'user':
             comments = getTodos();
             console.log(comments.filter(x => isCommentOfUser(x, splitted[1])));
