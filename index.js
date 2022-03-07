@@ -108,6 +108,18 @@ function sortDateTODO() {
     console.log(sortedDateTODO);
 }
 
+function showAfterDate(dateAfter) {
+    for (const todo of todos) {
+        const splitStr = todo.split(";");
+        if (splitStr.length === 3) {
+            date = splitStr[1].trimLeft();
+            if (date > dateAfter) {
+                console.log(todo);
+            }
+        }
+    }
+}
+
 function processCommand(command) {
     makeTODO();
 
@@ -127,6 +139,12 @@ function processCommand(command) {
                 sortUserTODO();
             } else if (sorting === "date") {
                 sortDateTODO();
+            }
+            break;
+        case 'date':
+            let newDate = command.split(" ")[1];
+            if (newDate != undefined) {
+                showAfterDate(newDate);
             }
             break;
         case 'show':
