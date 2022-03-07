@@ -16,11 +16,8 @@ class TODO{
     }
 }
 
-const DEBUG = false
-
 const files = getFiles();
 const comments = getComments();
-//console.log(comments)
 const todo = comments.map((str) => new TODO(str));
 
 console.log('Please, write your command!');
@@ -36,10 +33,6 @@ function getComments(){
     files.forEach((file) => {
         comments = [...comments, ...file.match(/\/\/ TODO.*$/gim)];
     })
-    if (DEBUG) {
-        console.log(files[0]);
-        console.log(comments);
-    }
     return comments;
 }
 
@@ -59,6 +52,7 @@ function processCommand(command) {
             break;
         case 'sort importance':
             sortImportance();
+            show();
             break;
         case 'sort date':
             sortDate();
@@ -104,17 +98,16 @@ function sortDate(){
 function userSort() {
     todo.sort((x, y) => {
         if (!x.name) {
-            return true;
-        }
-        if (!y.name) {
             return false;
         }
-        return x.name.toLowerCase() > y.name.toLowerCase();
+        if (!y.name) {
+            return true;
+        }
+        return x.name.toLowerCase().localeCompare(y.name.toLowerCase());
     });
 }
 function sortImportance(){
     todo.sort((a, b) => b.important - a.important);
-    show();
 }
 
 // TODO you can do it!
