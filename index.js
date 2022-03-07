@@ -14,11 +14,13 @@ function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
     return filePaths.map(path => readFile(path));
 }
+
 function printTodos(todos) {
     for (const todo of todos) {
         console.log(todo);
     }
 }
+
 function processCommand(command) {
     switch (command) {
 
@@ -26,7 +28,7 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-           printTodos(findTODO());
+            printTodos(findTODO());
             break;
         case 'important':
             printTodos(getImportant(findTODO()));
@@ -56,10 +58,10 @@ function* findTODO() {
     }
 }
 
-function* getCleverTodos(todos){
-    for (const todo of todos){
+function* getCleverTodos(todos) {
+    for (const todo of todos) {
         let matched = todo.match(/\/\/ TODO (.*?);\s*(.*?); (.*)/);
-        if(matched !== null){
+        if (matched !== null) {
             yield {
                 importance: (todo.match(/!/g) || []).length,
                 name: matched[1],
@@ -75,6 +77,16 @@ function* getCleverTodos(todos){
             }
         }
     }
+}
+
+function printTable(arr) {
+    let maxImportance = Math.max(...arr.map(x => x.importance.toString().length))
+    let maxName = Math.max(...arr.map(x => x.name.length))
+    let maxText = Math.max(...arr.map(x => x.text.length))
+    for (const item of arr) {
+        console.log(` ${item.importance.toString().padEnd(maxImportance, " ")} | ${item.name.padEnd(maxName, " ")} | ${new Date(item.date.getTime().slice(0, 10))} | ${item.text.padEnd(maxText, " ")}`);
+    }
+
 }
 
 
