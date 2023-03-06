@@ -139,6 +139,15 @@ function processCommand(command) {
                     break;
             }
             break;
+        case 'date':
+            let sortedTODOsByDate = getAllTODOs().sort(dateComparator);
+            for (let TODO of sortedTODOsByDate){
+                let todoDate = TODO.substring(TODO.indexOf(';') + 1,
+                    TODO.indexOf(';', TODO.indexOf(';') + 1)).trim();
+                if (todoDate >= parameter)
+                    console.log(TODO);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
