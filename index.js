@@ -89,7 +89,36 @@ function getImportantFirst(arr){
 }
 
 function getGroupByUsers(arr){
-    return arr;
+    let result = [];
+
+    for (let i = 0; i< arr.length; i++) {
+        arr[i] = arr[i].toLowerCase();
+    }
+    const dictionary = {};
+    let withoutNames = [];
+
+    for (const str of arr) {
+        if (str.includes(';')) {
+            let splstr = str.split(";");
+            if (splstr[0] in dictionary){
+                dictionary[splstr[0]].push(str);
+            } else{
+                dictionary[splstr[0]] = [str];
+            }
+        }
+        else withoutNames.push(str);
+    }
+
+    for (const elem of Object.values(dictionary)) {
+        for (const elemElement of elem) {
+            result.push(elemElement);
+        }
+    }
+    for (const strin of withoutNames) {
+        result.push(strin);
+    }
+    
+    return result;
 }
 
 function getNewestDates(arr){
