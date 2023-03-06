@@ -26,7 +26,7 @@ function getTodos(files) {
                 line = line.split(';');
                 if (line.length === 3) {
                     comment = {
-                        name: line[0],
+                        name: line[0].toLowerCase(),
                         date: line[1],
                         comment: line[2].trim()
                     }
@@ -42,13 +42,21 @@ function formatTodo(todo){
     return `${todo.name} ${todo.date} ${todo.comment}`.trim();
 }
 
-function hasUsername(command){
+function isCommand(command, sampleCommand){
     let splittedCommand = command.split(' ');
-    if (command.length === 1)
-        return '';
-    if (splittedCommand[0] === 'user')
+    if (splittedCommand[0] === sampleCommand)
         return command;
-    return '';
+}
+
+function countExclMarks(str){
+    return (str.comment.match(/!/g) || []).length;
+}
+
+function groupBy(xs, key) {
+  return xs.reduce(function(rv, x) {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
 }
 
 
@@ -63,14 +71,43 @@ function processCommand(command) {
         case 'important':
             console.log(todos
                 .map(formatTodo)
-                .filter((comment => comment.includes('!')))
-                .join('\n'));
+                .filter((comment => comment.includes('!'))));
             break;
-        case hasUsername(command):
+        case isCommand(command, 'user'):
             let username = command.split(' ')[1];
             console.log(todos
                 .filter(todo => todo.name.toLowerCase() === username.toLowerCase())
                 .map(formatTodo));
+            break;
+        case isCommand(command, 'sort'):
+            let sortFilter = command.split(' ')[1];
+            switch (sortFilter){
+                case 'importance':
+                    console.log(todos
+                        .sort((a, b) => countExclMarks(b) - countExclMarks(a))
+                        .map(formatTodo));
+                    break;
+                case 'user':
+                    let grouped = groupBy(todos, "name");
+                    for (let user in grouped){
+                        console.log(grouped[user].map(formatTodo))
+                    }
+                    break;
+                case 'date':
+                    console.log(todos
+                        .sort((a, b) => {
+                            if (a.date === '')
+                                return 1;
+                            if (b.date === '')
+                                return -1;
+                            return new Date(b.date) - new Date(a.date);
+                        })
+                        .map(formatTodo));
+                    break;
+                default:
+                    console.log('wrong command');
+                    break;
+            }
             break;
         default:
             console.log('wrong command');
