@@ -35,9 +35,16 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
-        case 'todo':
+        case 'show':
             for (let str of getToDo(getFiles()))
                 console.log(str);
+            break;
+        case 'important':
+            for (let str of getToDo(getFiles())){
+                if (str.includes('!')){
+                    console.log(str);
+                }
+            }
             break;
         default:
             console.log('wrong command');
