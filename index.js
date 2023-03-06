@@ -16,19 +16,26 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    let parameter = command.split(' ')[1];
+    let spl = command.split(' ');
+    let task = spl[0];
+    let parameter = spl[1];
 
-    switch (command) {
+    switch (task) {
         case 'show':
             console.log(TODOs);
             break;
         case 'important':
             console.log(getImportantTODOs());
             break;
-        case `user ${parameter}`:
+        case `user`:
             let userTODOs = getUserTODOs(parameter);
             console.log(userTODOs);
             break;
+        case 'sort':
+            if (parameter === 'importance') {
+                console.log(getImportantTODOs());
+            }
+            break
         case 'exit':
             process.exit(0);
             break;
@@ -52,12 +59,21 @@ function getTODOs() {
 }
 
 function getImportantTODOs(){
-    let res = [];
+    let importance = {};
     for (let value of TODOs) {
-        if (value.search('!') !== -1)
-            res.push(value);
+        let exclamatoryCount = value.split('!').length - 1;
+        if (exclamatoryCount > 0) {
+            if (!(exclamatoryCount in importance))
+                importance[exclamatoryCount] = [];
+            importance[exclamatoryCount].push(value);
+        }
     }
-    return res;
+    res = [];
+    for (let importanceClass in importance) {
+        let a = importance[importanceClass];
+        res = res.concat(importance[importanceClass]);
+    }
+    return res.reverse();
 }
 
 function getUserTODOs(parameter){
