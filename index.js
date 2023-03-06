@@ -24,21 +24,29 @@ function processCommand(command) {
             logToDoWithImportant();
             break;
         case 'user':
-            let dataUser = command.split(' ');
-            let currentUser = dataUser[1];
-            LogToDo();
+            const requestedUser = command.split(' ')[1];
+            let todos = getTodos(getFiles())
+                .filter(function(x) { return hasUserName(x, requestedUser); });
+            for(const todo of todos) {
+                console.log(todo);
+            }
             break;
         case 'sort':
             let dataSort = command.split(' ');
             let currentSortParam = dataSort[1];
             switch (currentSortParam){
-                
+
             }
             break;
         default:
             console.log('wrong command');
             break;
     }
+}
+
+function hasUserName(todoStr, requestedName) {
+    const name = todoStr.split(';')[0].slice(8);
+    return name.toLowerCase() === requestedName.toLowerCase();
 }
 
 function logToDo(){
