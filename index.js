@@ -1,5 +1,5 @@
-const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
-const {readLine} = require('./console');
+const { getAllFilePathsWithExtension, readFile } = require('./fileSystem');
+const { readLine } = require('./console');
 
 const files = getFiles();
 
@@ -16,13 +16,27 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            const showArr = getAllTodo(getFiles());
+            for (str of showArr) {
+                console.log(str);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
     }
 }
 
-// TODO you can do it!
+function getAllTodo(codeStrings) {
+    const todo = [];
+    for (str of codeStrings) {
+        if (/^\/\/ TODO /.test(str)) {
+            todo.push(str);
+        }
+    }
+    return todo;
+}
 
 
 function getLinesWithExclamation(arr) {
