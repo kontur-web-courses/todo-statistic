@@ -34,7 +34,7 @@ function processCommand(command) {
             todos.forEach(
                 function (todo) {
                     if (todo.important > 0) {
-                        console.log(todo);
+                        console.log(todo.comment);
                     }
                 }
             );
@@ -53,6 +53,15 @@ function processCommand(command) {
             todos.forEach(
                 function (todo){
                     console.log(todo.comment)
+                }
+            )
+            break;
+        case "date":
+            todos.forEach(
+                function (todo){
+                    if (new Date(cmd[1]) < todo.date) {
+                        console.log(todo.comment);
+                    }
                 }
             )
             break;
