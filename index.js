@@ -31,6 +31,9 @@ function processCommand(command) {
         case command.startsWith('sort'):
             console.log(sortBy(command.split(' ')[1]))
             break;
+        case command.startsWith('date'):
+            console.log(getSince(command.split(' ')[1]))
+            break;
         default:
             console.log('wrong command');
             break;
@@ -64,6 +67,12 @@ function sortBy(key)
     }
 }
 
+function getSince(date)
+{
+    date = Date.parse(date);
+    return todoArray.filter(s => getDate(s) >= date);
+}
+
 function getUser(todoStr)
 {
     if (todoStr.split(';').length !== 3)
@@ -81,5 +90,5 @@ function getDate(todoStr)
         return null;
     }
     todoStr = todoStr.slice(8);
-    return Date(todoStr.split(';')[1].trim());
+    return new Date(todoStr.split(';')[1].trim());
 }
