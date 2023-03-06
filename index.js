@@ -82,10 +82,18 @@ function sortByValue(func) {
     return todosByValue;
 }
 
+function getTodosAfterDate(date) {
+    let todosByTime = sortByDate();
+    return todosByTime.filter(a => date < new Date(a.split(';')[1]))
+}
 
 function processCommand(command) {
     let splitedCommand = command.split(' ');
     switch (splitedCommand[0]) {
+        case 'date':
+            let date = new Date(splitedCommand[1]);
+            console.log(getTodosAfterDate(date))
+            break;
         case 'sort':
             let arg = splitedCommand[1];
             console.log(getSort(arg));
