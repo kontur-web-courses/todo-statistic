@@ -4,6 +4,8 @@ const {readLine} = require('./console');
 const files = getFiles();
 let TODOs = getTODOs();
 let usernameTODOS = {};
+let nonameTODOS = {};
+nonameTODOS['no name'] = []
 fillUsernameTODOS();
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -68,9 +70,19 @@ function fillUsernameTODOS(){
         let username = data[0].split(' ')[2].toLowerCase();
         let comment = data[2]
 
+        if (!(username === ''))
+            nonameTODOS['no name'].push(comment)
+
         if (!(username in usernameTODOS))
             usernameTODOS[username] = []
         usernameTODOS[username].push(comment)
     }
+}
+
+function sortUser(){
+    for (let [key, value] of usernameTODOS) {
+        console.log(key, value)
+    }
+    return 1;
 }
 
