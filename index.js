@@ -21,5 +21,12 @@ function processCommand(command) {
             break;
     }
 }
-
-// TODO you can do it!
+let todoArray = [];
+files.forEach((file, number) => {
+    const lines = file.split('\n');
+    lines.forEach((line, index) => {
+        if (line.startsWith('// TODO')) {
+            todoArray.push(line);
+        }
+    });
+})
