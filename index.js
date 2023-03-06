@@ -32,6 +32,17 @@ function getTodosFromFiles(fileDatas) {
     return todos;
 }
 
+function groupBy(key) {
+    return function group(array) {
+        return array.reduce((acc, obj) => {
+            const property = obj[key];
+            acc[property] = acc[property] || [];
+            acc[property].push(obj);
+            return acc;
+        }, {});
+    };
+}
+
 function extractFormattedTodos(todos) {
     const formattedTodos = [];
     const regex = /(.+?); (.*?); (.*)/g;
@@ -82,7 +93,48 @@ function processCommand(command) {
             });
             break;
         }
+        case 'sort': {
+            const sort_type = args[0].toLowerCase();
+            switch (sort_type) {
+                case 'importance': {
+                    const todos = getTodosFromFiles(files);
+                    const formattedTodos = extractFormattedTodos(todos);
+                    formattedTodos.forEach(todo => {
+                        if (todo.includes('!')) {
+                            console.log(todo.text);
+                        }
+                    });
+                    formattedTodos.forEach(todo => {
+                        if (!todo.includes('!')) {
+                            console.log(todo.text);
+                        }
+                    });
+                }
+                case 'user': {
+                    const todos = getTodosFromFiles(files);
+                    const formattedTodos = extractFormattedTodos(todos);
+                    const groupByUser = groupBy("user");
+                    const groups = groupByUser(formattedTodos);
+                    groups.forEach(group => {
+                        group.forEach(todo => {
+                            console.log(todo.text);
+                        })
+                    });
+                }
+                case 'date': {
+                    const todos = getTodosFromFiles(files);
+                    const formattedTodos = extractFormattedTodos(todos);
+                    const groupByDate = groupBy("date");
+                    const groups = groupByDate(formattedTodos);
+                    groups.forEach(group => {
+                        group.forEach(todo => {
+                            console.log(todo.text);
+                        })
+                    });
+                }
 
+            }
+        }
         default:
             console.log('wrong command');
             break;
