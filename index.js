@@ -35,6 +35,16 @@ function processCommand(command) {
                 todos.forEach(todo => console.log(todo));
             });
             break;
+        case 'important':
+            files.forEach(file => {
+                const todos = getAllTodos(file);
+                todos.forEach(todo => {
+                    if (todo.includes('!')) {
+                        console.log(todo);
+                    }
+                });
+            });
+            break;
         default:
             console.log('wrong command');
             break;
