@@ -33,7 +33,7 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    commandSplited = command.split(' ');
+    let commandSplited = command.split(' ');
     switch (commandSplited[0]) {
         case 'exit':
             process.exit(0);
@@ -57,6 +57,29 @@ function processCommand(command) {
                     console.log(i.comment);
                 }
             }
+            break;
+        case 'sort':
+            let order = commandSplited[1];
+            if (order === 'user') {
+                let dict = new Map();
+                for (let i of namedTodoes) {
+                    if (!dict.has(i.name)) {
+                        dict.set(i.name, [])
+                    }
+                    let comment = i.date + '; ' + i.comment;
+                    let oldValue = dict.get(i.name);
+                    oldValue.push(comment);
+                    dict.set(i.name, oldValue);
+                }
+
+                for (let [key, values] of dict) {
+                    console.log(key + ':');
+                    for (let value of values) {
+                        console.log(value);
+                    }
+                }
+            }
+
             break;
         default:
             console.log('wrong command');
