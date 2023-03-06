@@ -62,8 +62,31 @@ function sortBy(key)
         case 'importance':
             return getImportant().concat(getNotImportant());
         case 'user':
+            const names = {};
+            const defaultUserComments = [];
+            todoArray.forEach(str => {
+                const name = getUser(str);
+                if (name) {
+                    if (!names[name]) {
+                        names[name] = [];
+                    }
+                    names[name].push(str);
+                }
+                else {
+                    defaultUserComments.push(str);
+                }
+            });
+            for (const name in names) {
+                names[name].forEach(str => console.log(str));
+            }
+            defaultUserComments.map(c => console.log(c))
             break;
         case 'date':
+            const sortByDate = (arr) => {
+                arr.sort(str => getDate(str));
+                return arr.reverse();
+            }
+            sortByDate(todoArray).map(t => console.log(t))
             break;
         default:
             console.log('wrong key');
@@ -91,7 +114,7 @@ function getDate(todoStr)
 {
     if (todoStr.split(';').length !== 3)
     {
-        return null;
+        return new Date(1000, 0, 1);
     }
     todoStr = todoStr.slice(8);
     return new Date(todoStr.split(';')[1].trim());
