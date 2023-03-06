@@ -36,7 +36,7 @@ function processCommand(command) {
     }
 }
 
-function all_todos() {
+function allTodos() {
     let list = getFiles();
     return list.map(x => x.match(/\/\/ TODO.*/g)).reduce(function (a, b) {
         return a.concat(b);
@@ -60,7 +60,7 @@ function important() {
 
 
 function sort(arg) {
-    let all = all_todos();
+    let all = allTodos();
     switch (arg) {
         case 'importance':
         {
