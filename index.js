@@ -25,6 +25,12 @@ function processCommand(command) {
             }
             break;
         case 'important':
+            const myArr = getAllTodo(files);
+            for (str of getLinesWithExclamation(myArr)) {
+                console.log(str);
+            }
+            break;
+        case 'important':
             const importantArr = getLinesWithExclamation(getAllTodo(files));
             for (str of importantArr) {
                 console.log(str);
@@ -57,7 +63,7 @@ function getAllTodo(files) {
 function getLinesWithExclamation(arr) {
     filteredArr = [];
     for (let line of arr) {
-        hasExclamation = false;
+        let hasExclamation = false;
         for (let c of line) {
             if (c === '!') {
                 hasExclamation = true;
