@@ -12,6 +12,7 @@ function getFiles() {
 }
 
 let todos = getTodos();
+
 function processCommand(command) {
     let cmd =  command.split(" ");
     switch (cmd[0]) {
@@ -22,6 +23,15 @@ function processCommand(command) {
             todos.forEach(
                 function (todo) {
                     console.log(todo);
+                }
+            );
+            break;
+        case "important":
+            todos.forEach(
+                function (todo) {
+                    if (todo.important > 0) {
+                        console.log(todo);
+                    }
                 }
             );
             break;
@@ -62,5 +72,6 @@ function getTodos() {
     );
     return todos;
 }
+
 
 // toDo art3x; 2023-06-03; add sort
