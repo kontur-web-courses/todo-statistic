@@ -26,7 +26,7 @@ function processCommand(command) {
         case "show":
             todos.forEach(
                 function (todo) {
-                    console.log(todo);
+                    console.log(`${todo.comment} | ${todo.path}`);
                 }
             );
             break;
@@ -34,7 +34,7 @@ function processCommand(command) {
             todos.forEach(
                 function (todo) {
                     if (todo.important > 0) {
-                        console.log(todo.comment);
+                        console.log(`${todo.comment} | ${todo.path}`);
                     }
                 }
             );
@@ -43,7 +43,7 @@ function processCommand(command) {
             todos.forEach(
                 function (todo) {
                     if (todo.user === cmd[1]) {
-                        console.log(todo.value);
+                        console.log(`${todo.value} | ${todo.path}`);
                     }
                 }
             );
@@ -52,7 +52,7 @@ function processCommand(command) {
             todos.sort(sortComps.get(cmd[1]))
             todos.forEach(
                 function (todo){
-                    console.log(todo.comment)
+                    console.log(`${todo.comment} | ${todo.path}`)
                 }
             )
             break;
@@ -60,7 +60,7 @@ function processCommand(command) {
             todos.forEach(
                 function (todo){
                     if (new Date(cmd[1]) < todo.date) {
-                        console.log(todo.comment);
+                        console.log(`${todo.comment} | ${todo.path}`);
                     }
                 }
             )
