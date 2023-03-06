@@ -36,11 +36,11 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            for (let str of getToDo(getFiles()))
+            for (let str of getToDo(files))
                 console.log(str);
             break;
         case 'important':
-            for (let str of getToDo(getFiles())){
+            for (let str of getToDo(files)){
                 if (str.includes('!')){
                     console.log(str);
                 }
