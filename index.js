@@ -86,18 +86,11 @@ function processCommand(command) {
         case 'sort':
             switch (args[1]) {
                 case 'importance':
-                    console.log(sortByImportance());
+                    sortByImportance().map(v => console.log(v));
                     break;
                 case 'user':
-                    console.log(sortByUser());
+                    sortByUser().map(v => console.log(v));
                     break;
-                default:
-                    console.log('ahaha');
-                    break;
-            }
-            break;
-        case 'sort':
-            switch (args[1]) {
                 case 'date':
                     getAllToDo().sort((a, b) => {
                         if ((getDate(a) != null) && (getDate(b) == null)) return -1;
@@ -108,9 +101,8 @@ function processCommand(command) {
                     }).map((value) => console.log(value));
                     break;
                 default:
-                    console.log('');
+                    console.log('ahaha');
                     break;
-
             }
             break;
         default:
