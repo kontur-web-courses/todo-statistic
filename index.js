@@ -11,9 +11,9 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
-function getAllTodos(){
+function getAllTodos() {
     let allTodos = []
-    for (let code of files){
+    for (let code of files) {
         for (let s of code.split('\n')) {
             if (s.includes("// TODO")) {
                 let start = s.indexOf("/");
@@ -24,32 +24,41 @@ function getAllTodos(){
     return allTodos;
 }
 
-function getImportant(){
+function getImportant() {
     let allTodos = getAllTodos();
     let importantTodos = []
-    for (let line of allTodos){
+    for (let line of allTodos) {
         if (line.includes("!"))
             importantTodos.push(line);
     }
     return importantTodos;
 }
 
-function getUserTodos(user){
+function getUserTodos() {
     let allTodos = getAllTodos();
-    let userTodos = []
-    for (let line of allTodos){
-        if (line.toLowerCase().includes(`// todo ${user};`))
-            userTodos.push(line);
+    let usersTodos = {};
+    for (let todo of allTodos) {
+        if (todo.includes(";")) {
+            const user = todo.split(';')[0].split('TODO ')[1].toLowerCase();
+            if (usersTodos[user] !== undefined)
+                usersTodos[user].push(todo);
+            else usersTodos[user] = [todo];
+        }
     }
-    return userTodos;
+    return usersTodos;
 }
 
-function getSort(arg){
-    switch (arg){
+function sortByDate() {
+    let userTodos = sortByValue(getUserTodos);
+    return userTodos.sort((a, b) => new Date(a.split(';')[1]) - new Date(b.split(';')[1]))
+}
+
+function getSort(arg) {
+    switch (arg) {
         case 'importance':
             return sortByImportance();
         case 'user':
-            return sortByUser();
+            return sortByValue(getUserTodos);
         case 'date':
             return sortByDate();
     }
@@ -65,13 +74,14 @@ function sortByImportance() {
     return todosByImportance;
 }
 
-function sortByUser(){
-    let allTodos = getAllTodos();
+function sortByValue(func) {
+    let byValueTodos = func();
+    let todosByValue = [];
+    for (let todo of Object.values(byValueTodos))
+        todosByValue = todosByValue.concat(todo);
+    return todosByValue;
 }
 
-function sortByDate(){
-
-}
 
 function processCommand(command) {
     let splitedCommand = command.split(' ');
@@ -82,7 +92,7 @@ function processCommand(command) {
             break;
         case 'user':
             let user = splitedCommand[1].toLowerCase();
-            console.log(getUserTodos(user))
+            console.log(getUserTodos()[user])
             break;
         case 'important':
             console.log(getImportant());
