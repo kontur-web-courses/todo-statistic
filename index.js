@@ -12,12 +12,18 @@ function getFiles() {
 }
 
 function processCommand(command) {
+    let parameter = command.split(' ')[1];
+
     switch (command) {
         case 'show':
             console.log(TODOs)
             break;
         case 'important':
             console.log(getImportantTODOs())
+            break;
+        case `user ${parameter}`:
+            let userTODOs = getUserTODOs(parameter)
+            console.log(userTODOs)
             break;
         case 'exit':
             process.exit(0);
@@ -48,6 +54,21 @@ function getImportantTODOs(){
             res.push(value);
     }
     return res;
+}
+
+function getUserTODOs(parameter){
+    let userTODOs = []
+
+    for (let todo of TODOs) {
+        let data = todo.split(';')
+        // let username = data[0].split(' ')[2]
+
+        if (username.toLowerCase() !== user) continue
+
+        userTODOs.push(extract(data, 2))
+    }
+
+    return userTODOs
 }
 
 // TODO you can do it!
