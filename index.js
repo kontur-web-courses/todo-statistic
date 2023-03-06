@@ -68,7 +68,7 @@ function getTableView(array, text_denom, name_denom, date_denom) {
 }
 
 function getToDo() {
-    const pattern = new RegExp(/\/\/ TODO .*/)
+    const pattern = new RegExp(/\/\/ ?TODO[: ]?.*/i)
     let files = getFiles();
     let result = [];
     for (let file of files) {
@@ -112,8 +112,10 @@ function processCommand(command) {
                     break;
                 case 'user':
                     console.log(parseToDo(getToDo()).sort(x => x.at(1) !== null).map(x => x.at(0)));
+                    break;
                 case 'date':
                     console.log(parseToDo(getToDo()).sort((x, y) => compareDate(x.at(2), y.at(2))).map(x => x.at(0)));
+                    break;
                 default:
                     console.log('wrong parameter');
                     break;

@@ -11,7 +11,8 @@ function readLine(callback) {
 }
 
 // TODO digi; 2016-04-08; добавить writeLine!!!
-
+//Todo digit; 2022-04-12; проверочный regex
+//todo: user; 2022-04-11; groege
 module.exports = {
     readLine,
 };
