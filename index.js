@@ -31,6 +31,10 @@ function processCommand(command) {
                 console.log(todo);
             }
             break;
+        case 'names':
+            let tods = getTodos(getFiles());
+            console.log(tods.map(getUserName));
+            break;
         case 'sort':
             let dataSort = command.split(' ');
             let currentSortParam = dataSort[1];
@@ -44,8 +48,16 @@ function processCommand(command) {
     }
 }
 
+function getUserName(str) {
+    if(!str.includes(';'))
+        return null;
+    return str.split(';')[0].slice(8);
+}
+
 function hasUserName(todoStr, requestedName) {
-    const name = todoStr.split(';')[0].slice(8);
+    const name = getUserName(todoStr);
+    if(name === null)
+        return false;
     return name.toLowerCase() === requestedName.toLowerCase();
 }
 
