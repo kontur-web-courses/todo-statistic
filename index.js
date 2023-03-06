@@ -59,7 +59,7 @@ function getImportance(line) {
 function sortBy(key) {
     const re = new RegExp('(?<name>.+?);\\s(?<date>.+?);\\s(?<question>.+)');
     const formatted = getFormatted();
-    const selector = selectors.get(key) || function (o) {return null};
+    const selector = selectors.get(key) || function () {return null};
     const mod = key === 'name' ? 1 : -1;
 
     const sorted = formatted.sort((a, b) => {
@@ -118,9 +118,14 @@ function getTodosByUser(userName) {
 function processCommand(command) {
     const args = command.split(' ');
     switch (args[0]) {
+        case 'date':
+            console.log(getCommentsAfterDate(args[1]));
+            break;
+
         case 'sort':
             console.log(sortBy(args[1]));
             break;
+
         case 'user':
             console.log(getTodosByUser(args[1]));
             break;
