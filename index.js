@@ -76,6 +76,20 @@ function sortBy(key) {
     return sorted;
 }
 
+function getCommentsAfterDate(date) {
+    const actualDate = new Date(date);
+    const res = [];
+    for (const comment of getFormatted()) {
+        const commentDate = comment.groups.date;
+        if (new Date(commentDate) < actualDate) {
+            continue;
+        }
+        res.push(comment.comment);
+    }
+
+    return res;
+}
+
 
 function getFormatted() {
     const re = new RegExp('(?<name>.+?);\\s(?<date>.+?);\\s(?<question>.+)');
