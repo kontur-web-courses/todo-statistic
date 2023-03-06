@@ -12,18 +12,34 @@ function getFiles() {
 }
 
 function processCommand(command) {
+    let mas = show();
     switch (command) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            let mas = show();
+            mas = show();
             for (let todo of mas) {
                 console.log(todo);
             }
         case 'important':
-            let mass = show();
-            showImportant(mass)
+            mas = show();
+            showImportant(mas)
+            break;
+        case 'sort importance':
+            mas = show();
+            let sorted = sortByImportance(mas)
+            for (let todo of sorted) {
+                console.log(todo);
+            }
+            break;
+        case 'sort user':
+            mas = show();
+            showImportant(mas)
+            break;
+        case 'sort date':
+            mas = show();
+            showImportant(mas)
             break;
         default:
             console.log('wrong command');
@@ -52,4 +68,8 @@ function showImportant(todoLines) {
             console.log(line);
         }
     }
+}
+
+function sortByImportance(todoLines) {
+    return todoLines.sort((a, b) => (b.split('').filter(x=>x==='!').length - a.split('').filter(x=>x==='!').length));
 }
