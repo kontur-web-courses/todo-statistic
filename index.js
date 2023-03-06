@@ -29,11 +29,12 @@ function processCommand(command) {
             console.log(getImportantTODOs());
             break;
         case `user`:
-            let userTODOs = getUserTODOs(parameter);
+            let userTODOs = getUserTODOs(parameter.toLowerCase());
             console.log(userTODOs);
             break;
         case 'date':
             console.log(getCommentsBeforeDate(new Date(parameter)))
+            break;
         case 'sort':
             if (parameter === 'importance') {
                 console.log(getImportantTODOs());
@@ -119,15 +120,17 @@ function getUserTODOs(parameter){
 function fillUsernameTODOS(){
     for (let todo of TODOs) {
         let data = todo.split(';');
-        let username = data[0].split(' ')[2].toLowerCase();
-        let comment = data[2]
+        if (data.length === 3) {
+            let username = data[0].split(' ')[2].toLowerCase();
+            let comment = data[2]
 
-        if (!(username === ''))
-            nonameTODOS['no name'].push(comment)
+            if (!(username === ''))
+                nonameTODOS['no name'].push(comment)
 
-        if (!(username in usernameTODOS))
-            usernameTODOS[username] = []
-        usernameTODOS[username].push(comment)
+            if (!(username in usernameTODOS))
+                usernameTODOS[username] = []
+            usernameTODOS[username].push(comment)
+        }
     }
 }
 
