@@ -12,7 +12,7 @@ function getFiles() {
 }
 
 function getTODOs(text){
-    const reg = RegExp(/\/\/ TODO .*$/, "gm")
+    const reg = RegExp(/\/\/ ?TODO ?:? ?.*$/, "gmi")
     return text.match(reg)
 }
 
@@ -24,9 +24,13 @@ function* iterTodos() {
     }
 }
 
+function isImportant(todo) {
+    return todo.includes('!');
+}
+
 function parseTODO(todo){
 
-    let reg = /\/\/ TODO (?<user>.*); ?(?<date>.*); ?(?<text>.*)/
+    let reg = /\/\/ ?TODO ?:? ?(?<user>.*); ?(?<date>.*); ?(?<text>.*)/i
     if(!reg.test(todo))
         return {};
     return todo.match(reg).groups;
@@ -44,7 +48,7 @@ function processCommand(command) {
             break;
         case 'important' === command:
             for (let todo of iterTodos()) {
-                if (todo.includes('!')) {
+                if (isImportant(todo)) {
                     console.log(todo);
                 }
             }
@@ -52,7 +56,7 @@ function processCommand(command) {
         case /user (\w+)/.test(command):
             const inputUser = command.match(/user (\w+)/)[1]
             for (let todo of iterTodos()) {
-                let {user, date, text} = parseTODO(todo);
+                let {user} = parseTODO(todo);
                 if (user?.toLowerCase() === inputUser.toLowerCase()) {
                     console.log(todo);
                 }
@@ -61,7 +65,7 @@ function processCommand(command) {
         case /date (.*)/.test(command):
             const inputDate = new Date(command.match(/date (.*)/)[1])
             for (let todo of iterTodos()) {
-                let {user, date, text} = parseTODO(todo);
+                let {date} = parseTODO(todo);
                 if (new Date(date) >= inputDate) {
                     console.log(todo);
                 }
@@ -76,3 +80,4 @@ function processCommand(command) {
 // TODO you can do it!
 // TODO abc; 2018-03-02; asd
 // TODO abc; 2018-03-01; asd
+//toDO: abc; 2018-03-01; asd
