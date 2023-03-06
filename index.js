@@ -32,108 +32,125 @@ function getTodosFromFiles(fileDatas) {
     return todos;
 }
 
-function groupBy(key) {
-    return function group(array) {
-        return array.reduce((acc, obj) => {
-            const property = obj[key];
-            acc[property] = acc[property] || [];
-            acc[property].push(obj);
-            return acc;
-        }, {});
-    };
-}
-
 function extractFormattedTodos(todos) {
     const formattedTodos = [];
-    const regex = /(.+?); (.*?); (.*)/g;
     todos.forEach(todo => {
-        const match = regex.exec(todo);
-        console.log(todo);
-        if (match) {
+        const [user, date, text] = todo.split(';');
+        if (user && date && text) {
             formattedTodos.push({
-                user: match[1].toLowerCase(),
-                date: match[2],
-                text: match[3]
+                user: user.trim().toLowerCase(),
+                date: Date.parse(date.trim()),
+                text: text.trim()
+            });
+        } else {
+            formattedTodos.push({
+                user: undefined,
+                date: undefined,
+                text: todo
             });
         }
     });
     return formattedTodos;
 }
 
+function readFormattedTodos(files) {
+    const todos = getTodosFromFiles(files);
+    return extractFormattedTodos(todos);
+}
+
+function printFormattedTodos(todos) {
+    const maxUserLength = todos.reduce((max, todo) => {
+        return Math.max(max, todo.user ? todo.user.length : 0);
+    }, 0);
+    const maxDateLength = todos.reduce((max, todo) => {
+        return Math.max(max, todo.date ? todo.date.toString().length : 0);
+    }, 0);
+
+    todos.forEach(todo => {
+        const user = todo.user || '';
+        const date = todo.date || '';
+        let text = todo.text;
+        const importance = todo.text.includes('!') ? '!' : ' ';
+        if (text.length > 50) {
+            text = text.slice(0, 50 - 3) + '...';
+        }
+        console.log(`${importance} | ${user.padEnd(maxUserLength)} | ${date.toString().padEnd(maxDateLength)} | ${text}`);
+    });
+}
+
 function processCommand(command) {
-    const [commandName, ...args] = command.split(' ');
+    const commandName = command.split(' ')[0];
+    const args = command.slice(commandName.length + 1);
     switch (commandName) {
         case 'exit':
             process.exit(0);
             break;
         case 'show': {
-            const todos = getTodosFromFiles(files);
-            todos.forEach(todo => {
-                console.log(todo);
-            });
+            const todos = readFormattedTodos(files);
+            printFormattedTodos(todos);
             break;
         }
         case 'important': {
-            const todos = getTodosFromFiles(files);
-            todos.forEach(todo => {
-                if (todo.includes('!')) {
-                    console.log(todo);
-                }
-            });
+            const todos = readFormattedTodos(files);
+            const importantTodos = todos.filter(todo => todo.text.includes('!'));
+            printFormattedTodos(importantTodos);
             break;
         }
         case 'user': {
-            const user = args[0].toLowerCase();
-            const todos = getTodosFromFiles(files);
-            const formattedTodos = extractFormattedTodos(todos);
-            formattedTodos.forEach(todo => {
-                if (todo.user === user) {
-                    console.log(todo.text);
-                }
-            });
+            const user = args.toLowerCase();
+            const todos = readFormattedTodos(files);
+            const usersTodos = todos.filter(todo => todo.user && todo.user === user);
+            printFormattedTodos(usersTodos);
             break;
         }
         case 'sort': {
-            const sort_type = args[0].toLowerCase();
-            switch (sort_type) {
+            const sortType = args.toLowerCase();
+            const todos = readFormattedTodos(files);
+            switch (sortType) {
                 case 'importance': {
-                    const todos = getTodosFromFiles(files);
-                    const formattedTodos = extractFormattedTodos(todos);
-                    formattedTodos.forEach(todo => {
-                        if (todo.includes('!')) {
-                            console.log(todo.text);
-                        }
-                    });
-                    formattedTodos.forEach(todo => {
-                        if (!todo.includes('!')) {
-                            console.log(todo.text);
-                        }
-                    });
+                    const important = todos.filter(todo => todo.text.includes('!'));
+                    const notImportant = todos.filter(todo => !todo.text.includes('!'));
+                    printFormattedTodos(important.concat(notImportant));
+                    break;
                 }
                 case 'user': {
-                    const todos = getTodosFromFiles(files);
-                    const formattedTodos = extractFormattedTodos(todos);
-                    const groupByUser = groupBy("user");
-                    const groups = groupByUser(formattedTodos);
-                    groups.forEach(group => {
-                        group.forEach(todo => {
-                            console.log(todo.text);
-                        })
+                    const unnamed = [];
+                    const userGroups = {};
+                    todos.forEach(todo => {
+                        if (todo.user) {
+                            if (!userGroups[todo.user]) {
+                                userGroups[todo.user] = [];
+                            }
+                            userGroups[todo.user].push(todo);
+                        } else {
+                            unnamed.push(todo);
+                        }
                     });
+
+                    const combined = [];
+                    Object.keys(userGroups).forEach(user => {
+                        combined.concat(userGroups[user]);
+                    });
+                    combined.concat(unnamed);
+
+                    printFormattedTodos(combined);
+                    break;
                 }
                 case 'date': {
-                    const todos = getTodosFromFiles(files);
-                    const formattedTodos = extractFormattedTodos(todos);
                     const groupByDate = groupBy("date");
                     const groups = groupByDate(formattedTodos);
-                    groups.forEach(group => {
-                        group.forEach(todo => {
-                            console.log(todo.text);
-                        })
-                    });
+                    console.log(groups);
                 }
-
             }
+            break;
+        }
+        case 'date': {
+            // date format: yyyy[-mm[-dd]]
+            const date = Date.parse(args);
+            const todos = readFormattedTodos(files);
+            const afterDateTodos = todos.filter(todo => todo.date && todo.date >= date);
+            printFormattedTodos(afterDateTodos);
+            break;
         }
         default:
             console.log('wrong command');
