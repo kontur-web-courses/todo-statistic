@@ -14,7 +14,7 @@ function getFiles() {
 function processCommand(command) {
     switch (command) {
         case 'show':
-            parseToDo();
+            console.log(parseToDo());
             break
         case 'exit':
             process.exit(0);
@@ -26,8 +26,17 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
-function parseToDo(){
-    for (const argument of files) {
-        console.log(argument);
+function parseToDo() {
+    const regexp = /\/\/ TODO [\w\W]*/;
+    const todoComments = [];
+
+    for (const file of files) {
+        for (const line of file.split('\r\n')) {
+            if (regexp.test(line)) {
+                todoComments.push('//' + line.split('//')[1]);
+            }
+        }
     }
+
+    return todoComments;
 }
