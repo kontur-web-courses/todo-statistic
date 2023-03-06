@@ -36,7 +36,7 @@ function dateCompare(a, b) {
     }
     if (todoSplitB.length !== 3) {
         return -1;
-    }s
+    }
     let dateA = new Date(todoSplitA[1].trim());
     let dateB = new Date(todoSplitB[1].trim());
     return dateA - dateB;
@@ -73,8 +73,7 @@ function processCommand(command) {
 
                         let user = todoSplit[0].slice(todoSplit[0].indexOf('TODO ') + 5)
                         let comment = todoSplit[2].trim();
-                        if (user === 'Anonymous Developer')
-                        {
+                        if (user === 'Anonymous Developer') {
                             anon.push(comment)
                             continue;
                         }
