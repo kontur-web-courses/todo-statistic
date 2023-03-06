@@ -59,7 +59,7 @@ function a(str, name) {
     for (let s of str){
         s = s.toLowerCase();
         if (s.includes(';')){
-            b = s.split(";");
+            let b = s.split(";");
             if (s.includes(name.toLowerCase())){
                 arr.push(b[2]);
             }
