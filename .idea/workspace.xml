@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc4c3620-1165-496e-89f8-de0babade01f" name="Changes" comment="date">
+    <list default="true" id="bc4c3620-1165-496e-89f8-de0babade01f" name="Changes" comment="todo all">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
     </list>
@@ -44,7 +44,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1678105410236</updated>
-      <workItem from="1678105411211" duration="3998000" />
+      <workItem from="1678105411211" duration="4931000" />
     </task>
     <task id="LOCAL-00001" summary="push">
       <created>1678106189842</created>
@@ -74,7 +74,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678108717104</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="todo all">
+      <created>1678109493667</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1678109493667</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -84,16 +91,23 @@
     <MESSAGE value="push" />
     <MESSAGE value="user" />
     <MESSAGE value="date" />
-    <option name="LAST_COMMIT_MESSAGE" value="date" />
+    <MESSAGE value="todo all" />
+    <option name="LAST_COMMIT_MESSAGE" value="todo all" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/index.js</url>
-          <line>65</line>
+          <line>70</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/index.js</url>
+          <line>98</line>
+          <properties lambdaOrdinal="0" />
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

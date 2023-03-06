@@ -78,10 +78,31 @@ function processCommand(command) {
             break;
         case /sort (\w+)/.test(command):
             const sortArgument = command.match(/sort (\w+)/)[1];
-            for (let todo of Array.from(iterTodos())
-                .sort((text1, text2) => measureImportance(text2) - measureImportance(text1))) {
-                console.log(todo)
+            switch (sortArgument){
+                case "importance":
+                    for (let todo of Array.from(iterTodos())
+                        .sort((text1, text2) => measureImportance(text2) - measureImportance(text1))) {
+                        console.log(todo)
+                    }
+                    break;
+                case "user":
+                    for (let todo of Array.from(iterTodos())
+                        .map((item) => [parseTODO(item).user, item])
+                        .sort((text1, text2) => text1[0]?.localeCompare(text2[0]))
+                        .map((item) => item[1])) {
+                        console.log(todo)
+                    }
+                    break;
+                case "date":
+                    for (let todo of Array.from(iterTodos())
+                        .map((item) => [parseTODO(item).date, item])
+                        .sort((text1, text2) => new Date(text2[0]) - new Date(text1[0]))
+                        .map((item) => item[1])) {
+                        console.log(todo)
+                    }
+                    break;
             }
+
             break;
         default:
             console.log('wrong command');
