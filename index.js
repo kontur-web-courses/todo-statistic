@@ -88,10 +88,10 @@ function getDateTODOs() {
             date.push([commentDate, comment, todo, new Date(commentDate)]);
         }
         else {
-            date.push(['', todo.split('TODO')[1].trim(), todo, new Date(0)])
+            date.push(['', todo.split('TODO')[1].trim(), todo, new Date(0)]);
         }
     }
-    date.sort((a, b) => b[3] - a[3])
+    date.sort((a, b) => b[3] - a[3]);
     return date;
 }
 
@@ -122,28 +122,28 @@ function fillUsernameTODOS(){
         let data = todo.split(';');
         if (data.length === 3) {
             let username = data[0].split(' ')[2].toLowerCase();
-            let comment = data[2]
+            let comment = data[2].trim();
 
             if (!(username === ''))
-                nonameTODOS['no name'].push(comment)
+                nonameTODOS['no name'].push(comment);
 
             if (!(username in usernameTODOS))
-                usernameTODOS[username] = []
-            usernameTODOS[username].push(comment)
+                usernameTODOS[username] = [];
+            usernameTODOS[username].push(comment);
         }
     }
 }
 
 function sortUser(){
     for (let key in usernameTODOS) {
-        console.log(`${key}:`)
-        console.log(`${usernameTODOS[key]}\n`)
+        console.log(`${key}:`);
+        console.log(`${usernameTODOS[key]}\n`);
     }
 
     for (let key in nonameTODOS) {
         if (usernameTODOS[key] !== undefined){
-            console.log(`${key}:`)
-            console.log(`${usernameTODOS[key]}\n`)
+            console.log(`${key}:`);
+            console.log(`${usernameTODOS[key]}\n`);
         }
     }
 }
