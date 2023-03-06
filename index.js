@@ -80,7 +80,7 @@ function getTodos() {
                 let todo = {
                     important: 0,
                     user: "",
-                    date: "",
+                    date: new Date(1),
                     dateString: "",
                     comment: match[1],
                     value: "",
