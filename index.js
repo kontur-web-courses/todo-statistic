@@ -15,10 +15,11 @@ function parseToDo(array) {
     let result = []
     for (let toDo of array) {
         let curr = [toDo];
+        let toDoTable = "";
         if(toDo.indexOf(';') !== -1)
         {
-            curr.push(toDo.split(';')[0].trim().split(' ').at(-1));
-            curr.push(toDo.split(';')[1].trim());
+            curr.push(toDo.split(';')[0].trim().split(' ').at(-1).toLowerCase());
+            curr.push(new Date(toDo.split(';')[1].trim()));
         }
         else
         {
@@ -28,10 +29,12 @@ function parseToDo(array) {
         if(toDo.indexOf('!')!==-1)
         {
             curr.push(true);
+            toDoTable += '!  ';
         }
         else
         {
             curr.push(false);
+            toDoTable += '   ';
         }
         result.push(curr);
     }
@@ -64,6 +67,11 @@ function processCommand(command) {
             console.log(parseToDo(getToDo()).filter(x=>x.at(-1)).map(x=>x.at(0)));
             break;
         case 'user':
+            console.log(parseToDo(getToDo()).filter(x=>x.at(1) === command.split(' ').at(1).toLowerCase()).map(x=>x.at(0)));
+            break;
+        case 'date':
+            console.log(parseToDo(getToDo()).filter(x=>x.at(2) != null && x.at(2) < new Date(command.split(' ').at(1))).map(x=>x.at(0)));
+            break;
             break;
         case 'sort':
             switch (command.split(' ').at(1)){
