@@ -137,10 +137,10 @@ function processCommand(command) {
                     break;
                 }
                 case 'date': {
-                    const groupByDate = groupBy("date");
-                    const groups = groupByDate(formattedTodos);
+                    const todos = getTodosFromFiles(files);
+                    const formattedTodos = extractFormattedTodos(todos);
                     formattedTodos.sort().forEach(todo => {
-                            console.log(todo.text);
+                        console.log(todo.text);
                     });
                     break;
                 }
