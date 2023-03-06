@@ -1,3 +1,8 @@
+// magic from stackoverflow
+function measureImportance(str) {
+    return (str.match(/!/g) || []).length
+}
+
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
@@ -56,6 +61,13 @@ function processCommand(command) {
                 if (user?.toLowerCase() === findUser.toLowerCase()) {
                     console.log(todo);
                 }
+            }
+            break;
+        case /sort (\w+)/.test(command):
+            const sortArgument = command.match(/sort (\w+)/)[1];
+            for (let todo of Array.from(iterTodos())
+                .sort((text1, text2) => measureImportance(text2) - measureImportance(text1))) {
+                console.log(todo)
             }
             break;
         default:
