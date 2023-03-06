@@ -11,9 +11,9 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
-function getAllTodos(){
+function getAllTodos() {
     let allTodos = []
-    for (let code of files){
+    for (let code of files) {
         for (let s of code.split('\n')) {
             if (s.includes("// TODO")) {
                 let start = s.indexOf("/");
@@ -24,10 +24,10 @@ function getAllTodos(){
     return allTodos;
 }
 
-function getImportant(){
+function getImportant() {
     let allTodos = getAllTodos();
     let importantTodos = []
-    for (let line of allTodos){
+    for (let line of allTodos) {
         if (line.includes("!"))
             importantTodos.push(line);
     }
@@ -48,6 +48,14 @@ function getUserTodos() {
     return usersTodos;
 }
 
+<<<<<<< HEAD
+=======
+function sortByDate() {
+    let userTodos = sortByValue(getUserTodos);
+    return userTodos.sort((a, b) => new Date(a.split(';')[1]) - new Date(b.split(';')[1]))
+}
+
+>>>>>>> 89965087fddf6f9c76e5e0d6a661b88cbc38eef7
 function getSort(arg) {
     switch (arg) {
         case 'importance':
@@ -77,6 +85,7 @@ function sortByValue(func) {
     return todosByValue;
 }
 
+<<<<<<< HEAD
 
 function sortByDate() {
     let userTodos = sortByValue(getUserTodos);
@@ -101,18 +110,31 @@ function makeTable(todosList){
         let commentToWrite = comment.length <= 50 ? comment.padEnd(50) : (comment.substring(0, 46) + '...').padEnd(50);
         console.log(`  ${isImportant ? "! " : "  "} |  ${userToWrite}  |  ${date}  |  ${commentToWrite}`);
     }
+=======
+function getTodosAfterDate(date) {
+    let todosByTime = sortByDate();
+    return todosByTime.filter(a => date < new Date(a.split(';')[1]))
+>>>>>>> 89965087fddf6f9c76e5e0d6a661b88cbc38eef7
 }
 
 function processCommand(command) {
     let splitedCommand = command.split(' ');
     switch (splitedCommand[0]) {
+        case 'date':
+            let date = new Date(splitedCommand[1]);
+            console.log(getTodosAfterDate(date))
+            break;
         case 'sort':
             let arg = splitedCommand[1];
             makeTable(getSort(arg));
             break;
         case 'user':
             let user = splitedCommand[1].toLowerCase();
+<<<<<<< HEAD
             makeTable(getUserTodos()[user])
+=======
+            console.log(getUserTodos()[user])
+>>>>>>> 89965087fddf6f9c76e5e0d6a661b88cbc38eef7
             break;
         case 'important':
             makeTable(getImportant());
