@@ -25,8 +25,17 @@ function processCommand(command) {
             break;
         case 'important':
             const myArr = getAllTodo(files);
-            for (str of getLinesWithExclamation(myArr)) {
-                console.log(str);
+            for (let strWithCount of getLinesWithExclamation(myArr)) {
+                if (strWithCount[1] > 0) {
+                    console.log(strWithCount[0]);
+                }
+            }
+            break;
+        case 'sort':
+            let sortedArr = getLinesWithExclamation(getAllTodo(files));
+            sortedArr.sort(compareSecondElement);
+            for (let strWithCount of sortedArr) {
+                console.log(strWithCount[0]);
             }
             break;
         case 'name':
@@ -54,16 +63,26 @@ function getAllTodo(files) {
 function getLinesWithExclamation(arr) {
     filteredArr = [];
     for (let line of arr) {
-        let hasExclamation = false;
+        let exclamationCount = 0;
         for (let c of line) {
             if (c === '!') {
-                hasExclamation = true;
-                break;
+                exclamationCount += 1;
             }
         }
-        if (hasExclamation) {
-            filteredArr.push(line);
-        }
+        filteredArr.push([line, exclamationCount]);
     }
     return filteredArr;
+}
+
+
+function compareSecondElement(a, b) {
+    const secondElementA = a[1];
+    const secondElementB = b[1];
+    if (secondElementA < secondElementB) {
+        return -1;
+    }
+    if (secondElementA > secondElementB) {
+        return 1;
+    }
+    return 0;
 }
