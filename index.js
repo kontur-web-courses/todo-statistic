@@ -52,16 +52,6 @@ function getToDo(){
     return result;
 }
 
-function getTodoWithExclamatory(arr){
-    let result = [];
-    for (let element of arr) {
-        if (element[3]) {
-            result.push(element[0]);
-        }
-    }
-    return result;
-}
-
 function processCommand(command) {
     switch (command.split(' ').at(0)) {
         case 'exit':
