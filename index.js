@@ -16,6 +16,11 @@ function processCommand(command) {
         case 'show':
             console.log(parseToDo());
             break
+        case 'important':
+            for (const todo of parseToDo()) {
+                if (todo.indexOf('!') !== -1)
+                    console.log(todo);
+            }
         case 'exit':
             process.exit(0);
             break;
@@ -37,6 +42,5 @@ function parseToDo() {
             }
         }
     }
-
     return todoComments;
 }
