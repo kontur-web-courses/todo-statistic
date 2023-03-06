@@ -36,8 +36,7 @@ function dateCompare(a, b) {
     }
     if (todoSplitB.length !== 3) {
         return -1;
-    }
-    s
+    }s
     let dateA = new Date(todoSplitA[1].trim());
     let dateB = new Date(todoSplitB[1].trim());
     return dateA - dateB;
