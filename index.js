@@ -32,23 +32,37 @@ function parseToDo(array) {
     return result;
 }
 
-function getTableView(array) {
+function maximum(array) {
+    max = 0;
+    for (let i of array) {
+        if (i > max)
+            max = i;
+    }
+    return max;
+}
+function getDenominator(array) {
+    return maximum(array.map(x => (x + "").length));
+}
+
+
+
+function getTableView(array, text_denom, name_denom, date_denom) {
     let newStr = "";
     if (array.at(-1)) {
-        newStr += ' !  |';
+        newStr += '! |  ';
     } else {
-        newStr += '    |';
+        newStr += '  |  ';
     }
-    newStr += array[0].split(';').at(-1) + "  |";
-    if (array.at(1)!==null) {
-        newStr += array.at(1) + '  |';
+    newStr += array[0].split(';').at(-1) + " ".repeat(text_denom - array[0].split(';').at(-1).length + 2) + "|";
+    if (array.at(1) !== null) {
+        newStr += "  " + array.at(1) + " ".repeat(name_denom - array.at(1).length + 2) + "|";
     } else {
-        newStr += "    |";
+        newStr += "  " + " ".repeat(name_denom + 2) + "|";
     }
-    if (array.at(2)!==null) {
-        newStr += array.at(2) + '  |';
+    if (array.at(2) !== null) {
+        newStr += "  " + array.at(2) + " ".repeat(date_denom-(array.at(2)+"").length + 2) + '|';
     } else {
-        newStr += "  |";
+        newStr +="  " + " ".repeat(date_denom + 2) + '|';
     }
     return newStr;
 }
@@ -79,7 +93,8 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            console.log(parseToDo(getToDo()).map(x=>getTableView(x)));
+            array = parseToDo(getToDo());
+            console.log(array.map(x => getTableView(x, getDenominator(array.map(x => x.at(0).split(';').at(-1))), getDenominator(array.map(x => x.at(1))), getDenominator(array.map(x => x.at(2))))));
             break;
         case 'important':
             console.log(parseToDo(getToDo()).filter(x => x.at(-1)).map(x => x.at(0)));
@@ -91,7 +106,7 @@ function processCommand(command) {
             console.log(parseToDo(getToDo()).filter(x => x.at(2) != null && x.at(2) < new Date(command.split(' ').at(1))).map(x => x.at(0)));
             break;
         case 'sort':
-            switch (command.split(' ').at(1)){
+            switch (command.split(' ').at(1)) {
                 case 'importance':
                     console.log(parseToDo(getToDo()).sort(x => -x.at(-1)).map(x => x.at(0)));
                     break;
