@@ -67,7 +67,7 @@ function sortBy(key) {
     }).map(o => o.comment);
 
     if (key !== 'importance') {
-        for (const comment in getTodos()) {
+        for (const comment of getTodos()) {
             if (!re.test(comment)) {
                 sorted.push(comment);
             }
@@ -104,6 +104,9 @@ function getTodosByUser(userName) {
 function processCommand(command) {
     const args = command.split(' ');
     switch (args[0]) {
+        case 'sort':
+            console.log(sortBy(args[1]));
+            break;
         case 'user':
             console.log(getTodosByUser(args[1]));
             break;
