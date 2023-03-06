@@ -39,21 +39,23 @@ function processCommand(command) {
                     break;
                 case 'user':
                     let users = findUsers();
-                    for(let user in users){
-                        let todos = mas.filter(x=>x.split(";")[0].trim().toLowerCase() === user)
+                    for (let user in users) {
+                        let todos = mas.filter(x => x.split(";")[0].trim().toLowerCase() === user)
                         for (let todo of todos) {
                             console.log(todo);
                         }
                     }
-                    let todos = mas.filter(x=> !(x.split(";")[0].trim().toLowerCase() in users))
+                    let todos = mas.filter(x => !(x.split(";")[0].trim().toLowerCase() in users))
                     for (let todo of todos) {
                         console.log(todo);
                     }
-
-
                     break
                 case 'date':
-                    break
+                    let sortedByDate = sortByDate(mas)
+                    for (let todo of sortedByDate) {
+                        console.log(todo);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -87,13 +89,12 @@ function processCommand(command) {
 function findDates(date) {
     let data = show();
     let comments = [];
-    for (comment of data) {
+    for (let comment of data) {
         let parseData = comment.split(";")
         if (parseData.length > 2) {
             let d = Date.parse(parseData[1].trim());
-            if(d - date>0 )
-            {
-                comments.push(parseData[2].trim())
+            if (d - date > 0) {
+                comments.push(comment)
             }
 
         }
@@ -104,14 +105,14 @@ function findDates(date) {
 function findUsers() {
     let data = show();
     let users = {};
-    for (comment of data) {
+    for (let comment of data) {
         let parseData = comment.split(";")
         if (parseData.length > 2) {
             let user = parseData[0].trim().toLowerCase();
             if (!(user in users)) {
                 users[user] = []
             }
-            users[user].push(parseData[2].trim())
+            users[user].push(comment)
         }
     }
     return users;
@@ -142,4 +143,9 @@ function showImportant(todoLines) {
 
 function sortByImportance(todoLines) {
     return todoLines.sort((a, b) => (b.split('').filter(x => x === '!').length - a.split('').filter(x => x === '!').length));
+}
+
+function sortByDate(todoLines) {
+    return todoLines.sort((a, b) =>
+        (Date.parse((b.split(';')[1] || '0').trim()) || Date.parse('0')) - (Date.parse((a.split(';')[1] || '0').trim()) || Date.parse('0')));
 }
