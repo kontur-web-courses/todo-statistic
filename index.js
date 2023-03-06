@@ -11,7 +11,7 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
-function getTodos(){
+function getTodos() {
     const re = new RegExp('\\/\\/\\sTODO\\s(?<command>.+)')
     const todoComments = [];
     for (const file of getFiles()) {
@@ -26,6 +26,17 @@ function getTodos(){
     }
 
     return todoComments;
+}
+
+function getImportant() {
+    const re = new RegExp('.+?!+')
+    const important = [];
+    for (const comment of getTodos()) {
+        if (re.test(comment)) {
+            important.push(comment);
+        }
+    }
+    return important;
 }
 
 function processCommand(command) {
