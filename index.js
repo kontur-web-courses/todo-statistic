@@ -29,7 +29,9 @@ function getToDo(){
     let files = getFiles();
     let result = [];
     for(let file of files){
-        result.push(file.match(pattern));
+        for(let m of file.match(pattern)) {
+            result.push(m);
+        }
     }
     console.log(result);
 
