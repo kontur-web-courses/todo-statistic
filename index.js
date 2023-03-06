@@ -46,6 +46,52 @@ function processCommand(command) {
                 }
             }
             break;
+        case 'sort importance':
+            let stack = [];
+            for (let str of getToDo(files)){
+                if (str.includes('!')){
+                    console.log(str);
+                } else {
+                    stack.push(str);
+                }
+            }
+            for (let str of stack){
+                console.log(str);
+            }
+            break;
+
+        case 'sort user':
+            let map = {};
+            for (let str of getToDo(files)) {
+                let user = str.split('// TODO ').pop().split(';').shift();
+                map[user] = str;
+            }
+            for (let key in map){
+                console.log(map[key]);
+            }
+            break;
+        case 'sort date':
+            let map2 = {};
+            let noDate = [];
+            let arr =[];
+            for (let str of getToDo(files)) {
+                let date = str.split('// TODO').pop().split('; ')[1];
+                if (date === undefined){
+                    noDate.push(str);
+                    continue;
+                }
+                map2[new Date(date)] = (str);
+                arr.push(new Date(date));
+            }
+            arr.sort((date1, date2) => date1 - date2);
+            for (let i = arr.length - 1; i >= 0; i--){
+                let key = arr[i];
+                console.log(map2[key]);
+            }
+            for (let i of noDate){
+                console.log(i);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
