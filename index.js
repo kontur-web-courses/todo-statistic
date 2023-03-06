@@ -33,10 +33,12 @@ function processCommand(command) {
             }
             break;
         case 'sort':
-            let sortedArr = getLinesWithExclamation(getAllTodo(files));
-            sortedArr.sort(compareSecondElement);
-            for (let strWithCount of sortedArr) {
-                console.log(strWithCount[0]);
+            if (argument === "importnace") {
+                let sortedArr = getLinesWithExclamation(getAllTodo(files));
+                sortedArr.sort(compareSecondElement);
+                for (let strWithCount of sortedArr) {
+                    console.log(strWithCount[0]);
+                }
             }
             break;
         case 'important':
