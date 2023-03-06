@@ -37,12 +37,24 @@ function processCommand(command) {
 }
 
 function LogToDo(){
-    const allToDo = getTodods(getFiles())
-    for (currentTodDo of allToDo){
-        console.log(currentTodDo)
+    const allToDo = getTodos(getFiles());
+    for (const currentTodDo of allToDo){
+        console.log(currentTodDo);
     }
 }
 
 
+
+function getTodos(files) {
+    let res = [];
+    for(const file of files) {
+        for(const line of file.split(/\r?\n|\r|\n/g)) {
+            if(line.startsWith('// TODO')) {
+                res.push(line);
+            }
+        }
+    }
+    return res;
+}
 
 // TODO you can do it!
