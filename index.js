@@ -12,7 +12,8 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let currentData = command.split(' ')[0];
+    switch (currentData) {
         case 'exit':
             process.exit(0);
             break;
@@ -22,13 +23,14 @@ function processCommand(command) {
         case 'important':
             LogToDo();
             break;
-        case 'user' in command:
-            let data = command.split(' ');
-            let currentUser = data[1];
+        case 'user':
+            let dataUser = command.split(' ');
+            let currentUser = dataUser[1];
             LogToDo();
             break;
-        case 'sort' in command:
-            LogToDo();
+        case 'sort':
+            let dataSort = command.split(' ');
+            let currentSortParam = dataSort[1];
             break;
         default:
             console.log('wrong command');
