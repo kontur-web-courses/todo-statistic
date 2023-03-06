@@ -18,10 +18,10 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            LogToDo();
+            logToDo();
             break;
         case 'important':
-            LogToDo();
+            logToDoWithImportant();
             break;
         case 'user':
             let dataUser = command.split(' ');
@@ -31,6 +31,9 @@ function processCommand(command) {
         case 'sort':
             let dataSort = command.split(' ');
             let currentSortParam = dataSort[1];
+            switch (currentSortParam){
+                
+            }
             break;
         default:
             console.log('wrong command');
@@ -38,10 +41,19 @@ function processCommand(command) {
     }
 }
 
-function LogToDo(){
+function logToDo(){
     const allToDo = getTodos(getFiles());
     for (const currentTodDo of allToDo){
         console.log(currentTodDo);
+    }
+}
+
+function logToDoWithImportant(){
+    const allToDo = getTodos(getFiles());
+    for (let currentTodDo of allToDo){
+        if (currentTodDo.indexOf('!') !== -1) {
+            console.log(currentTodDo);
+        }
     }
 }
 
@@ -51,7 +63,7 @@ function getTodos(files) {
     let res = [];
     for(const file of files) {
         for(const line of file.split(/\r?\n|\r|\n/g)) {
-            if(line.startsWith('// TODO')) {
+            if(line.trim().startsWith('// TODO')) {
                 res.push(line);
             }
         }
