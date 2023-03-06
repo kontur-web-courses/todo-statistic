@@ -18,15 +18,18 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            LogToDo();
+            logToDo();
             break;
         case 'important':
-            LogToDo();
+            logToDo();
             break;
         case 'user':
-            let dataUser = command.split(' ');
-            let currentUser = dataUser[1];
-            LogToDo();
+            const requestedUser = command.split(' ')[1];
+            let todos = getTodos(getFiles())
+                .filter(function(x) { return hasUserName(x, requestedUser); });
+            for(const todo of todos) {
+                console.log(todo);
+            }
             break;
         case 'sort':
             let dataSort = command.split(' ');
@@ -38,14 +41,17 @@ function processCommand(command) {
     }
 }
 
-function LogToDo(){
+function hasUserName(todoStr, requestedName) {
+    const name = todoStr.split(';')[0].slice(8);
+    return name.toLowerCase() === requestedName.toLowerCase();
+}
+
+function logToDo(){
     const allToDo = getTodos(getFiles());
     for (const currentTodDo of allToDo){
         console.log(currentTodDo);
     }
 }
-
-
 
 function getTodos(files) {
     let res = [];
