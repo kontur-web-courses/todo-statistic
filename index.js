@@ -17,11 +17,25 @@ function parseToDo(array) {
         let curr = [toDo];
         if(toDo.indexOf(';') !== -1)
         {
-            curr.push(toDo.split(';')[0]);
-            curr.push(toDo.split(';')[1]);
+            curr.push(toDo.split(';')[0].trim().split(' ').at(-1));
+            curr.push(toDo.split(';')[1].trim());
+        }
+        else
+        {
+            curr.push(null);
+            curr.push(null);
+        }
+        if(toDo.indexOf('!')!==-1)
+        {
+            curr.push(true);
+        }
+        else
+        {
+            curr.push(false);
         }
         result.push(curr);
     }
+    return result;
 }
 
 function getToDo(){
@@ -35,6 +49,7 @@ function getToDo(){
                 result.push(matching[0]);
         }
     }
+    console.log(parseToDo(result))
     return result;
 }
 
