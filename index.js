@@ -12,7 +12,9 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let command_name = command.split(' ')[0];
+    let args = command.split(' ').slice(1);
+    switch (command_name) {
         case 'exit':
             process.exit(0);
             break;
@@ -21,6 +23,9 @@ function processCommand(command) {
             break;
         case 'important':
             important();
+            break;
+        case 'user':
+            user(args[0]);
             break;
         default:
             console.log('wrong command');
@@ -41,5 +46,12 @@ function important() {
         return b === null ? a : a.concat(b);
     }, []).forEach(x => console.log(x));
 }
+
+function user(username) {
+    files.map(x => x.match(new RegExp(`\/\/ TODO ${username};.*;.*`, 'gi')))
+        .reduce((a, b) => b === null ? a : a.concat(b), [])
+        .forEach(x => console.log(x));
+}
+
 
 // TODO you can do it!
