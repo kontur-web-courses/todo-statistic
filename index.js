@@ -34,6 +34,14 @@ function processCommand(command) {
     }
 }
 
+function all_todos() {
+    let list = getFiles();
+    return list.map(x => x.match(/\/\/ TODO.*/g)).reduce(function (a, b) {
+        return a.concat(b);
+    }, [])
+}
+
+
 function show() {
     let list = getFiles();
     list.map(x => x.match(/\/\/ TODO.*/g)).reduce(function (a, b) {
@@ -50,22 +58,39 @@ function important() {
 
 
 function sort(arg) {
-    let list = getFiles();
-    if (arg === 'importance') {
-        important();
-        list.map(x => x.match(/\/\/ TODO[^!\r\n]+\r/g)).reduce(function (a, b) {
-            return b === null ? a : a.concat(b);
-        }, []).forEach(x => console.log(x));
-        console.log(list.map(x => x.match(/\/\/ TODO.*[^!]+.*/g)))
+    let all = all_todos();
+    switch (arg) {
+        case 'importance':
+        {
+            let list = getFiles();
+            important();
+            list.map(x => x.match(/\/\/ TODO[^!\r\n]+\r/g)).reduce(function (a, b) {
+                return b === null ? a : a.concat(b);
+            }, []).sort((a, b) => a.split('!').length < b.split('!').length).forEach(x => console.log(x));
+            break;
+        }
+        case 'date':
+        {
+            let withDate = all.filter((el) => el.split(";").length === 3);
+            let withoutDate = all.filter((el) => el.split(";").length !== 3);
+            withDate
+                .sort((a, b) => {
+                    a = new Date(a.split(";")[1]);
+                    b = new Date(b.split(";")[1]);
+                    return a > b ? -1 : a < b ? 1 : 0;
+                })
+                .concat(withoutDate).forEach(x => console.log(x));
+            break;
+        }
+        case 'user':
+        {
+            return all
+                .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+                .sort((a, b) => b.split(";").length - a.split(";").length).forEach(x => console.log(x));
+        }
     }
-
-    // if (arg === 'date') {
-    //     important();
-    //     list.map(x => x.match(/\/\/ TODO.*[^!]+.*/g)).reduce(function (a, b) {
-    //         return b === null ? a : a.concat(b);
-    //     }, []).forEach(x => console.log(x));
-    // }
 }
 
 // TODO you can do it!
 // sort importance
+// sort date
