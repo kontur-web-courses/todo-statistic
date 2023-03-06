@@ -25,7 +25,7 @@ function getTodos() {
     const todoComments = [];
     for (const file of files) {
         for (const line of file.split('\n')) {
-            if (!COMMAND_REGEXP.test(line)){
+            if (!COMMAND_REGEXP.test(line)) {
                 continue;
             }
 
@@ -60,7 +60,7 @@ function getImportance(line) {
 
 function sortBy(key) {
     const formatted = getFormatted();
-    const selector = selectors.get(key) || function () {return null};
+    const selector = selectors.get(key) || function () { return null };
     const mod = key === 'name' ? 1 : -1;
 
     const sorted = formatted.sort((a, b) => {
