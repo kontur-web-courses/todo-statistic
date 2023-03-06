@@ -7,9 +7,9 @@ console.log('Please, write your command!');
 readLine(processCommand);
 
 const selectors = {
-    'name': o => o.groups.name,
-    'date': o => new Date(o.groups.date),
-    'importance': o => getImportance(o.comment)
+    'name': function (o) { return o.groups.name },
+    'date': function (o) { return new Date(o.groups.date) },
+    'importance': function (o) { return getImportance(o.comment) }
 };
 
 function getFiles() {
