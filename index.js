@@ -16,17 +16,30 @@ function getTODOs(text){
     return text.match(reg)
 }
 
+function* iterTodos() {
+    for (let fileContent of getFiles()){
+        for (const v of getTODOs(fileContent)) {
+            yield v;
+        }
+    }
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            getFiles().forEach((value, index, arr) => {
-                for (const v of getTODOs(value)) {
-                    console.log(v);
+            for (let todo of iterTodos()) {
+                console.log(todo);
+            }
+            break;
+        case 'important':
+            for (let todo of iterTodos()) {
+                if (todo.includes('!')) {
+                    console.log(todo);
                 }
-            })
+            }
             break;
         default:
             console.log('wrong command');
