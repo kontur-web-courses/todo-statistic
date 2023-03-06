@@ -38,6 +38,19 @@ function getTodos(files) {
     return res;
 }
 
+function formatTodo(todo){
+    return `${todo.name} ${todo.date} ${todo.comment}`.trim();
+}
+
+function hasUsername(command){
+    let splittedCommand = command.split(' ');
+    if (command.length === 1)
+        return '';
+    if (splittedCommand[0] === 'user')
+        return command;
+    return '';
+}
+
 
 function processCommand(command) {
     switch (command) {
@@ -45,7 +58,16 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'important':
-            console.log(todos.map(todo => todo.comment).filter((comment => comment.includes('!'))).join('\n'));
+            console.log(todos
+                .map(formatTodo)
+                .filter((comment => comment.includes('!')))
+                .join('\n'));
+            break;
+        case hasUsername(command):
+            let username = command.split(' ')[1];
+            console.log(todos
+                .filter(todo => todo.name.toLowerCase() === username.toLowerCase())
+                .map(formatTodo));
             break;
         default:
             console.log('wrong command');
