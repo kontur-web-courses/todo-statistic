@@ -13,6 +13,9 @@ function getFiles() {
 
 function processCommand(command) {
     switch (command) {
+        case 'show':
+            parseToDo();
+            break
         case 'exit':
             process.exit(0);
             break;
@@ -23,3 +26,8 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+function parseToDo(){
+    for (const argument of files) {
+        console.log(argument);
+    }
+}
