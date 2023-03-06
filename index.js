@@ -24,9 +24,21 @@ function parseToDo(array) {
     }
 }
 
+function getToDo(){
+    const pattern = new RegExp(/(\/\/ TODO .*)/)
+    let files = getFiles();
+    let result = [];
+    for(let file of files){
+        result.push(file.match(pattern));
+    }
+    console.log(result);
+
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
+            getToDo();
             process.exit(0);
             break;
         case 'show':
