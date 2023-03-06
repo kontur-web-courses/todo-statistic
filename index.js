@@ -53,6 +53,55 @@ function importanceComparator(a, b) {
     return 0;
 }
 
+function userComparator(a, b) {
+    let lowerA = a.toLowerCase();
+    let lowerB = b.toLowerCase();
+
+    if (lowerA.includes(';') && !lowerB.includes(';')) {
+        return -1;
+    }
+    if (!lowerA.includes(';') && lowerB.includes(';')) {
+        return 1;
+    }
+
+    if (lowerA < lowerB) {
+        return -1;
+    }
+    if (lowerA > lowerB) {
+        return 1;
+    }
+
+    return 0;
+}
+
+function dateComparator(a, b) {
+    let regex = /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/g;
+
+    let aMatch = a.match(regex);
+    let aCount = 0;
+    if (aMatch !== null) aCount = aMatch.length;
+
+    let bMatch = b.match(regex);
+    let bCount = 0;
+    if (bMatch !== null) bCount = bMatch.length;
+
+    if (aCount > bCount) {
+        return -1;
+    }
+    if (aCount < bCount) {
+        return 1;
+    }
+
+    if (aMatch > bMatch) {
+        return -1;
+    }
+    if (aMatch < bMatch) {
+        return 1;
+    }
+
+    return 0;
+}
+
 function processCommand(command) {
     let operation = command.split(' ')[0];
     let parameter = command.split(' ')[1];
@@ -67,21 +116,29 @@ function processCommand(command) {
             printArrayWithStatement(getAllTODOs(), (TODO) => TODO.includes('!'));
             break;
         case 'user':
-            printArrayWithStatement(getAllTODOs(),(TODO) => TODO.includes(`// TODO ${parameter}`));
+            printArrayWithStatement(getAllTODOs(),
+                (TODO) => TODO.toLowerCase().includes(`// todo ${parameter.toLowerCase()}`));
             break;
         case 'sort':
             let TODOs = getAllTODOs();
             switch (parameter) {
                 case 'importance':
-                    let sortedTODOs = TODOs.sort(importanceComparator);
-                    printArrayWithStatement(sortedTODOs, () => true);
+                    let sortedTODOsByImportance = TODOs.sort(importanceComparator);
+                    printArrayWithStatement(sortedTODOsByImportance, () => true);
+                    break;
+                case 'user':
+                    let sortedTODOsByUser = TODOs.sort(userComparator);
+                    printArrayWithStatement(sortedTODOsByUser, () => true);
+                    break;
+                case 'date':
+                    let sortedTODOsByDate = TODOs.sort(dateComparator);
+                    printArrayWithStatement(sortedTODOsByDate, () => true);
                     break;
                 default:
                     console.log('wrong parameter');
                     break;
             }
             break;
-
         default:
             console.log('wrong command');
             break;
