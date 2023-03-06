@@ -67,13 +67,27 @@ function sortBy(key) {
     }).map(o => o.comment);
 
     if (key !== 'importance') {
-        for (const comment in getTodos()) {
+        for (const comment of getTodos()) {
             if (!re.test(comment)) {
                 sorted.push(comment);
             }
         }
     }
     return sorted;
+}
+
+function getCommentsAfterDate(date) {
+    const actualDate = new Date(date);
+    const res = [];
+    for (const comment of getFormatted()) {
+        const commentDate = comment.groups.date;
+        if (new Date(commentDate) < actualDate) {
+            continue;
+        }
+        res.push(comment.comment);
+    }
+
+    return res;
 }
 
 
