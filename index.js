@@ -65,18 +65,24 @@ function getOnlyImportantTODOs(todos) {
 
 function getUserTODOs(todos, username) {
     return todos.filter((todo) => {
-        const [name] = getTODOParts(todo);
+        const {name} = getTODOParts(todo);
         return name.toLowerCase() === username.toLowerCase();
     });
 
 }
 
 function getTODOParts(todo) {
-    const [, name = "", date = "", text = ""] = todo.match(/\/\/ TODO (\w+;)?(\d{4}-\d{2}-\d{2};)?(.+)/) || [];
+    const lineWithoutTODO = todo.slice(8);
+    const parts = lineWithoutTODO.split(";");
+    const [name, date, text] = [
+        (parts.length === 3 ? parts[0] : ""),
+        (parts.length === 3 ? parts[1] : ""),
+        (parts.length === 3 ? parts[2] : "")
+    ];
     return {
         name: name.replace(";", ""),
         date: date.replace(";", ""),
-        text: text.trim(),
+        text: text,
     };
 }
 
@@ -102,7 +108,7 @@ function sortByParameter(todos, parameter) {
 
 function printFormattedOutput(todos) {
     todos.forEach((todo) => {
-        const [name, date, text] = getTodoParts(todo);
+        const {name, date, text}  = getTODOParts(todo);
         const importance = todo.includes("!") ? "!" : " ";
         const formattedName = formatString(name, 11);
         const formattedDate = formatString(date, 11);
@@ -112,6 +118,7 @@ function printFormattedOutput(todos) {
 }
 
 function formatString(str, maxLength) {
+    str = str.padEnd(maxLength);
     if (str.length <= maxLength) {
         return str;
     } else {
