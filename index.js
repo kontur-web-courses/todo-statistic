@@ -49,18 +49,21 @@ function getToDo(){
                 result.push(matching[0]);
         }
     }
-    console.log(parseToDo(result))
     return result;
 }
 
 function processCommand(command) {
-    switch (command) {
+    switch (command.split(' ').at(0)) {
         case 'exit':
             getToDo();
             process.exit(0);
             break;
         case 'show':
             break;
+        case 'important':
+            console.log(parseToDo(getToDo()).filter(x=>x.at(-1)).map(x=>x.at(0)));
+            break;
+        case 'user':
         default:
             console.log('wrong command');
             break;
