@@ -17,7 +17,7 @@ function parseToDo(array) {
         let curr = [toDo];
         if(toDo.indexOf(';') !== -1)
         {
-            curr.push(toDo.split(';')[0].trim().split(' ').at(-1));
+            curr.push(toDo.split(';')[0].trim().split(' ').at(-1).toLowerCase());
             curr.push(toDo.split(';')[1].trim());
         }
         else
@@ -64,6 +64,8 @@ function processCommand(command) {
             console.log(parseToDo(getToDo()).filter(x=>x.at(-1)).map(x=>x.at(0)));
             break;
         case 'user':
+            console.log(parseToDo(getToDo()).filter(x=>x.at(1) === command.split(' ').at(1).toLowerCase()).map(x=>x.at(0)))
+            break;
         default:
             console.log('wrong command');
             break;
