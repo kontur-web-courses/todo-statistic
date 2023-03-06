@@ -59,8 +59,13 @@ function processCommand(command) {
             }
             break;
         case 'sort':
-            let order = commandSplited[1];
-            if (order === 'user') {
+            switch(commandSplited[1]){
+                case 'importance':
+                    allTodoes.sort((a, b) => b.split('!').length - a.split('!').length);
+                    for(let i of allTodoes){
+                        console.log(i);
+                    }
+                case 'user':
                 let dict = new Map();
                 for (let i of namedTodoes) {
                     if (!dict.has(i.name)) {
@@ -78,8 +83,11 @@ function processCommand(command) {
                         console.log(value);
                     }
                 }
+                case 'date':
+                    
+                default:
+                    break;
             }
-
             break;
         default:
             console.log('wrong command');
