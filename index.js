@@ -57,11 +57,23 @@ function getImportance(line) {
 
 
 function sortBy(key) {
+    const re = new RegExp('(?<name>.+?);\\s(?<date>.+?);\\s(?<question>.+)');
     const formatted = getFormatted();
     const selector = selectors.get(key);
-    return formatted.sort((a, b) => {
-        return selector(a) > selector(b) ? 1 : -1;
+    const mod = key === 'name' ? 1 : -1;
+
+    const sorted = formatted.sort((a, b) => {
+        return selector(a) > selector(b) ? mod : -mod;
     }).map(o => o.comment);
+
+    if (key !== 'importance') {
+        for (const comment in getTodos()) {
+            if (!re.test(comment)) {
+                sorted.push(comment);
+            }
+        }
+    }
+    return sorted;
 }
 
 
