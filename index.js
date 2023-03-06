@@ -35,6 +35,14 @@ function processCommand(command) {
                 }
             );
             break;
+        case "sort":
+            todos.sort(sortComps.get(cmd[1]))
+            todos.forEach(
+                function (todo){
+                    console.log(todo.comment)
+                }
+            )
+            break;
         default:
             console.log('wrong command');
             break;
@@ -75,3 +83,20 @@ function getTodos() {
 
 
 // toDo art3x; 2023-06-03; add sort
+
+let sortComps = new Map([
+    ["user", (a, b) => {
+        if (a.user.includes("?") || a.user.includes(".") || a.user === "") {
+            return 2;
+        }
+        if (a.user.toLowerCase() > b.user.toLowerCase()) {
+            return 1;
+        }
+        else if (a.user.toLowerCase() < b.user.toLowerCase()) {
+            return -1;
+        }
+        return 0;
+    }],
+    ["importance", (a, b) => Math.sign(b.important - a.important)],
+    ["date", (a, b) => Math.sign(b.date.getTime() - a.date.getTime())]
+]);
