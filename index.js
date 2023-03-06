@@ -12,12 +12,14 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    const arg = command.split(' ');
+    let mas = show();
+    switch (arg[0]) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            let mas = show();
+            mas = show();
             for (let todo of mas) {
                 console.log(todo);
             }
@@ -26,29 +28,45 @@ function processCommand(command) {
             mas = show();
             showImportant(mas)
             break;
-        case 'sort importance':
+        case 'sort':
             mas = show();
-            let sorted = sortByImportance(mas)
-            for (let todo of sorted) {
-                console.log(todo);
+            switch (arg[1]) {
+                case 'importance':
+                    let sorted = sortByImportance(mas)
+                    for (let todo of sorted) {
+                        console.log(todo);
+                    }
+                    break;
+                case 'user':
+                    let users = findUsers();
+                    for(let user in users){
+                        let todos = mas.filter(x=>x.split(";")[0].trim().toLowerCase() === user)
+                        for (let todo of todos) {
+                            console.log(todo);
+                        }
+                    }
+                    let todos = mas.filter(x=> !(x.split(";")[0].trim().toLowerCase() in users))
+                    for (let todo of todos) {
+                        console.log(todo);
+                    }
+
+
+                    break
+                case 'date':
+                    break
+                default:
+                    break;
             }
-            break;
-        case 'sort user':
-            mas = show();
-            showImportant(mas)
-            break;
-        case 'sort date':
-            mas = show();
-            showImportant(mas)
+
             break;
         case 'user':
             let name = arg[1].toLowerCase();
-            let users =findUsers();
-            if (name in users){
-            for (let comment of users[name]){
-                console.log(comment);
-            }}
-            else{
+            let users = findUsers();
+            if (name in users) {
+                for (let comment of users[name]) {
+                    console.log(comment);
+                }
+            } else {
                 console.log("User not find")
             }
             break;
@@ -58,21 +76,23 @@ function processCommand(command) {
             break;
     }
 }
-function findUsers(){
-    let data=show();
-    let users={};
-    for(comment of data){
-        let parseData=comment.split(";")
-        if (parseData.length>2){
-            let user=parseData[0].trim();
-            if (!(user in users)){
-                users[user]=[]
+
+function findUsers() {
+    let data = show();
+    let users = {};
+    for (let comment of data) {
+        let parseData = comment.split(";")
+        if (parseData.length > 2) {
+            let user = parseData[0].trim().toLowerCase();
+            if (!(user in users)) {
+                users[user] = []
             }
             users[user].push(parseData[2].trim())
         }
     }
     return users;
 }
+
 function show() {
     let todoLines = [];
     for (let file of files) {
@@ -97,5 +117,5 @@ function showImportant(todoLines) {
 }
 
 function sortByImportance(todoLines) {
-    return todoLines.sort((a, b) => (b.split('').filter(x=>x==='!').length - a.split('').filter(x=>x==='!').length));
+    return todoLines.sort((a, b) => (b.split('').filter(x => x === '!').length - a.split('').filter(x => x === '!').length));
 }
