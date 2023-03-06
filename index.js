@@ -59,7 +59,7 @@ function getImportance(line) {
 function sortBy(key) {
     const re = new RegExp('(?<name>.+?);\\s(?<date>.+?);\\s(?<question>.+)');
     const formatted = getFormatted();
-    const selector = selectors.get(key);
+    const selector = selectors.get(key) || function (o) {return null};
     const mod = key === 'name' ? 1 : -1;
 
     const sorted = formatted.sort((a, b) => {
