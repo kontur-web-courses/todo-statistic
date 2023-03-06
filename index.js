@@ -40,7 +40,7 @@ function processCommand(command) {
                     logToDoWithSortImportant();
                     break;
                 case 'date':
-                    let todos = getTodos(getFiles());
+                    todos = getTodos(getFiles());
                     todos.sort(function(a,b) { return compareDates(getData(a), getData(b)); });
                     for(const todo of todos) {
                         console.log(todo);
