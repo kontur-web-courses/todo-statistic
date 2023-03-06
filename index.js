@@ -16,6 +16,15 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show : показать все todo':
+            for (let file of files){
+                for (let string of file.split('\n')) {
+                    if (string.includes('// TODO ') && !string.includes('\'// TODO ')) {
+                        console.log(string.substring(string.indexOf('// TODO')));
+                    }
+                }
+            }
+            break;
         default:
             console.log('wrong command');
             break;
