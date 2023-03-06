@@ -16,10 +16,18 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            show();
+            break;
         default:
             console.log('wrong command');
             break;
     }
+}
+
+function show(){
+    let list = getFiles();
+    list.map(x => x.match(/\/\/ TODO.*/g)).reduce(function(a, b){ return a.concat(b); }, []).forEach(x => console.log(x));
 }
 
 // TODO you can do it!
