@@ -12,16 +12,16 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    let mas = show();
     switch (command) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            mas = show();
+            let mas = show();
             for (let todo of mas) {
                 console.log(todo);
             }
+            break;
         case 'important':
             mas = show();
             showImportant(mas)
@@ -41,14 +41,40 @@ function processCommand(command) {
             mas = show();
             showImportant(mas)
             break;
+        case 'user':
+            let name = arg[1].toLowerCase();
+            let users =findUsers();
+            if (name in users){
+            for (let comment of users[name]){
+                console.log(comment);
+            }}
+            else{
+                console.log("User not find")
+            }
+            break;
+
         default:
             console.log('wrong command');
             break;
     }
 }
-
+function findUsers(){
+    let data=show();
+    let users={};
+    for(comment of data){
+        let parseData=comment.split(";")
+        if (parseData.length>2){
+            let user=parseData[0].trim();
+            if (!(user in users)){
+                users[user]=[]
+            }
+            users[user].push(parseData[2].trim())
+        }
+    }
+    return users;
+}
 function show() {
-    var todoLines = [];
+    let todoLines = [];
     for (let file of files) {
         for (let line of file.split("\n")) {
             let index = line.indexOf("// TODO ");
