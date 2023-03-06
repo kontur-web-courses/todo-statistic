@@ -64,32 +64,56 @@ function textHasUser(text) {
     return (isNaN(+parts[2][0])) && (parts[2].endsWith(';'));
 }
 
+function formatDate (date) {
+    const formatFunc = (x => x.toString().padStart(2, '0'));
+    const day = formatFunc(date.getDate());
+    const month = formatFunc(date.getMonth() + 1);
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
+
+function formatOutput(str){
+    const importance = (str.match(/!/g) || [])[0] ?? " ";
+    const matched = str.match(/\/\/ TODO (.*?);\s*(.*?); (.*)/)
+    if (matched !== null){
+        const name = matched[1].toLowerCase();
+        const date = formatDate(new Date(matched[2]));
+        const text = matched[3].trim();
+        console.log(`${importance} | ${name.padEnd(10, " ")} | ${date.padEnd(10, " ")} | ${text.padEnd(50, " ")}`);
+    }
+    else {
+        const name = "";
+        const date = "";
+        console.log(`${importance} | ${name.padEnd(10, " ")} | ${date.toString().padEnd(10, " ")} | ${str.padEnd(50, " ")}`);
+    }
+
+}
 
 function processCommand(command) {
     const args = command.split(' ');
     switch (args[0]) {
         case 'user':
             getAllToDo().filter((v) =>  v.includes(`// TODO ${args[1]}`))
-                .map((value) => console.log(value));
+                .map((value) => formatOutput(value));
             break;
         case 'exit':
             process.exit(0);
             break;
         case 'show':
             for (const ans of getAllToDo()){
-                console.log(ans);
+                formatOutput(ans);
             }
             break;
         case 'importance':
-            getAllToDo().filter((v, i, a) => v.includes('!')).map((value) => console.log(value));
+            getAllToDo().filter((v, i, a) => v.includes('!')).map((value) => formatOutput(value));
             break;
         case 'sort':
             switch (args[1]) {
                 case 'importance':
-                    sortByImportance().map(v => console.log(v));
+                    sortByImportance().map(v => formatOutput(v));
                     break;
                 case 'user':
-                    sortByUser().map(v => console.log(v));
+                    sortByUser().map(v => formatOutput(v));
                     break;
                 case 'date':
                     getAllToDo().sort((a, b) => {
@@ -98,7 +122,7 @@ function processCommand(command) {
                         if (getDate(a) > getDate(b)) return 1;
                         if (getDate(a) < getDate(b)) return -1;
                         if (getDate(a) === getDate(b)) return 0;
-                    }).map((value) => console.log(value));
+                    }).map((value) => formatOutput(value));
                     break;
                 default:
                     console.log('ahaha');
