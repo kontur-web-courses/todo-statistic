@@ -29,7 +29,7 @@ function getTodos() {
 }
 
 function getImportant() {
-    const re = new RegExp('.+?!+')
+    const re = new RegExp('.+?!+');
     const important = [];
     for (const comment of getTodos()) {
         if (re.test(comment)) {
@@ -37,6 +37,29 @@ function getImportant() {
         }
     }
     return important;
+}
+
+function getFormatted() {
+    const re = new RegExp('(?<name>.+?);\\s(?<date>.+?);\\s(?<question>.+)');
+    const formatted = [];
+    for (const comment of getTodos()) {
+        if (!re.test(comment)) {
+            continue;
+        }
+        const { groups } = re.exec(comment);
+        const obj = new {
+            groups: groups,
+            comment: comment
+        }
+        formatted.push(obj);
+    }
+    return formatted;
+}
+
+function getTodosByUser(userName) {
+    return getFormatted()
+        .filter(o => o.groups.name.toLowerCase() === userName.toLowerCase())
+        .map(o => o.comment);
 }
 
 function processCommand(command) {
