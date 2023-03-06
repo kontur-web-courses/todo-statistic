@@ -16,10 +16,29 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            let mas = show();
+            for (let todo of mas) {
+                console.log(todo);
+            }
         default:
             console.log('wrong command');
             break;
     }
 }
+
+function show() {
+    var todoLines = [];
+    for (let file of files) {
+        for (let line of file.split("\n")) {
+            let index = line.indexOf("// TODO ");
+            if (index !== -1) {
+                todoLines.push(line.slice(index + 8));
+            }
+        }
+    }
+    return todoLines;
+}
+
 
 // TODO you can do it!
