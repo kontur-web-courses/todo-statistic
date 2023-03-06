@@ -13,6 +13,10 @@ function getFiles() {
 
 let todos = getTodos();
 
+function isDate(dateStr) {
+    return !isNaN(new Date(dateStr).getDate());
+}
+
 function processCommand(command) {
     let cmd =  command.split(" ");
     switch (cmd[0]) {
@@ -58,7 +62,7 @@ function getTodos() {
                 let todo = {
                     important: 0,
                     user: "",
-                    date: new Date(1, 1, 1, 1, 1, 1),
+                    date: "",
                     dateString: "",
                     comment: match[1],
                     value: "",
@@ -68,8 +72,8 @@ function getTodos() {
                 let data = [...match[1].matchAll(groupRegex)] || [];
                 if (data.length > 0) {
                     todo.user = data[0][1];
-                    todo.date = new Date(data[0][2]);
-                    if (todo.date > new Date(1, 1, 1, 1, 1, 1)) {
+                    if (isDate(data[0][2])) {
+                        todo.date = new Date(data[0][2]);
                         todo.dateString = todo.date.toDateString();
                     }
                     todo.value = data[0][3];
@@ -100,3 +104,6 @@ let sortComps = new Map([
     ["importance", (a, b) => Math.sign(b.important - a.important)],
     ["date", (a, b) => Math.sign(b.date.getTime() - a.date.getTime())]
 ]);
+
+//toDO senya; 2023-03-06; add name of file
+
