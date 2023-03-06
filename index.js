@@ -17,7 +17,21 @@ function getTodos(files) {
     for (let text of files) {
         for (let line of text.split('\n')){
             if (line.startsWith("\/\/ TODO ")){
-                res.push(line.substring(8));
+                line = line.substring(8);
+                let comment = {
+                    name: '',
+                    date: '',
+                    comment: line
+                }
+                line = line.split(';');
+                if (line.length === 3) {
+                    comment = {
+                        name: line[0],
+                        date: line[1],
+                        comment: line[2].trim()
+                    }
+                }
+                res.push(comment);
             }
         }
     }
@@ -32,6 +46,9 @@ function processCommand(command) {
             break;
         case 'show':
             console.log(todos);
+            break;
+        case 'important':
+            console.log(todos.map(todo => todo.comment).filter((comment => comment.includes('!'))).join('\n'));
             break;
         default:
             console.log('wrong command');
