@@ -12,27 +12,33 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    const [action, parametr] = command.split(" ");
+    switch (action) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            const showArr = getAllTodo(getFiles());
+            const showArr = getAllTodo(files);
             for (str of showArr) {
                 console.log(str);
             }
             break;
+        case 'name':
+            const todoArr = getAllTodo(getFiles());
+
         default:
             console.log('wrong command');
             break;
     }
 }
 
-function getAllTodo(codeStrings) {
+function getAllTodo(files) {
     const todo = [];
-    for (str of codeStrings) {
-        if (/^\/\/ TODO /.test(str)) {
-            todo.push(str);
+    for (file of files) {
+        for (str of file.split('\n')) {
+            if (/^\/\/ TODO /.test(str.trim())) {
+                todo.push(str.trim());
+            }
         }
     }
     return todo;
