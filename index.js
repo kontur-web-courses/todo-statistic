@@ -101,7 +101,12 @@ function processCommand(command) {
 
             break;
         case 'date':
-
+            let d = new Date(commandSplited[1]);
+            let matchComments = namedTodoes.filter(item => item.date > d);
+            for (let i of matchComments) {
+                let comment = i.name + '; ' + i.date.toDateString() + '; ' + i.comment;
+                console.log(comment);
+            }
             break;
         default:
             console.log('wrong command');
