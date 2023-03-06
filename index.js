@@ -34,22 +34,26 @@ function getImportant(){
     return importantTodos;
 }
 
-function getUserTodos(user){
+function getUserTodos() {
     let allTodos = getAllTodos();
-    let userTodos = []
-    for (let line of allTodos){
-        if (line.toLowerCase().includes(`// todo ${user};`))
-            userTodos.push(line);
+    let usersTodos = {};
+    for (let todo of allTodos) {
+        if (todo.includes(";")) {
+            const user = todo.split(';')[0].split('TODO ')[1].toLowerCase();
+            if (usersTodos[user] !== undefined)
+                usersTodos[user].push(todo);
+            else usersTodos[user] = [todo];
+        }
     }
-    return userTodos;
+    return usersTodos;
 }
 
-function getSort(arg){
-    switch (arg){
+function getSort(arg) {
+    switch (arg) {
         case 'importance':
             return sortByImportance();
         case 'user':
-            return sortByUser();
+            return sortByValue(getUserTodos);
         case 'date':
             return sortByDate();
     }
@@ -65,12 +69,18 @@ function sortByImportance() {
     return todosByImportance;
 }
 
-function sortByUser(){
-    let allTodos = getAllTodos();
+function sortByValue(func) {
+    let byValueTodos = func();
+    let todosByValue = [];
+    for (let todo of Object.values(byValueTodos))
+        todosByValue = todosByValue.concat(todo);
+    return todosByValue;
 }
 
-function sortByDate(){
 
+function sortByDate() {
+    let userTodos = sortByValue(getUserTodos);
+    return userTodos.sort((a, b) => new Date(a.split(';')[1]) - new Date(b.split(';')[1]))
 }
 
 function makeTable(todosList){
@@ -102,7 +112,7 @@ function processCommand(command) {
             break;
         case 'user':
             let user = splitedCommand[1].toLowerCase();
-            makeTable(getUserTodos(user))
+            makeTable(getUserTodos()[user])
             break;
         case 'important':
             makeTable(getImportant());
