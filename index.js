@@ -38,13 +38,25 @@ function getToDo(){
     return result;
 }
 
+function getTodoWithExclamatory(arr){
+    let result = [];
+    for (let element of arr) {
+        if (element[3]) {
+            result.push(element[0]);
+        }
+    }
+    return result;
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
-            getToDo();
             process.exit(0);
             break;
         case 'show':
+            console.log(getToDo());
+            break;
+        case 'important':
             break;
         default:
             console.log('wrong command');
