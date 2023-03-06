@@ -35,7 +35,6 @@ function getToDo(){
                 result.push(matching[0]);
         }
     }
-
     return result;
 }
 
