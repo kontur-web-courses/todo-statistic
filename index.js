@@ -36,20 +36,26 @@ function processCommand(command) {
             break;
         case 'sort':
             Sort(ToDoFind(), command);
+            break;
+        case 'date':
+            AfterDate(ToDoFind(), new Date(command.split(' ')[1]));
+            break;
         default:
             console.log('wrong command');
             break;
     }
 }
 
-function TakeName(str){
-    if (str.indexOf(';')!==-1)
+function TakeName(str) {
+    let p = str.indexOf(';');
+    let s = (str.match(/'/g) || []).length;
+    if (p !== -1 && s === 0)
         return str.replace("// TODO ", "").split(';')[0];
     return "";
 }
 
-function TakeDate(str){
-    if (str.indexOf(';')!==-1)
+function TakeDate(str) {
+    if (str.indexOf(';') !== -1)
         return str.split(';')[1].trim();
     return "";
 }
@@ -96,34 +102,44 @@ function Sort(todos, command) {
             let count = (todo.match(/!/g) || []).length;
             sortArray.push({param: count, str: todo});
         }
-    }
-    else if (typeSort === 'user') {
+        sortArray.sort((a, b) => b.param - a.param);
+        sortArray = sortArray.concat(otherArray);
+    } else if (typeSort === 'user') {
         for (const todo of todos) {
             let name = TakeName(todo);
             if (name !== "") {
-                sortArray.push({param: name.toLowerCase(), str: todo});
-            }
-            else {
-                otherArray.push(todo);
+                name = name.toLowerCase();
+                sortArray.push({param: name, str: todo});
+            } else {
+                otherArray.push({str: todo});
             }
         }
-    }
-    else if (typeSort === 'date') {
+        sortArray.sort((a, b) => String(a.param).localeCompare(String(b.param)));
+        sortArray = sortArray.concat(otherArray);
+    } else if (typeSort === 'date') {
         for (const todo of todos) {
             let date = TakeDate(todo);
             if (date !== "") {
                 sortArray.push({param: new Date(date), str: todo});
+            } else {
+                otherArray.push({str: todo});
             }
-            else {
-                otherArray.push(todo);
-            }
+            sortArray.sort((a, b) => b.param - a.param);
+            sortArray = sortArray.concat(otherArray);
         }
     }
 
-    sortArray.sort((a, b) => b.param - a.param);
-    sortArray = sortArray.concat(otherArray);
+
     for (const a of sortArray) {
         console.log(a.str)
+    }
+}
+
+function AfterDate(todos, theDate) {
+    for (const todo of todos) {
+        let date = TakeDate(todo);
+        if (new Date(date) > theDate)
+            console.log(todo);
     }
 }
 
