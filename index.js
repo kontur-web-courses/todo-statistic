@@ -33,13 +33,13 @@ function processCommand(command) {
             console.log(userTODOs);
             break;
         case 'date':
-            console.log(getCommentsBeforeDate(Date.parse(parameter)))
+            console.log(getCommentsBeforeDate(new Date(parameter)))
         case 'sort':
             if (parameter === 'importance') {
                 console.log(getImportantTODOs());
             }
             if (parameter === "date") {
-                console.log(dateTODOS);
+                console.log(dateTODOS.map(x => x[2]));
             }
             if (parameter === 'user') {
                 sortUser();
@@ -70,24 +70,27 @@ function getTODOs() {
 function getCommentsBeforeDate(date) {
     let res = []
     for (let todo of dateTODOS) {
-        if (todo[0] <= date) {
+        if (todo[3] <= date && date[0] != '') {
             res.push(todo[1]);
         }
     }
     return res;
 }
-
+// TODO toppop
 function getDateTODOs() {
     let date = [];
     for (let todo of TODOs) {
         let data = todo.split(';');
         if (data.length > 1) {
-            let commentDate = data[1];
-            let comment = data[2];
-            date.push([commentDate, comment]);
+            let commentDate = data[1].trim();
+            let comment = data[2].trim();
+            date.push([commentDate, comment, todo, new Date(commentDate)]);
+        }
+        else {
+            date.push(['', '', todo, new Date(0)])
         }
     }
-    date.sort((a, b) => new Date(b.date) - new Date(a.date))
+    date.sort((a, b) => b[3] - a[3])
     return date;
 }
 
