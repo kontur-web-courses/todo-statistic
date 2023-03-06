@@ -61,11 +61,11 @@ function getUserTODOs(parameter){
 
     for (let todo of TODOs) {
         let data = todo.split(';')
-        // let username = data[0].split(' ')[2]
+        let username = data[0].split(' ')[2]
 
-        if (username.toLowerCase() !== user) continue
+        if (username.toLowerCase() !== parameter) continue
 
-        userTODOs.push(extract(data, 2))
+
     }
 
     return userTODOs
