@@ -61,6 +61,10 @@ function sortBy(key)
     {
         case 'importance':
             return getImportant().concat(getNotImportant());
+        case 'user':
+            break;
+        case 'date':
+            break;
         default:
             console.log('wrong key');
             break;
