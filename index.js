@@ -66,6 +66,23 @@ function processCommand(command) {
                         console.log(i);
                     }
                 case 'user':
+                let dict = new Map();
+                for (let i of namedTodoes) {
+                    if (!dict.has(i.name)) {
+                        dict.set(i.name, [])
+                    }
+                    let comment = i.date + '; ' + i.comment;
+                    let oldValue = dict.get(i.name);
+                    oldValue.push(comment);
+                    dict.set(i.name, oldValue);
+                }
+
+                for (let [key, values] of dict) {
+                    console.log(key + ':');
+                    for (let value of values) {
+                        console.log(value);
+                    }
+                }
                 case 'date':
                     
                 default:
