@@ -10,7 +10,7 @@ function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
     return filePaths.map(path => readFile(path));
 }
-//использовать регулярные выражения
+
 function GetAllCommentsFromFiles(files) {
     let comments = [];
     for (let file of files) {
@@ -24,12 +24,42 @@ function GetAllCommentsFromFiles(files) {
     return comments;
 }
 
+function GetCountSimbol(str) {
+    let count = 0;
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] === '!') {
+            count++;
+        }
+    }
+    return count;
+}
+
+function GetName(str){
+    let name = str.match(/\/\/ TODO .*/g);
+    return name;
+}
+
+function GetDate(str){
+    let reg = str.match(/\d{4}([\/.-])\d{2}\1\d{2}/g);
+    if (reg == null) return Date(null);
+    let date = new Date(reg[0]);
+    return date;    
+
+}
+
+
+function CompareString(str1, str2){
+    if (str1 > str2) return 1;
+    if (str1 === str2) return 0;
+    if (str1 < str2) return -1;
+}
 
 
 
 function processCommand(command) {
+    let commands = command.split(' ');
     let comments = GetAllCommentsFromFiles(getFiles());
-    switch (command) {
+    switch (commands[0]) {
         case 'exit':
             process.exit(0);
             break;
@@ -39,7 +69,7 @@ function processCommand(command) {
                 console.log(comment);
             }
             break;
-        case 'important': //только с восклицательным знаком
+        case 'important':
             comments = GetAllCommentsFromFiles(getFiles());
             for (let comment of comments) {
                 if (comment.includes('!')) {
@@ -47,13 +77,37 @@ function processCommand(command) {
                 }
             }
             break;
-        case ''://выводит комментарии, которые были добавлены конкретным пользователем
+        case 'user':
+            let username = commands[1].toLowerCase();
             comments = GetAllCommentsFromFiles(getFiles());
             for (let comment of comments) {
-                if (comment.includes(`${username};`)) {
-
+                if (comment.toLowerCase().includes(`${username};`)) {
                     console.log(comment);
                 }
+            }
+            break;
+        case 'sort':
+            let sort = commands[1];
+            comments = GetAllCommentsFromFiles(getFiles());
+            switch (sort) {
+                case 'importance':
+                    comments.sort((a, b) => GetCountSimbol(b) - GetCountSimbol(a));
+                    for (let comment of comments) {
+                        console.log(comment);
+                    }
+                    break;
+                case 'user':
+                    comments.sort((a, b) => a.localeCompare(b));
+                    for (let comment of comments) {
+                        console.log(comment);
+                    }
+                    break;
+                case 'date':
+                    comments.sort((a, b) => GetDate(b) - GetDate(a));
+                    for (let comment of comments) {
+                        console.log(comment);
+                    }
+                break;
             }
             break;
         default:
