@@ -3,6 +3,8 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 let TODOs = getTODOs();
+let usernameTODOS = {};
+fillUsernameTODOS();
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -18,14 +20,14 @@ function processCommand(command) {
 
     switch (task) {
         case 'show':
-            console.log(TODOs)
+            console.log(TODOs);
             break;
         case 'important':
-            console.log(getImportantTODOs())
+            console.log(getImportantTODOs());
             break;
         case `user`:
-            let userTODOs = getUserTODOs(parameter)
-            console.log(userTODOs)
+            let userTODOs = getUserTODOs(parameter);
+            console.log(userTODOs);
             break;
         case 'sort':
             if (parameter === 'importance') {
@@ -73,18 +75,18 @@ function getImportantTODOs(){
 }
 
 function getUserTODOs(parameter){
-    let userTODOs = []
-
-    for (let todo of TODOs) {
-        let data = todo.split(';')
-        let username = data[0].split(' ')[2]
-
-        if (username.toLowerCase() !== parameter) continue
-
-
-    }
-
-    return userTODOs
+    return usernameTODOS[parameter];
 }
 
-// TODO you can do it!
+function fillUsernameTODOS(){
+    for (let todo of TODOs) {
+        let data = todo.split(';');
+        let username = data[0].split(' ')[2].toLowerCase();
+        let comment = data[2]
+
+        if (!(username in usernameTODOS))
+            usernameTODOS[username] = []
+        usernameTODOS[username].push(comment)
+    }
+}
+
