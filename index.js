@@ -22,7 +22,8 @@ function processCommand(command) {
                 console.log(todo);
             }
         case 'important':
-            process.exit(0);
+            let mass = show();
+            showImportant(mass)
             break;
         default:
             console.log('wrong command');
@@ -45,9 +46,9 @@ function show() {
 
 
 // TODO you can do it!
-function showImportant() {
-    for (let line of TodoLines) {
-        if(line.includes('!')){
+function showImportant(todoLines) {
+    for (let line of todoLines) {
+        if (line.includes('!')) {
             console.log(line);
         }
     }
