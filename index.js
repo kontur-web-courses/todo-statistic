@@ -19,15 +19,27 @@ function processCommand(command) {
         case 'show':
             show();
             break;
+        case 'important':
+            important();
+            break;
         default:
             console.log('wrong command');
             break;
     }
 }
 
-function show(){
+function show() {
     let list = getFiles();
-    list.map(x => x.match(/\/\/ TODO.*/g)).reduce(function(a, b){ return a.concat(b); }, []).forEach(x => console.log(x));
+    list.map(x => x.match(/\/\/ TODO.*/g)).reduce(function (a, b) {
+        return a.concat(b);
+    }, []).forEach(x => console.log(x));
+}
+
+function important() {
+    let list = getFiles();
+    list.map(x => x.match(/\/\/ TODO.*!.*/g)).reduce(function (a, b) {
+        return b === null ? a : a.concat(b);
+    }, []).forEach(x => console.log(x));
 }
 
 // TODO you can do it!
