@@ -23,3 +23,21 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+
+
+function getLinesWithExclamation(arr) {
+    filteredArr = [];
+    for (let line of arr) {
+        hasExclamation = false;
+        for (let c of line) {
+            if (c === '!') {
+                hasExclamation = true;
+                break;
+            }
+        }
+        if (hasExclamation) {
+            filteredArr.push(line);
+        }
+    }
+    return filteredArr;
+}
