@@ -29,6 +29,14 @@ function getAllToDo() {
     return res;
 }
 
+function getDate(str) {
+    let a = str.split(';')[0];
+    let b = str.split(';')[1];
+    if (!isNaN(Date.parse(b))) return b;
+         else if (!isNaN(Date.parse(a))) return a;
+             else return null;
+}
+
 
 function processCommand(command) {
     const args = command.split(' ');
@@ -47,6 +55,23 @@ function processCommand(command) {
             break;
         case 'importance':
             getAllToDo().filter((v, i, a) => v.includes('!')).map((value) => console.log(value));
+            break;
+        case 'sort':
+            switch (args[1]) {
+                case 'date':
+                    getAllToDo().sort((a, b) => {
+                        if ((getDate(a) != null) && (getDate(b) == null)) return -1;
+                        if ((getDate(a) == null) && (getDate(b) != null)) return 1;
+                        if (getDate(a) > getDate(b)) return 1;
+                        if (getDate(a) < getDate(b)) return -1;
+                        if (getDate(a) === getDate(b)) return 0;
+                    }).map((value) => console.log(value));
+                    break;
+                default:
+                    console.log('');
+                    break;
+
+            }
             break;
         default:
             console.log('wrong command');
