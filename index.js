@@ -73,22 +73,42 @@ function sortByDate(){
 
 }
 
+function makeTable(todosList){
+    console.log(`  !  |  ${'user'.padEnd(10)}  |  ${'date'.padEnd(10)}  | comment`);
+    console.log(`${'-'.repeat(86)}`)
+    for (let line of todosList) {
+        let splittedLine = line.replaceAll('; ', '|').split('|');
+        if (splittedLine.length !== 3) {
+            console.log(`     |  ${"".padEnd(10)}  |  ${"".padEnd(10)}  |  ${splittedLine[0].padEnd(50)}`);
+            continue;
+        }
+        let user = splittedLine[0].replaceAll("// TODO ", "");
+        let date = splittedLine[1];
+        let comment = splittedLine[2];
+        let isImportant = comment.includes("!");
+
+        let userToWrite = user.length <= 10 ? user.padEnd(10) : (user.substring(0, 7) + '...').padEnd(10);
+        let commentToWrite = comment.length <= 50 ? comment.padEnd(50) : (comment.substring(0, 46) + '...').padEnd(50);
+        console.log(`  ${isImportant ? "! " : "  "} |  ${userToWrite}  |  ${date}  |  ${commentToWrite}`);
+    }
+}
+
 function processCommand(command) {
     let splitedCommand = command.split(' ');
     switch (splitedCommand[0]) {
         case 'sort':
             let arg = splitedCommand[1];
-            console.log(getSort(arg));
+            makeTable(getSort(arg));
             break;
         case 'user':
             let user = splitedCommand[1].toLowerCase();
-            console.log(getUserTodos(user))
+            makeTable(getUserTodos(user))
             break;
         case 'important':
-            console.log(getImportant());
+            makeTable(getImportant());
             break;
         case 'show':
-            console.log(getAllTodos());
+            makeTable(getAllTodos());
             break;
         case 'exit':
             process.exit(0);
