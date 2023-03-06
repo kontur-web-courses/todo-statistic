@@ -6,6 +6,12 @@ const files = getFiles();
 console.log('Please, write your command!');
 readLine(processCommand);
 
+const selectors = {
+    'name': o => o.groups.name,
+    'date': o => new Date(o.groups.date),
+    'importance': o => getImportance(o.comment)
+};
+
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
     return filePaths.map(path => readFile(path));
@@ -38,6 +44,26 @@ function getImportant() {
     }
     return important;
 }
+
+function getImportance(line) {
+    let marks = 0;
+    for (const sym of line) {
+        if (sym === '!') {
+            marks += 1;
+        }
+    }
+    return marks;
+}
+
+
+function sortBy(key) {
+    const formatted = getFormatted();
+    const selector = selectors[key];
+    return formatted.sort((a, b) => {
+        return selector(a) > selector(b) ? 1 : -1;
+    })
+}
+
 
 function getFormatted() {
     const re = new RegExp('(?<name>.+?);\\s(?<date>.+?);\\s(?<question>.+)');
