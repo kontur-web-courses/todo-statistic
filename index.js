@@ -100,6 +100,9 @@ function processCommand(command) {
             }
 
             break;
+        case 'date':
+
+            break;
         default:
             console.log('wrong command');
             break;
