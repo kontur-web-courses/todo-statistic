@@ -33,7 +33,7 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    commandSplited = command.split(' ');
+    let commandSplited = command.split(' ');
     switch (commandSplited[0]) {
         case 'exit':
             process.exit(0);
@@ -56,6 +56,20 @@ function processCommand(command) {
                 if (i.name.toLowerCase() === userName) {
                     console.log(i.comment);
                 }
+            }
+            break;
+        case 'sort':
+            switch(commandSplited[1]){
+                case 'importance':
+                    allTodoes.sort((a, b) => b.split('!').length - a.split('!').length);
+                    for(let i of allTodoes){
+                        console.log(i);
+                    }
+                case 'user':
+                case 'date':
+                    
+                default:
+                    break;
             }
             break;
         default:
