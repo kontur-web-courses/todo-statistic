@@ -35,7 +35,18 @@ function processCommand(command) {
             let dataSort = command.split(' ');
             let currentSortParam = dataSort[1];
             switch (currentSortParam){
-
+                case 'important':
+                    logToDoWithSortImportant();
+                    break;
+                case 'user':
+                    break;
+                case 'date':
+                    let todos = getTodos(getFiles());
+                    todos.sort(function(a,b) { return compareDates(getData(a), getData(b)); });
+                    for(const todo of todos) {
+                        console.log(todo);
+                    }
+                    break;
             }
             break;
         default:
@@ -62,6 +73,50 @@ function logToDoWithImportant(){
         if (currentTodDo.indexOf('!') !== -1) {
             console.log(currentTodDo);
         }
+    }
+}
+
+function getData(str){
+    let result = null;
+    if (str.indexOf('-') !== -1) {
+        let currentIndex = str.indexOf('-') - 4;
+        let currentData = str.slice(currentIndex, currentIndex + 10);
+        result = currentData;
+    }
+    return result;
+}
+function compareDates(a, b) {
+    if(a === null)
+        return 1;
+    if(a > b)
+        return -1;
+    if(a < b)
+        return 1;
+    return 0;
+}
+
+function logToDoWithSortImportant(){
+    let data = {};
+    const allToDo = getTodos(getFiles());
+    for (let currentTodDo of allToDo){
+        if (currentTodDo.indexOf('!') !== -1) {
+            if (!data[currentTodDo]){
+                data[currentTodDo] = currentTodDo.split('!').length - 1;
+            }
+        }
+        if (!data[currentTodDo]){
+            data[currentTodDo] = 0;
+        }
+    }
+    let sortable = [];
+    for (let prior in data) {
+        sortable.push([prior, data[prior]]);
+    }
+    sortable.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+    for (const res of sortable){
+        console.log(res[0]);
     }
 }
 
