@@ -11,6 +11,23 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function getTodos(){
+    const re = new RegExp('\\/\\/\\sTODO\\s(?<command>.+)')
+    const todoComments = [];
+    for (const file of getFiles()) {
+        for (const line of file.split('\n')) {
+            if (!re.test(line)){
+                continue;
+            }
+
+            const { groups: { command } } = re.exec(line);
+            todoComments.push(command);
+        }
+    }
+
+    return todoComments;
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
