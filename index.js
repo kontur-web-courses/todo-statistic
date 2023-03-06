@@ -34,12 +34,13 @@ function getTodosFromFiles(fileDatas) {
 
 function extractFormattedTodos(todos) {
     const formattedTodos = [];
-    const regex = /(.+?);\s(.+?);\s(.*)/g;
+    const regex = /(.+?); (.*?); (.*)/g;
     todos.forEach(todo => {
         const match = regex.exec(todo);
+        console.log(todo);
         if (match) {
             formattedTodos.push({
-                user: match[1],
+                user: match[1].toLowerCase(),
                 date: match[2],
                 text: match[3]
             });
@@ -70,9 +71,8 @@ function processCommand(command) {
             });
             break;
         }
-        // user {username}
-        case commandName: {
-            const user = args[0];
+        case 'user': {
+            const user = args[0].toLowerCase();
             const todos = getTodosFromFiles(files);
             const formattedTodos = extractFormattedTodos(todos);
             formattedTodos.forEach(todo => {
