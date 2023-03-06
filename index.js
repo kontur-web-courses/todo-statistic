@@ -26,33 +26,62 @@ function getAllTODOs() {
     return TODOs;
 }
 
+function printArrayWithStatement(array, statement) {
+    for (let element of array) {
+        if (statement(element)) {
+            console.log(element);
+        }
+    }
+}
+function importanceComparator(a, b) {
+    let regex = /!/g;
+
+    let aMatch = a.match(regex);
+    if (aMatch === null) aMatch = 0;
+    else aMatch = aMatch.length;
+
+    let bMatch = b.match(regex);
+    if (bMatch === null) bMatch = 0;
+    else bMatch = bMatch.length;
+
+    if (aMatch > bMatch) {
+        return -1;
+    }
+    if (aMatch < bMatch) {
+        return 1;
+    }
+    return 0;
+}
+
 function processCommand(command) {
-    let cmd = command.split(' : ');
-    let operation = cmd[0].split(' ')[0];
-    let parameter = cmd[0].split(' ')[1];
+    let operation = command.split(' ')[0];
+    let parameter = command.split(' ')[1];
     switch (operation) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            for (let TODO of getAllTODOs()) {
-                console.log(TODO);
-            }
+            printArrayWithStatement(getAllTODOs(), () => true);
             break;
         case 'important':
-            for (let TODO of getAllTODOs()) {
-                if (TODO.includes('!')) {
-                    console.log(TODO);
-                }
-            }
+            printArrayWithStatement(getAllTODOs(), (TODO) => TODO.includes('!'));
             break;
         case 'user':
-            for (let TODO of getAllTODOs()) {
-                if (TODO.includes(`// TODO ${parameter}`)) {
-                    console.log(TODO);
-                }
+            printArrayWithStatement(getAllTODOs(),(TODO) => TODO.includes(`// TODO ${parameter}`));
+            break;
+        case 'sort':
+            let TODOs = getAllTODOs();
+            switch (parameter) {
+                case 'importance':
+                    let sortedTODOs = TODOs.sort(importanceComparator);
+                    printArrayWithStatement(sortedTODOs, () => true);
+                    break;
+                default:
+                    console.log('wrong parameter');
+                    break;
             }
             break;
+
         default:
             console.log('wrong command');
             break;
