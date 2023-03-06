@@ -13,7 +13,6 @@ files.forEach((file, number) => {
     });
 })
 
-console.log(todoArray);
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -63,4 +62,24 @@ function sortBy(key)
             console.log('wrong key');
             break;
     }
+}
+
+function getUser(todoStr)
+{
+    if (todoStr.split(';').length !== 3)
+    {
+        return null;
+    }
+    todoStr = todoStr.slice(8);
+    return todoStr.split(';')[0].trim();
+}
+
+function getDate(todoStr)
+{
+    if (todoStr.split(';').length !== 3)
+    {
+        return null;
+    }
+    todoStr = todoStr.slice(8);
+    return Date(todoStr.split(';')[1].trim());
 }
