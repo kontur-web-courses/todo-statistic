@@ -71,8 +71,8 @@ function getTODOs() {
 function getCommentsBeforeDate(date) {
     let res = []
     for (let todo of dateTODOS) {
-        if (todo[3] <= date && todo[0] !== '') {
-            res.push(todo[1]);
+        if (todo[3] > date && todo[0] !== '') {
+            res.push(todo[2]);
         }
     }
     return res;
@@ -137,7 +137,9 @@ function fillUsernameTODOS(){
 function sortUser(){
     for (let key in usernameTODOS) {
         console.log(`${key}:`);
-        console.log(`${usernameTODOS[key]}\n`);
+        for (let value of usernameTODOS[key])
+            console.log(`${value}`);
+        console.log('\n')
     }
 
     for (let key in nonameTODOS) {
