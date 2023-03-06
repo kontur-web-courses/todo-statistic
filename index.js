@@ -41,6 +41,9 @@ function processCommand(command) {
             if (parameter === "date") {
                 console.log(dateTODOS);
             }
+            if (parameter === 'user') {
+                sortUser();
+            }
             break
         case 'exit':
             process.exit(0);
@@ -126,9 +129,16 @@ function fillUsernameTODOS(){
 }
 
 function sortUser(){
-    for (let [key, value] of usernameTODOS) {
-        console.log(key, value)
+    for (let key in usernameTODOS) {
+        console.log(`${key}:`)
+        console.log(`${usernameTODOS[key]}\n`)
     }
-    return 1;
+
+    for (let key in nonameTODOS) {
+        if (usernameTODOS[key] !== undefined){
+            console.log(`${key}:`)
+            console.log(`${usernameTODOS[key]}\n`)
+        }
+    }
 }
 
