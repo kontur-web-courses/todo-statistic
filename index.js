@@ -16,6 +16,9 @@ function processCommand(command) {
         case 'show':
             console.log(TODOs)
             break;
+        case 'important':
+            console.log(getImportantTODOs())
+            break;
         case 'exit':
             process.exit(0);
             break;
@@ -35,6 +38,15 @@ function getTODOs() {
         res = res.concat(ans);
     }
 
+    return res;
+}
+
+function getImportantTODOs(){
+    let res = [];
+    for (let value of TODOs) {
+        if (value.search('!') !== -1)
+            res.push(value);
+    }
     return res;
 }
 
