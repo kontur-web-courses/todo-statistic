@@ -24,37 +24,64 @@ function getAllTodos(fileData) {
     return todos;
 }
 
+function getTodosFromFiles(fileDatas) {
+    const todos = [];
+    fileDatas.forEach(fileData => {
+        todos.push(...getAllTodos(fileData));
+    });
+    return todos;
+}
+
+function extractFormattedTodos(todos) {
+    const formattedTodos = [];
+    const regex = /(.+?);\s(.+?);\s(.*)/g;
+    todos.forEach(todo => {
+        const match = regex.exec(todo);
+        if (match) {
+            formattedTodos.push({
+                user: match[1],
+                date: match[2],
+                text: match[3]
+            });
+        }
+    });
+    return formattedTodos;
+}
+
 function processCommand(command) {
-    switch (command) {
+    const [commandName, ...args] = command.split(' ');
+    switch (commandName) {
         case 'exit':
             process.exit(0);
             break;
-        case 'show':
-            files.forEach(file => {
-                const todos = getAllTodos(file);
-                todos.forEach(todo => console.log(todo));
+        case 'show': {
+            const todos = getTodosFromFiles(files);
+            todos.forEach(todo => {
+                console.log(todo);
             });
             break;
-        case 'important':
-            files.forEach(file => {
-                const todos = getAllTodos(file);
-                todos.forEach(todo => {
-                    if (todo.includes('!')) {
-                        console.log(todo);
-                    }
-                });
+        }
+        case 'important': {
+            const todos = getTodosFromFiles(files);
+            todos.forEach(todo => {
+                if (todo.includes('!')) {
+                    console.log(todo);
+                }
             });
             break;
-        case command.split()[0] === 'user':
-            files.forEach(file => {
-                const todos = getAllTodos(file);
-                todos.forEach(todo => {
-                    if (todo.includes(command.split()[1])) {
-                        console.log(todo);
-                    }
-                });
+        }
+        // user {username}
+        case commandName: {
+            const user = args[0];
+            const todos = getTodosFromFiles(files);
+            const formattedTodos = extractFormattedTodos(todos);
+            formattedTodos.forEach(todo => {
+                if (todo.user === user) {
+                    console.log(todo.text);
+                }
             });
             break;
+        }
 
         default:
             console.log('wrong command');
