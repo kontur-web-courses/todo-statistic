@@ -29,13 +29,20 @@ function processCommand(command) {
             break;
         case 'user':
             let name = arg[1].toLowerCase();
-            let users =findUsers();
-            if (name in users){
-            for (let comment of users[name]){
-                console.log(comment);
-            }}
-            else{
+            let users = findUsers();
+            if (name in users) {
+                for (let comment of users[name]) {
+                    console.log(comment);
+                }
+            } else {
                 console.log("User not find")
+            }
+            break;
+        case 'date':
+            let date = Date.parse(arg[1])
+            let dates = findDates(date);
+            for (let comment of dates) {
+                console.log(comment);
             }
             break;
 
@@ -44,21 +51,40 @@ function processCommand(command) {
             break;
     }
 }
-function findUsers(){
-    let data=show();
-    let users={};
-    for(comment of data){
-        let parseData=comment.split(";")
-        if (parseData.length>2){
-            let user=parseData[0].trim();
-            if (!(user in users)){
-                users[user]=[]
+
+function findDates(date) {
+    let data = show();
+    let comments = [];
+    for (comment of data) {
+        let parseData = comment.split(";")
+        if (parseData.length > 2) {
+            let d = Date.parse(parseData[1].trim());
+            if(d - date>0 )
+            {
+                comments.push(parseData[2].trim())
+            }
+
+        }
+    }
+    return comments;
+}
+
+function findUsers() {
+    let data = show();
+    let users = {};
+    for (comment of data) {
+        let parseData = comment.split(";")
+        if (parseData.length > 2) {
+            let user = parseData[0].trim().toLowerCase();
+            if (!(user in users)) {
+                users[user] = []
             }
             users[user].push(parseData[2].trim())
         }
     }
     return users;
 }
+
 function show() {
     let todoLines = [];
     for (let file of files) {
