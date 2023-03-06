@@ -11,7 +11,38 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
-// TODO pe; 2015-08-10; почему кодировка только utf?'
+function countExclamationMarks(str) {
+    let count = 0;
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] === '!') {
+            count++;
+        }
+    }
+    return count;
+}
+
+function exclamationMarksCompare(a, b) {
+    const countA = countExclamationMarks(a);
+    const countB = countExclamationMarks(b);
+    return countB - countA;
+}
+
+function dateCompare(a, b) {
+    let todoSplitA = a.split(';', 3);
+    let todoSplitB = b.split(';', 3);
+
+    if (todoSplitA.length !== 3) {
+        return 1;
+    }
+    if (todoSplitB.length !== 3) {
+        return -1;
+    }
+    s
+    let dateA = new Date(todoSplitA[1].trim());
+    let dateB = new Date(todoSplitB[1].trim());
+    return dateA - dateB;
+}
+
 function processCommand(command) {
     let commandSplit = command.split(' ');
     let name = ''
@@ -21,7 +52,16 @@ function processCommand(command) {
     }
     switch (command) {
         case 'sort':
+            let todo = parseToDo();
             switch (name) {
+                case "importance":
+                    todo.sort((a, b) => exclamationMarksCompare(a, b));
+                    console.log(todo);
+                    break;
+                case "date":
+                    todo.sort((a, b) => dateCompare(a, b))
+                    console.log(todo)
+                    break;
                 case 'user':
                     let users_and_comments = {};
                     let anon = [];
@@ -69,7 +109,7 @@ function processCommand(command) {
             break;
         case 'show':
             console.log(parseToDo());
-            break
+            break;
         case 'important':
             for (const todo of parseToDo()) {
                 if (todo.indexOf('!') !== -1)
