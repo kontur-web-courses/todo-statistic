@@ -21,6 +21,9 @@ function processCommand(command) {
             for (let todo of mas) {
                 console.log(todo);
             }
+        case 'important':
+            process.exit(0);
+            break;
         default:
             console.log('wrong command');
             break;
@@ -42,3 +45,10 @@ function show() {
 
 
 // TODO you can do it!
+function showImportant() {
+    for (let line of TodoLines) {
+        if(line.includes('!')){
+            console.log(line);
+        }
+    }
+}
