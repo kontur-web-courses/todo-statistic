@@ -27,6 +27,17 @@ function processCommand(command) {
         case 'user':
             console.log(a(f(getFiles()), name))
             break;
+        case 'sort':
+            if (name === "importance") {
+                console.log(getImportantFirst(f(getFiles())));
+            }
+            else if (name === "user"){
+                console.log(getGroupByUsers(f(getFiles())));
+            }
+            else if(name === "date"){
+                console.log(getNewestDates(f(getFiles())));
+            }
+            break;
         default:
             console.log('wrong command');
             break;
@@ -37,18 +48,18 @@ function processCommand(command) {
 function f(files) {
     let arr = []
     for (let str of files) {
-        for (let s of str.split('\r\n')){
-            if (s.indexOf("// TODO")!== -1) {
-                 arr.push(s.slice(s.indexOf("// TODO")));
+        for (let s of str.split('\r\n')) {
+            if (s.indexOf("// TODO") !== -1) {
+                arr.push(s.slice(s.indexOf("// TODO")));
             }
         }
     }
-    return arr.slice(0, arr.length-2);
+    return arr.slice(0, arr.length - 2);
 }
 
-function exclamationPoint(str){
+function exclamationPoint(str) {
     let arr = [];
-    for (let s of str){
+    for (let s of str) {
         if (s.includes("!")) arr.push(s);
     }
     return arr;
@@ -56,14 +67,31 @@ function exclamationPoint(str){
 
 function a(str, name) {
     let arr = [];
-    for (let s of str){
+    for (let s of str) {
         s = s.toLowerCase();
-        if (s.includes(';')){
+        if (s.includes(';')) {
             b = s.split(";");
-            if (s.includes(name.toLowerCase())){
+            if (s.includes(name.toLowerCase())) {
                 arr.push(b[2]);
             }
         }
     }
+    return arr;
+}
+
+function getImportantFirst(arr){
+    let mp = new Map();
+    for (const str of arr) {
+        let count = (str.match(/!/g) || []).length;
+        mp.set(str, count);
+    }
+    return new Map([...mp].sort((a, b) => b[1] - a[1])).keys();
+}
+
+function getGroupByUsers(arr){
+    return arr;
+}
+
+function getNewestDates(arr){
     return arr;
 }
