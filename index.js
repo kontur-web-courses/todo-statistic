@@ -39,6 +39,15 @@ function processCommand(command) {
                 }
             );
             break;
+        case "user":
+            todos.forEach(
+                function (todo) {
+                    if (todo.user === cmd[1]) {
+                        console.log(todo.value);
+                    }
+                }
+            );
+            break;
         case "sort":
             todos.sort(sortComps.get(cmd[1]))
             todos.forEach(
