@@ -70,7 +70,7 @@ function getTODOs() {
 function getCommentsBeforeDate(date) {
     let res = []
     for (let todo of dateTODOS) {
-        if (todo[3] <= date && date[0] != '') {
+        if (todo[3] <= date && todo[0] !== '') {
             res.push(todo[1]);
         }
     }
@@ -87,7 +87,7 @@ function getDateTODOs() {
             date.push([commentDate, comment, todo, new Date(commentDate)]);
         }
         else {
-            date.push(['', '', todo, new Date(0)])
+            date.push(['', todo.split('TODO')[1].trim(), todo, new Date(0)])
         }
     }
     date.sort((a, b) => b[3] - a[3])
@@ -144,4 +144,4 @@ function sortUser(){
         }
     }
 }
-
+// TODO kopter; 2016; добавить!
