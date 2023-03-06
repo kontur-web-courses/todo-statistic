@@ -24,6 +24,9 @@ function processCommand(command) {
         case 'important':
             console.log(getImportant())
             break;
+        case 'show : показать все todo':
+            todoArray.map(t => console.log(t))
+            break;
         default:
             console.log('wrong command');
             break;
