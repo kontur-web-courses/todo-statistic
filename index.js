@@ -12,14 +12,18 @@ function getFiles() {
 }
 
 function getToDo(){
-    const pattern = new RegExp(/(\/\/ TODO .*)/)
+    const pattern = new RegExp(/\/\/ TODO .*/)
     let files = getFiles();
     let result = [];
     for(let file of files){
-        result.push(file.match(pattern));
+        for(let line of file.split("\n")){
+            let matching = line.match(pattern);
+            if(matching !== null)
+                result.push(matching[0]);
+        }
     }
-    console.log(result);
 
+    return result;
 }
 
 function processCommand(command) {
