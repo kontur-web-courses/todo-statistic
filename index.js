@@ -71,8 +71,6 @@ function processCommand(command) {
             console.log(getToDo());
             break;
         case 'important':
-            break;
-        case 'important':
             console.log(parseToDo(getToDo()).filter(x=>x.at(-1)).map(x=>x.at(0)));
             break;
         case 'user':
