@@ -24,19 +24,36 @@ function* iterTodos() {
     }
 }
 
+function parseTODO(todo){
+
+    let reg = /\/\/ TODO (?<user>.*); ?(?<date>.*); ?(?<text>.*)/
+    if(!reg.test(todo))
+        return {};
+    return todo.match(reg).groups;
+}
+
 function processCommand(command) {
-    switch (command) {
-        case 'exit':
+    switch (true) {
+        case 'exit' === command:
             process.exit(0);
             break;
-        case 'show':
+        case 'show' === command:
             for (let todo of iterTodos()) {
                 console.log(todo);
             }
             break;
-        case 'important':
+        case 'important' === command:
             for (let todo of iterTodos()) {
                 if (todo.includes('!')) {
+                    console.log(todo);
+                }
+            }
+            break;
+        case /user (\w+)/.test(command):
+            const findUser = command.match(/user (\w+)/)[1]
+            for (let todo of iterTodos()) {
+                let {user, date, text} = parseTODO(todo);
+                if (user?.toLowerCase() === findUser.toLowerCase()) {
                     console.log(todo);
                 }
             }
