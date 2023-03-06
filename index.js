@@ -9,7 +9,7 @@ function todo(strings){
     for(let str of strings){
         let todo = str.match(regex);
         if(todo)
-            result.push(todo);
+            result.push(todo[0]);
     }
     return result;
 }
@@ -30,7 +30,14 @@ function processCommand(command) {
             break;
         case 'show':
             for(let i of t){
-                console.log(i[0]);
+                console.log(i);
+            }
+            break;
+        case 'important':
+            for (let i of t) {
+                if (i.at(-1) === '!') {
+                    console.log(i);
+                }
             }
             break;
         default:
