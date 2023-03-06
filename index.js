@@ -3,7 +3,7 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 
-const groupBy = (arr, fn) =>
+const groupBy = (arr, fn) => //;;
     arr
         .map(typeof fn === 'function' ? fn : val => val[fn])
         .reduce((acc, val, i) => {
