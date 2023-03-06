@@ -12,7 +12,9 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let command_name = command.split(' ')[0];
+    let args = command.split(' ').slice(1);
+    switch (command_name) {
         case 'exit':
             process.exit(0);
             break;
@@ -21,6 +23,10 @@ function processCommand(command) {
             break;
         case 'important':
             important();
+            break;
+        case 'sort':
+            console.log(args[0])
+            sort(args[0]);
             break;
         default:
             console.log('wrong command');
@@ -42,4 +48,24 @@ function important() {
     }, []).forEach(x => console.log(x));
 }
 
+
+function sort(arg) {
+    let list = getFiles();
+    if (arg === 'importance') {
+        important();
+        list.map(x => x.match(/\/\/ TODO[^!\r\n]+\r/g)).reduce(function (a, b) {
+            return b === null ? a : a.concat(b);
+        }, []).forEach(x => console.log(x));
+        console.log(list.map(x => x.match(/\/\/ TODO.*[^!]+.*/g)))
+    }
+
+    // if (arg === 'date') {
+    //     important();
+    //     list.map(x => x.match(/\/\/ TODO.*[^!]+.*/g)).reduce(function (a, b) {
+    //         return b === null ? a : a.concat(b);
+    //     }, []).forEach(x => console.log(x));
+    // }
+}
+
 // TODO you can do it!
+// sort importance
