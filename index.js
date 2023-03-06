@@ -8,7 +8,6 @@ readLine(processCommand);
 
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
-    console.log(filePaths);
     return filePaths.map(path => readFile(path));
 }
 
@@ -39,7 +38,7 @@ function extractFormattedTodos(todos) {
         if (user && date && text) {
             formattedTodos.push({
                 user: user.trim().toLowerCase(),
-                date: Date.parse(date.trim()),
+                date: new Date(date.trim()),
                 text: text.trim()
             });
         } else {
@@ -59,22 +58,46 @@ function readFormattedTodos(files) {
 }
 
 function printFormattedTodos(todos) {
-    const maxUserLength = todos.reduce((max, todo) => {
+    const withFormattedDate = todos.map(todo => {
+        if (todo.date) {
+            return {
+                ...todo,
+                date: new Date(todo.date).toISOString().slice(0, 10)
+            };
+        }
+        else {
+            return {
+                ...todo,
+                date: ''
+            };
+        }
+    })
+    const maxUserLength = withFormattedDate.reduce((max, todo) => {
         return Math.max(max, todo.user ? todo.user.length : 0);
-    }, 0);
-    const maxDateLength = todos.reduce((max, todo) => {
-        return Math.max(max, todo.date ? todo.date.toString().length : 0);
-    }, 0);
+    }, 4);
+    const maxDateLength = withFormattedDate.reduce((max, todo) => {
+        return Math.max(max, todo.date.length);
+    }, 4);
+    let maxTextLength = withFormattedDate.reduce((max, todo) => {
+        return Math.max(max, todo.text.length);
+    }, 6);
+    if (maxTextLength > 50) {
+        maxTextLength = 50;
+    }
 
-    todos.forEach(todo => {
+    const header = ` ! | user${' '.repeat(maxUserLength - 4)} | date${' '.repeat(maxDateLength - 4)} | comment`;
+    console.log(header);
+    console.log('-'.repeat(header.length + maxTextLength - 'comment'.length + 1));
+
+    withFormattedDate.forEach(todo => {
         const user = todo.user || '';
-        const date = todo.date || '';
         let text = todo.text;
         const importance = todo.text.includes('!') ? '!' : ' ';
         if (text.length > 50) {
             text = text.slice(0, 50 - 3) + '...';
         }
-        console.log(`${importance} | ${user.padEnd(maxUserLength)} | ${date.toString().padEnd(maxDateLength)} | ${text}`);
+
+        console.log(` ${importance} | ${user.padEnd(maxUserLength)} | ${todo.date.padEnd(maxDateLength)} | ${text}`);
     });
 }
 
@@ -127,29 +150,37 @@ function processCommand(command) {
                         }
                     });
 
-                    const combined = [];
+                    let combined = [];
                     Object.keys(userGroups).forEach(user => {
-                        combined.concat(userGroups[user]);
+                        combined = combined.concat(userGroups[user]);
                     });
-                    combined.concat(unnamed);
-
-                    printFormattedTodos(combined);
+                    printFormattedTodos(combined.concat(unnamed));
                     break;
                 }
                 case 'date': {
-                    const todos = getTodosFromFiles(files);
-                    const formattedTodos = extractFormattedTodos(todos);
-                    formattedTodos.sort().forEach(todo => {
-                        console.log(todo.text);
+                    const todos = readFormattedTodos(files);
+                    // Sort todos by date
+                    const sorted = todos.sort((a, b) => {
+                        if (!a.date && !b.date) {
+                            return 0;
+                        }
+                        if (!a.date) {
+                            return 1;
+                        }
+                        if (!b.date) {
+                            return -1;
+                        }
+                        return b.date - a.date;
                     });
+
+                    printFormattedTodos(sorted);
                     break;
                 }
             }
             break;
         }
         case 'date': {
-            // date format: yyyy[-mm[-dd]]
-            const date = Date.parse(args);
+            const date = new Date(args);
             const todos = readFormattedTodos(files);
             const afterDateTodos = todos.filter(todo => todo.date && todo.date >= date);
             printFormattedTodos(afterDateTodos);
