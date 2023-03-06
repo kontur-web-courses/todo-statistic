@@ -11,6 +11,7 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+// TODO pe; 2015-08-10; почему кодировка только utf?'
 function processCommand(command) {
     let commandSplit = command.split(' ');
     let name = ''
@@ -19,6 +20,37 @@ function processCommand(command) {
         name = commandSplit[1]
     }
     switch (command) {
+        case 'sort':
+            switch (name) {
+                case 'user':
+                    let users_and_comments = {};
+                    let anon = [];
+                    let info = parseToDo();
+                    for (const todo of info) {
+                        let todoSplit = todo.split(';', 3);
+
+                        if (todoSplit.length !== 3)
+                            continue;
+
+                        let user = todoSplit[0].slice(todoSplit[0].indexOf('TODO ') + 5)
+                        let comment = todoSplit[2].trim();
+                        if (user === 'Anonymous Developer')
+                        {
+                            anon.push(comment)
+                            continue;
+                        }
+
+                        if (!users_and_comments[user]) {
+                            users_and_comments[user] = [];
+                        }
+                        users_and_comments[user].push(comment);
+                    }
+                    users_and_comments['Anonymous Developer'] = anon;
+                    console.log(users_and_comments);
+                    break;
+                default:
+                    console.log('wrong command');
+            }
         case 'user':
             for (const todo of parseToDo()) {
                 let todoSplit = todo.split(';', 3);
@@ -26,7 +58,7 @@ function processCommand(command) {
                 if (todoSplit.length !== 3)
                     continue;
 
-                let user = todoSplit[0].split(' ')[2];
+                let user = todoSplit[0].slice(todoSplit[0].indexOf('TODO ') + 5)
                 let date = todoSplit[1].trim();
                 let comment = todoSplit[2];
 
@@ -37,7 +69,7 @@ function processCommand(command) {
             break;
         case 'show':
             console.log(parseToDo());
-            break;
+            break
         case 'important':
             for (const todo of parseToDo()) {
                 if (todo.indexOf('!') !== -1)
