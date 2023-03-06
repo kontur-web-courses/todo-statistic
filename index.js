@@ -5,6 +5,7 @@ const files = getFiles();
 let TODOs = getTODOs();
 let usernameTODOS = {};
 let nonameTODOS = {};
+let dateTODOS = getDateTODOs()
 nonameTODOS['no name'] = []
 fillUsernameTODOS();
 console.log('Please, write your command!');
@@ -31,9 +32,14 @@ function processCommand(command) {
             let userTODOs = getUserTODOs(parameter);
             console.log(userTODOs);
             break;
+        case 'date':
+            console.log(getCommentsBeforeDate(Date.parse(parameter)))
         case 'sort':
             if (parameter === 'importance') {
                 console.log(getImportantTODOs());
+            }
+            if (parameter === "date") {
+                console.log(dateTODOS);
             }
             break
         case 'exit':
@@ -56,6 +62,30 @@ function getTODOs() {
     }
 
     return res;
+}
+
+function getCommentsBeforeDate(date) {
+    let res = []
+    for (let todo of dateTODOS) {
+        if (todo[0] <= date) {
+            res.push(todo[1]);
+        }
+    }
+    return res;
+}
+
+function getDateTODOs() {
+    let date = [];
+    for (let todo of TODOs) {
+        let data = todo.split(';');
+        if (data.length > 1) {
+            let commentDate = data[1];
+            let comment = data[2];
+            date.push([commentDate, comment]);
+        }
+    }
+    date.sort((a, b) => new Date(b.date) - new Date(a.date))
+    return date;
 }
 
 function getImportantTODOs(){
