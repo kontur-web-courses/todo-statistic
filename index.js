@@ -94,7 +94,7 @@ function processCommand(command) {
             break;
         }
         case 'sort': {
-            const sort_type = args[0].toLowerCase();
+            const sort_type = args.toLowerCase();
             switch (sort_type) {
                 case 'importance': {
                     const todos = getTodosFromFiles(files);
@@ -109,6 +109,7 @@ function processCommand(command) {
                             console.log(todo.text);
                         }
                     });
+                    break;
                 }
                 case 'user': {
                     const todos = getTodosFromFiles(files);
@@ -120,17 +121,17 @@ function processCommand(command) {
                             console.log(todo.text);
                         })
                     });
+                    break;
                 }
                 case 'date': {
                     const todos = getTodosFromFiles(files);
                     const formattedTodos = extractFormattedTodos(todos);
                     const groupByDate = groupBy("date");
                     const groups = groupByDate(formattedTodos);
-                    groups.forEach(group => {
-                        group.forEach(todo => {
+                    formattedTodos.sort().forEach(todo => {
                             console.log(todo.text);
-                        })
                     });
+                    break;
                 }
 
             }
