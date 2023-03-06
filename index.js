@@ -17,6 +17,8 @@ function todo(strings){
         let name = str.match(namedTodoRegex);
         if (name) {
             let obj = name.groups;
+            obj.name = obj.name.toLowerCase();
+            obj.date = new Date(obj.date);
             namedTodoes.push(obj);
         }
     }
@@ -54,7 +56,7 @@ function processCommand(command) {
             let userName = command.match(userNameRegex).groups.name.toLowerCase();
             for (let i of namedTodoes) {
                 if (i.name.toLowerCase() === userName) {
-                    console.log(i.comment);
+                    console.log(i.date.toDateString() + '; ' + i.comment);
                 }
             }
             break;
@@ -66,7 +68,7 @@ function processCommand(command) {
                     if (!dict.has(i.name)) {
                         dict.set(i.name, [])
                     }
-                    let comment = i.date + '; ' + i.comment;
+                    let comment = i.date.toDateString() + '; ' + i.comment;
                     let oldValue = dict.get(i.name);
                     oldValue.push(comment);
                     dict.set(i.name, oldValue);
@@ -77,6 +79,23 @@ function processCommand(command) {
                     for (let value of values) {
                         console.log(value);
                     }
+                }
+            }
+
+            if (order === 'date') {
+                let sorted = namedTodoes.sort(function(a,b) {
+                    return new Date(b.date) - new Date(a.date);
+                });
+                for (let i of sorted) {
+                    let comment = i.name + '; ' + i.date.toDateString() + '; ' + i.comment;
+                    console.log(comment);
+                }
+            }
+
+            if (order === 'importance') {
+                allTodoes.sort((a, b) => b.split('!').length - a.split('!').length);
+                for(let i of allTodoes){
+                    console.log(i);
                 }
             }
 
