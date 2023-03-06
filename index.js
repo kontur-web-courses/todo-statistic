@@ -55,6 +55,12 @@ function getToDo(){
     return result;
 }
 
+function compareDate(a, b) {
+    if (a > b) return -1;
+    if (a === b) return 0;
+    if (a < b) return 1;
+}
+
 function processCommand(command) {
     switch (command.split(' ').at(0)) {
         case 'exit':
@@ -72,7 +78,6 @@ function processCommand(command) {
         case 'date':
             console.log(parseToDo(getToDo()).filter(x=>x.at(2) != null && x.at(2) < new Date(command.split(' ').at(1))).map(x=>x.at(0)));
             break;
-            break;
         case 'sort':
             switch (command.split(' ').at(1)){
                 case 'importance':
@@ -80,6 +85,8 @@ function processCommand(command) {
                     break;
                 case 'user':
                     console.log(parseToDo(getToDo()).sort(x => x.at(1) !== null).map(x => x.at(0)));
+                case 'date':
+                    console.log(parseToDo(getToDo()).sort((x, y) => compareDate(x.at(2), y.at(2))).map(x => x.at(0)));
                 default:
                     console.log('wrong parameter');
                     break;
