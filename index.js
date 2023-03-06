@@ -45,6 +45,17 @@ function processCommand(command) {
                 });
             });
             break;
+        case command.split()[0] === 'user':
+            files.forEach(file => {
+                const todos = getAllTodos(file);
+                todos.forEach(todo => {
+                    if (todo.includes(command.split()[1])) {
+                        console.log(todo);
+                    }
+                });
+            });
+            break;
+
         default:
             console.log('wrong command');
             break;
