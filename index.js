@@ -50,10 +50,19 @@ function processCommand(command) {
             }
             break;
         case /user (\w+)/.test(command):
-            const findUser = command.match(/user (\w+)/)[1]
+            const inputUser = command.match(/user (\w+)/)[1]
             for (let todo of iterTodos()) {
                 let {user, date, text} = parseTODO(todo);
-                if (user?.toLowerCase() === findUser.toLowerCase()) {
+                if (user?.toLowerCase() === inputUser.toLowerCase()) {
+                    console.log(todo);
+                }
+            }
+            break;
+        case /date (.*)/.test(command):
+            const inputDate = new Date(command.match(/date (.*)/)[1])
+            for (let todo of iterTodos()) {
+                let {user, date, text} = parseTODO(todo);
+                if (new Date(date) >= inputDate) {
                     console.log(todo);
                 }
             }
@@ -65,3 +74,5 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+// TODO abc; 2018-03-02; asd
+// TODO abc; 2018-03-01; asd
