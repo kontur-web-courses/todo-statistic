@@ -14,7 +14,7 @@ function getFiles() {
 function getTodos() {
     const re = new RegExp('\\/\\/\\sTODO\\s(?<command>.+)')
     const todoComments = [];
-    for (const file of getFiles()) {
+    for (const file of files) {
         for (const line of file.split('\n')) {
             if (!re.test(line)){
                 continue;
@@ -47,7 +47,7 @@ function getFormatted() {
             continue;
         }
         const { groups } = re.exec(comment);
-        const obj = new {
+        const obj = {
             groups: groups,
             comment: comment
         }
@@ -58,15 +58,30 @@ function getFormatted() {
 
 function getTodosByUser(userName) {
     return getFormatted()
-        .filter(o => o.groups.name === userName)
+        .filter(o => o.groups.name.toLowerCase() === userName.toLowerCase())
         .map(o => o.comment);
 }
 
+
 function processCommand(command) {
-    switch (command) {
+    const args = command.split(' ');
+    switch (args[0]) {
+        case 'user':
+            console.log(getTodosByUser(args[1]));
+            break;
+
+        case 'important':
+            console.log(getImportant());
+            break;
+
+        case 'show':
+            console.log(getTodos());
+            break;
+
         case 'exit':
             process.exit(0);
             break;
+
         default:
             console.log('wrong command');
             break;
