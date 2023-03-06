@@ -37,6 +37,33 @@ function getDate(str) {
              else return null;
 }
 
+function sortByImportance() {
+    const result = getAllToDo().sort(importanceComparer);
+    return result;
+}
+
+function importanceComparer(first, second) {
+    const inFirst = (first.match(/!/g) || []).length;
+    const inSecond = (second.match(/!/g) || []).length;
+
+    return inSecond - inFirst;
+}
+
+function sortByUser() {
+    const todos = getAllToDo();
+    const hasUser = todos.filter(a => textHasUser(a));
+    const hasNoUser = todos.filter(a => !textHasUser(a));
+    hasUser.sort();
+
+    return hasUser.concat(hasNoUser);
+}
+
+function textHasUser(text) {
+    const parts = text.split(" ");
+
+    return (isNaN(+parts[2][0])) && (parts[2].endsWith(';'));
+}
+
 
 function processCommand(command) {
     const args = command.split(' ');
@@ -55,6 +82,19 @@ function processCommand(command) {
             break;
         case 'importance':
             getAllToDo().filter((v, i, a) => v.includes('!')).map((value) => console.log(value));
+            break;
+        case 'sort':
+            switch (args[1]) {
+                case 'importance':
+                    console.log(sortByImportance());
+                    break;
+                case 'user':
+                    console.log(sortByUser());
+                    break;
+                default:
+                    console.log('ahaha');
+                    break;
+            }
             break;
         case 'sort':
             switch (args[1]) {
