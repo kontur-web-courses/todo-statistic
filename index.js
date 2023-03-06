@@ -64,6 +64,19 @@ function processCommand(command) {
             console.log(parseToDo(getToDo()).filter(x=>x.at(-1)).map(x=>x.at(0)));
             break;
         case 'user':
+            break;
+        case 'sort':
+            switch (command.split(' ').at(1)){
+                case 'importance':
+                    console.log(parseToDo(getToDo()).sort(x => -x.at(-1)).map(x => x.at(0)));
+                    break;
+                case 'user':
+                    console.log(parseToDo(getToDo()).sort(x => x.at(1) !== null).map(x => x.at(0)));
+                default:
+                    console.log('wrong parameter');
+                    break;
+            }
+            break;
         default:
             console.log('wrong command');
             break;
