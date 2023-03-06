@@ -12,7 +12,8 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    const [action, parametr] = command.split(" ");
+    const [action, ...parametrs] = command.split(" ");
+    const argument = parametrs.join(" ").toLowerCase();
     switch (action) {
         case 'exit':
             process.exit(0);
@@ -23,9 +24,18 @@ function processCommand(command) {
                 console.log(str);
             }
             break;
+        case 'important':
+            const importantArr = getLinesWithExclamation(getAllTodo(files));
+            for (str of importantArr) {
+                console.log(str);
+            }
+            break;
         case 'name':
-            const todoArr = getAllTodo(getFiles());
-
+            const nameArr = getNameTodo(getAllTodo(files), argument);
+            for (str of nameArr) {
+                console.log(str);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
@@ -34,8 +44,8 @@ function processCommand(command) {
 
 function getAllTodo(files) {
     const todo = [];
-    for (file of files) {
-        for (str of file.split('\n')) {
+    for (const file of files) {
+        for (const str of file.split('\n')) {
             if (/^\/\/ TODO /.test(str.trim())) {
                 todo.push(str.trim());
             }
@@ -43,7 +53,6 @@ function getAllTodo(files) {
     }
     return todo;
 }
-
 
 function getLinesWithExclamation(arr) {
     filteredArr = [];
@@ -60,4 +69,14 @@ function getLinesWithExclamation(arr) {
         }
     }
     return filteredArr;
+}
+
+function getNameTodo(arr, name) {
+    const todoName = [];
+    for (el of arr) {
+        if ("// todo " + name === el.split(";")[0].toLowerCase()) {
+            todoName.push(el);
+        }
+    }
+    return todoName;
 }
