@@ -48,14 +48,6 @@ function getUserTodos() {
     return usersTodos;
 }
 
-<<<<<<< HEAD
-=======
-function sortByDate() {
-    let userTodos = sortByValue(getUserTodos);
-    return userTodos.sort((a, b) => new Date(a.split(';')[1]) - new Date(b.split(';')[1]))
-}
-
->>>>>>> 89965087fddf6f9c76e5e0d6a661b88cbc38eef7
 function getSort(arg) {
     switch (arg) {
         case 'importance':
@@ -85,14 +77,12 @@ function sortByValue(func) {
     return todosByValue;
 }
 
-<<<<<<< HEAD
-
 function sortByDate() {
     let userTodos = sortByValue(getUserTodos);
     return userTodos.sort((a, b) => new Date(a.split(';')[1]) - new Date(b.split(';')[1]))
 }
 
-function makeTable(todosList){
+function makeTable(todosList) {
     console.log(`  !  |  ${'user'.padEnd(10)}  |  ${'date'.padEnd(10)}  | comment`);
     console.log(`${'-'.repeat(86)}`)
     for (let line of todosList) {
@@ -110,43 +100,39 @@ function makeTable(todosList){
         let commentToWrite = comment.length <= 50 ? comment.padEnd(50) : (comment.substring(0, 46) + '...').padEnd(50);
         console.log(`  ${isImportant ? "! " : "  "} |  ${userToWrite}  |  ${date}  |  ${commentToWrite}`);
     }
-=======
-function getTodosAfterDate(date) {
-    let todosByTime = sortByDate();
-    return todosByTime.filter(a => date < new Date(a.split(';')[1]))
->>>>>>> 89965087fddf6f9c76e5e0d6a661b88cbc38eef7
 }
 
-function processCommand(command) {
-    let splitedCommand = command.split(' ');
-    switch (splitedCommand[0]) {
-        case 'date':
-            let date = new Date(splitedCommand[1]);
-            console.log(getTodosAfterDate(date))
-            break;
-        case 'sort':
-            let arg = splitedCommand[1];
-            makeTable(getSort(arg));
-            break;
-        case 'user':
-            let user = splitedCommand[1].toLowerCase();
-<<<<<<< HEAD
-            makeTable(getUserTodos()[user])
-=======
-            console.log(getUserTodos()[user])
->>>>>>> 89965087fddf6f9c76e5e0d6a661b88cbc38eef7
-            break;
-        case 'important':
-            makeTable(getImportant());
-            break;
-        case 'show':
-            makeTable(getAllTodos());
-            break;
-        case 'exit':
-            process.exit(0);
-            break;
-        default:
-            console.log('wrong command');
-            break;
+    function getTodosAfterDate(date) {
+        let todosByTime = sortByDate();
+        return todosByTime.filter(a => date < new Date(a.split(';')[1]))
     }
+
+    function processCommand(command) {
+        let splitedCommand = command.split(' ');
+        switch (splitedCommand[0]) {
+            case 'date':
+                let date = new Date(splitedCommand[1]);
+                makeTable(getTodosAfterDate(date))
+                break;
+            case 'sort':
+                let arg = splitedCommand[1];
+                makeTable(getSort(arg));
+                break;
+            case 'user':
+                let user = splitedCommand[1].toLowerCase();
+                makeTable(getUserTodos()[user])
+                break;
+            case 'important':
+                makeTable(getImportant());
+                break;
+            case 'show':
+                makeTable(getAllTodos());
+                break;
+            case 'exit':
+                process.exit(0);
+                break;
+            default:
+                console.log('wrong command');
+                break;
+        }
 }
