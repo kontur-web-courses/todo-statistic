@@ -70,7 +70,7 @@ function a(str, name) {
     for (let s of str) {
         s = s.toLowerCase();
         if (s.includes(';')) {
-            b = s.split(";");
+            let b = s.split(";");
             if (s.includes(name.toLowerCase())) {
                 arr.push(b[2]);
             }
@@ -122,5 +122,23 @@ function getGroupByUsers(arr){
 }
 
 function getNewestDates(arr){
-    return arr;
+    let ar = [];
+    for (let str of arr) {
+        if (str.includes('-')){
+            let date = str.slice(str.indexOf('-') - 4, str.indexOf('-') + 6);
+            ar.push(date);
+        }
+    }
+    let arrDateRes = [];
+    let mapDate =  ar.sort();
+    for (let mapDateElement of mapDate) {
+        for (let arrElement of arr) {
+            if (arrElement.includes(mapDateElement)) arrDateRes.push(arrElement)
+        }
+    }
+    for (let arrElement of arr) {
+        if (arrDateRes.includes(arrElement)) continue;
+        else arrDateRes.push(arrElement);
+    }
+    return arrDateRes;
 }
