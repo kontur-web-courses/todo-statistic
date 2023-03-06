@@ -139,7 +139,10 @@ function processCommand(command) {
                 case 'date': {
                     const groupByDate = groupBy("date");
                     const groups = groupByDate(formattedTodos);
-                    console.log(groups);
+                    formattedTodos.sort().forEach(todo => {
+                            console.log(todo.text);
+                    });
+                    break;
                 }
             }
             break;
