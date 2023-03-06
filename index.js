@@ -1,3 +1,8 @@
+// magic from stackoverflow
+function measureImportance(str) {
+    return (str.match(/!/g) || []).length
+}
+
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
@@ -11,10 +16,93 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function getTODOs(text){
+    const reg = RegExp(/\/\/ ?TODO ?:? ?.*$/, "gmi")
+    return text.match(reg)
+}
+
+function* iterTodos() {
+    for (let fileContent of getFiles()){
+        for (const v of getTODOs(fileContent)) {
+            yield v;
+        }
+    }
+}
+
+function isImportant(todo) {
+    return todo.includes('!');
+}
+
+function parseTODO(todo){
+
+    let reg = /\/\/ ?TODO ?:? ?(?<user>.*); ?(?<date>.*); ?(?<text>.*)/i
+    if(!reg.test(todo))
+        return {};
+    return todo.match(reg).groups;
+}
+
 function processCommand(command) {
-    switch (command) {
-        case 'exit':
+    switch (true) {
+        case 'exit' === command:
             process.exit(0);
+            break;
+        case 'show' === command:
+            for (let todo of iterTodos()) {
+                console.log(todo);
+            }
+            break;
+        case 'important' === command:
+            for (let todo of iterTodos()) {
+                if (isImportant(todo)) {
+                    console.log(todo);
+                }
+            }
+            break;
+        case /user (\w+)/.test(command):
+            const inputUser = command.match(/user (\w+)/)[1]
+            for (let todo of iterTodos()) {
+                let {user} = parseTODO(todo);
+                if (user?.toLowerCase() === inputUser.toLowerCase()) {
+                    console.log(todo);
+                }
+            }
+            break;
+        case /date (.*)/.test(command):
+            const inputDate = new Date(command.match(/date (.*)/)[1])
+            for (let todo of iterTodos()) {
+                let {date} = parseTODO(todo);
+                if (new Date(date) >= inputDate) {
+                    console.log(todo);
+                }
+            }
+            break;
+        case /sort (\w+)/.test(command):
+            const sortArgument = command.match(/sort (\w+)/)[1];
+            switch (sortArgument){
+                case "importance":
+                    for (let todo of Array.from(iterTodos())
+                        .sort((text1, text2) => measureImportance(text2) - measureImportance(text1))) {
+                        console.log(todo)
+                    }
+                    break;
+                case "user":
+                    for (let todo of Array.from(iterTodos())
+                        .map((item) => [parseTODO(item).user, item])
+                        .sort((text1, text2) => text1[0]?.localeCompare(text2[0]))
+                        .map((item) => item[1])) {
+                        console.log(todo)
+                    }
+                    break;
+                case "date":
+                    for (let todo of Array.from(iterTodos())
+                        .map((item) => [parseTODO(item).date, item])
+                        .sort((text1, text2) => new Date(text2[0]) - new Date(text1[0]))
+                        .map((item) => item[1])) {
+                        console.log(todo)
+                    }
+                    break;
+            }
+
             break;
         default:
             console.log('wrong command');
@@ -23,3 +111,6 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+// TODO abc; 2018-03-02; asd
+// TODO abc; 2018-03-01; asd
+//toDO: abc; 2018-03-01; asd

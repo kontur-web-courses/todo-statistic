@@ -1,0 +1,28 @@
+Index: index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');\r\nconst {readLine} = require('./console');\r\n\r\nconst files = getFiles();\r\n\r\nconsole.log('Please, write your command!');\r\nreadLine(processCommand);\r\n\r\nfunction getFiles() {\r\n    const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');\r\n    return filePaths.map(path => readFile(path));\r\n}\r\n\r\nfunction getTODOs(text){\r\n    const reg = RegExp(/\\/\\/ TODO .*$/, \"gm\")\r\n    return text.match(reg)\r\n}\r\n\r\nfunction processCommand(command) {\r\n    switch (command) {\r\n        case 'exit':\r\n            process.exit(0);\r\n            break;\r\n        case 'show':\r\n            getFiles().forEach((value, index, arr) => {\r\n                for (const v of getTODOs(value)) {\r\n                    console.log(v);\r\n                }\r\n            })\r\n            break;\r\n        default:\r\n            console.log('wrong command');\r\n            break;\r\n    }\r\n}\r\n\r\n// TODO you can do it!\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/index.js b/index.js
+--- a/index.js	(revision a509c0234ae694162ea2e46dfd9e2b3dc8a7669f)
++++ b/index.js	(date 1678106582155)
+@@ -16,6 +16,8 @@
+     return text.match(reg)
+ }
+ 
++
++
+ function processCommand(command) {
+     switch (command) {
+         case 'exit':
+@@ -27,6 +29,8 @@
+                     console.log(v);
+                 }
+             })
++            break;
++        case 'user':
+             break;
+         default:
+             console.log('wrong command');
