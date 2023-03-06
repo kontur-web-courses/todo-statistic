@@ -40,10 +40,10 @@ function maximum(array) {
     }
     return max;
 }
+
 function getDenominator(array) {
     return maximum(array.map(x => (x + "").length));
 }
-
 
 
 function getTableView(array, text_denom, name_denom, date_denom) {
@@ -60,9 +60,9 @@ function getTableView(array, text_denom, name_denom, date_denom) {
         newStr += "  " + " ".repeat(name_denom + 2) + "|";
     }
     if (array.at(2) !== null) {
-        newStr += "  " + array.at(2) + " ".repeat(date_denom-(array.at(2)+"").length + 2) + '|';
+        newStr += "  " + array.at(2) + " ".repeat(date_denom - (array.at(2) + "").length + 2) + '|';
     } else {
-        newStr +="  " + " ".repeat(date_denom + 2) + '|';
+        newStr += "  " + " ".repeat(date_denom + 2) + '|';
     }
     return newStr;
 }
@@ -82,9 +82,19 @@ function getToDo() {
 }
 
 function compareDate(a, b) {
-    if (a > b) return -1;
     if (a === b) return 0;
+    if (b === null) return -1;
+    if (a === null) return 1;
+    if (a > b) return -1;
     if (a < b) return 1;
+}
+
+function compareName(a, b) {
+    if (a === b) return 0;
+    if (b === null) return -1;
+    if (a === null) return 1;
+    if (a > b) return 1;
+    if (a < b) return -1;
 }
 
 function processCommand(command) {
@@ -111,7 +121,7 @@ function processCommand(command) {
                     console.log(parseToDo(getToDo()).sort(x => -x.at(-1)).map(x => x.at(0)));
                     break;
                 case 'user':
-                    console.log(parseToDo(getToDo()).sort(x => x.at(1) !== null).map(x => x.at(0)));
+                    console.log(parseToDo(getToDo()).sort((x, y) => compareName(x.at(1), y.at(1))).map(x => x.at(0)));
                     break;
                 case 'date':
                     console.log(parseToDo(getToDo()).sort((x, y) => compareDate(x.at(2), y.at(2))).map(x => x.at(0)));
