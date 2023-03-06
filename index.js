@@ -13,6 +13,7 @@ function getFiles() {
 
 function processCommand(command) {
     let currentData = command.split(' ')[0];
+    let todos;
     switch (currentData) {
         case 'exit':
             process.exit(0);
@@ -25,21 +26,23 @@ function processCommand(command) {
             break;
         case 'user':
             const requestedUser = command.split(' ')[1];
-            let todos = getTodos(getFiles())
+            todos = getTodos(getFiles())
                 .filter(function(x) { return hasUserName(x, requestedUser); });
             for(const todo of todos) {
                 console.log(todo);
             }
             break;
-        case 'names':
-            let tods = getTodos(getFiles());
-            console.log(tods.map(getUserName));
-            break;
         case 'sort':
             let dataSort = command.split(' ');
-            let currentSortParam = dataSort[1];
+            let currentSortParam = command.split(' ')[1];
             switch (currentSortParam){
-
+                case 'user':
+                    todos = getTodos(getFiles());
+                    todos.sort(compareNames);
+                    for(const todo of todos) {
+                        console.log(todo);
+                    }
+                    break;
             }
             break;
         default:
@@ -48,10 +51,23 @@ function processCommand(command) {
     }
 }
 
+function compareNames(a, b) {
+    const aName = getUserName(a);
+    const bName = getUserName(b);
+
+    if(aName === null)
+        return 1;
+    if(aName.toLowerCase() < bName.toLowerCase())
+        return -1;
+    if(aName.toLowerCase() > bName.toLowerCase())
+        return 1;
+    return 0;
+}
+
 function getUserName(str) {
     if(!str.includes(';'))
         return null;
-    return str.split(';')[0].slice(8);
+    return str.split(';')[0].slice(str.indexOf('// TODO') + 8);
 }
 
 function hasUserName(todoStr, requestedName) {
