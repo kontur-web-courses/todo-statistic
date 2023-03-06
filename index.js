@@ -17,10 +17,19 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'important':
+            process.exit(0);
+            break;
         default:
             console.log('wrong command');
             break;
     }
 }
 
-// TODO you can do it!
+function showImportant() {
+    for (let line of TodoLines) {
+        if(line.includes('!')){
+            console.log(line);
+        }
+    }
+}
