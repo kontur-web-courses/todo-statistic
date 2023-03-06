@@ -16,8 +16,8 @@ function getTodos(files) {
     let res = [];
     for (let text of files) {
         for (let line of text.split('\n')){
-            if (line.startsWith("\/\/ TODO ")){
-                line = line.substring(8);
+            if (line.includes("\/\/ TODO ")){
+                line = line.substring(line.indexOf("\/\/ TODO ")+8);
                 let comment = {
                     name: '',
                     date: '',
@@ -56,9 +56,14 @@ function groupBy(xs, key) {
   return xs.reduce(function(rv, x) {
     (rv[x[key]] = rv[x[key]] || []).push(x);
     return rv;
-  }, {});
+  }, {})
 }
 
+function hasDate(command){
+    let splittedCommand = command.split(' ');
+    if (splittedCommand[0] === 'date')
+        return command;
+}
 
 function processCommand(command) {
     switch (command) {
@@ -66,7 +71,11 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            console.log(todos);
+            console.log(todos.map(todo => formatTodo(todo)));
+            break;
+        case hasDate(command):
+            let date = new Date(command.split(' ')[1]);
+            console.log(todos.filter(comment => new Date(comment.date) > date).map(formatTodo));
             break;
         case 'important':
             console.log(todos
