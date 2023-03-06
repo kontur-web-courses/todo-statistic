@@ -70,6 +70,13 @@ function processCommand(command) {
                 console.log("User not find")
             }
             break;
+        case 'date':
+            let date = Date.parse(arg[1])
+            let dates = findDates(date);
+            for (let comment of dates) {
+                console.log(comment);
+            }
+            break;
 
         default:
             console.log('wrong command');
@@ -77,10 +84,27 @@ function processCommand(command) {
     }
 }
 
+function findDates(date) {
+    let data = show();
+    let comments = [];
+    for (comment of data) {
+        let parseData = comment.split(";")
+        if (parseData.length > 2) {
+            let d = Date.parse(parseData[1].trim());
+            if(d - date>0 )
+            {
+                comments.push(parseData[2].trim())
+            }
+
+        }
+    }
+    return comments;
+}
+
 function findUsers() {
     let data = show();
     let users = {};
-    for (let comment of data) {
+    for (comment of data) {
         let parseData = comment.split(";")
         if (parseData.length > 2) {
             let user = parseData[0].trim().toLowerCase();
