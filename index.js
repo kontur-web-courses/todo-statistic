@@ -10,8 +10,6 @@ for (let file of files) {
     todos = todos.concat(c_todos);
 }
 
-console.log(sortByUsers(todos));
-
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -65,10 +63,32 @@ function processCommand(command) {
                 }
             }
             break
+        case /date .*/g.test(command):
+            let after = Date.parse(command.split(' ')[1]);
+            for (let todo of getTodosAfterDate(todos, after)) {
+                console.log(todo);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
     }
+}
+
+function getTodosAfterDate(todosList, dateAfter) {
+    const dateExtractor = /\/\/ TODO (\w*); (?<date>[\d]+(-[\d]+)*)/;
+    let result = [];
+    for (let todo of todosList) {
+        let m = todo.match(dateExtractor);
+        if (m === null){
+            continue;
+        }
+        let date = Date.parse(m.groups.date);
+        if (date > dateAfter) {
+            result.push(todo);
+        }
+    }
+    return result;
 }
 
 function sortByUsers(todosList) {
