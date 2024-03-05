@@ -99,7 +99,7 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            console.log(getTodos());
+            console.log(getCoolTable(getTodos()));
             break;
         case 'important':
             console.log(getImportantTodos());
@@ -118,30 +118,24 @@ function processCommand(command) {
     }
 }
 
-function getTable(array)
-{
-    const labels = ['!', 'user', 'date', 'comment']
-    let table = `  ${labels.join("\t|  ")}\n`
-    for (const TODO of array) {
-        let cur_infos = [];
-        for (const info in TODO) {
-            cur_infos.push(`${TODO[info]}`);
-        }
-        table += `  ${cur_infos.join("\t|  ")}\n`;
-    }
-
-    return table;
-}
-
 function getCoolTable(array)
 {
-    const labels = ['!', 'user', 'date', 'comment'];
+    const labelsObj = {
+        isImportant: '!',
+        user: 'user',
+        data: 'date',
+        comment: 'comment'
+    }
+
     let infos = {};
-    let line_lengths = [];
+    let line_lengths = {};
     for (const TODO of array) {
         for (const info in TODO) {
             if (!infos.hasOwnProperty(info)) {
-                infos[info] = [];
+                if (info === "isImportant")
+                    infos[info] = ["!"]
+                else
+                    infos[info] = [info];
             }
             infos[info].push(TODO[info]);
         }
@@ -149,14 +143,33 @@ function getCoolTable(array)
 
     for (const info in infos){
         let arr = infos[info];
-        let max_length = arr.map(function (obj) { return String(obj).length }).max();
-        line_lengths.push(max_length);
+        line_lengths[info] = Math.max(...arr.map(function (obj) {return String(obj).length}));
     }
 
-    console.log(infos)
+    let table = "";
+    let cur_infos = [];
+    for (const label in labelsObj) {
+        let spaces_to_add = line_lengths[label] - String(labelsObj[label]).length;
+        cur_infos.push(`  ${labelsObj[label] + ' '.repeat(spaces_to_add)}  `);
+    }
+    table += `${cur_infos.join("|")}\n`;
+
+    const totalSum = Object.values(line_lengths).reduce((acc, val) => acc + (typeof val === 'number' ? val : 0), 0) + 3 + 4*4;
+    table += `${"-".repeat(totalSum)}\n`;
+
+    for (const TODO of array) {
+        let cur_infos = [];
+        for (const info in TODO) {
+            let spaces_to_add = line_lengths[info] - String(TODO[info]).length;
+            cur_infos.push(`  ${TODO[info] + ' '.repeat(spaces_to_add)}  `);
+        }
+        table += `${cur_infos.join("|")}\n`;
+    }
 
     return table;
 }
 
-console.log(getTable([{isImportant: "AAA", name: 300, date: 45, comment: 24}, {isImportant: "TTT", name: 40, date: 10, comment: 90}]))
+console.log(getCoolTable([{isImportant: 10, name: "ffeef", date: 132, comment: "fwfwef"},
+    {isImportant: 242, name: "ffeef", date: 242424, comment: "fwfwef"}]))
+
 // TODO you can do it!
