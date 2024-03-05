@@ -2,7 +2,7 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-console.log(parse(files))
+const todoComments = parse(files);
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -38,3 +38,10 @@ function parse(files) {
 }
 
 // TODO you can do it!
+
+const obj = {
+    username: '',
+    date: '',
+    text: '',
+    is_important: ''
+};
