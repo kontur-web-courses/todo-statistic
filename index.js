@@ -10,6 +10,8 @@ for (let file of files) {
     todos = todos.concat(c_todos);
 }
 
+console.log(sortByUsers(todos));
+
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -52,6 +54,29 @@ function processCommand(command) {
             console.log('wrong command');
             break;
     }
+}
+
+function sortByUsers(todosList) {
+    const extractNameRegex = /\/\/ TODO (?<name>\w*);/;
+    const todoByName = [];
+    for (let todo of todosList) {
+        let match = todo.match(extractNameRegex);
+        if (match === null) {
+            todoByName.push([null, todo]);
+            continue;
+        }
+        todoByName.push([match.groups.name.toLowerCase(), todo]);
+    }
+    todoByName.sort(function(a, b) { 
+        if (a === null || a[0] < b[0]) {
+            return -1;
+        }
+        if (b === null || a[0] > b[0]) {
+            return 1;
+        }
+        return 0;
+    });
+    return todoByName.map(a => a[1])
 }
 
 // TODO you can do it!
