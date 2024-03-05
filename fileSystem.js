@@ -26,3 +26,8 @@ module.exports = {
     getAllFilePathsWithExtension,
     readFile,
 };
+
+//TODO nospace
+//TODO: colon
+//toDo: camelCase
+//TOdO: ANYcaSE
