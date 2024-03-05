@@ -28,8 +28,13 @@ function processCommand(command) {
             }
             break;
         case 'show':
-            console.log(getTODOComments());
+            const todos = getTODOComments();
+            todos.forEach(todo => console.log(todo));
             break;
+        case 'sort':
+            if (commandParts.length === 2) {
+                sortTodos(commandParts[1]);
+            }
         case 'date':
             if (commandParts.length === 2) {
                 const dateComments = getCommentsAfterDate(String(commandParts[1]))
@@ -38,7 +43,6 @@ function processCommand(command) {
             else  {
                 console.log('Need date');
             }
-            break;
         case 'exit':
             process.exit(0);
             break;
@@ -54,7 +58,7 @@ function getTODOComments() {
     let result = [];
     let matches;
     for (let file of files) {
-        matches = file.match(TODORegex);
+        matches = file.match(regex);
         if (matches)
             result = result.concat(matches.map(line => line.slice(8)));
     }
@@ -93,4 +97,72 @@ function getCommentsAfterDate(date) {
         }
     }
     return result;
+}
+
+function sortTodos(criteria) {
+    switch (criteria) {
+        case 'importance':
+            printSortedTodos(sortByImportance());
+            break;
+        case 'user':
+            printSortedTodos(sortByUser());
+            break;
+        case 'date':
+            printSortedTodos(sortByDate());
+            break;
+        default:
+            console.log('Invalid sorting criterion. Please choose importance, user, or date.');
+            break;
+    }
+}
+
+function sortByImportance() {
+    const todos = getTODOComments();
+    const importantTodos = todos.filter(todo => todo.includes('!')).sort((a, b) => {
+        const countA = (a.match(/!/g) || []).length;
+        const countB = (b.match(/!/g) || []).length;
+        return countB - countA;
+    });
+    const otherTodos = todos.filter(todo => !todo.includes('!')).sort();
+    return [...importantTodos, ...otherTodos];
+}
+
+function sortByUser() {
+    const todos = getTODOComments();
+    const userTodos = {};
+    const unnamedTodos = [];
+    todos.forEach(todo => {
+        const todoParts = todo.split(';').map(part => part.trim());
+        if (todoParts.length >= 3) {
+            const username = todoParts[0].toLowerCase();
+            if (!userTodos[username]) {
+                userTodos[username] = [];
+            }
+            userTodos[username].push(todo);
+        } else {
+            unnamedTodos.push(todo);
+        }
+    });
+    const sortedUserTodos = Object.values(userTodos).flatMap(todos => todos.sort());
+    return [...sortedUserTodos, ...unnamedTodos];
+}
+
+function sortByDate() {
+    const todos = getTODOComments();
+    const datedTodos = todos.filter(todo => todo.match(/\d{4}-\d{2}-\d{2}/)).sort((a, b) => {
+        const dateA = getDateFromTodoString(a);
+        const dateB = getDateFromTodoString(b);
+        return dateB - dateA;
+    });
+    const undatedTodos = todos.filter(todo => !todo.match(/\d{4}-\d{2}-\d{2}/)).sort();
+    return [...datedTodos, ...undatedTodos];
+}
+
+function getDateFromTodoString(todo) {
+    const dateMatch = todo.match(/\d{4}-\d{2}-\d{2}/);
+    return dateMatch ? new Date(dateMatch[0]) : null;
+}
+
+function printSortedTodos(sortedTodos) {
+    sortedTodos.forEach(todo => console.log(todo));
 }
