@@ -2,7 +2,7 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-
+console.log(parse(files))
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -20,6 +20,21 @@ function processCommand(command) {
             console.log('wrong command');
             break;
     }
+}
+
+
+function parse(files) {
+    const todos = [];
+    const todoRegex = /\/\/ TODO .*/g;
+
+    files.forEach(file => {
+        const matches = file.match(todoRegex);
+        if (matches) {
+            todos.push(...matches);
+        }
+    });
+
+    return todos;
 }
 
 // TODO you can do it!
