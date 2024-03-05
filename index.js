@@ -1,7 +1,7 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
-const files = getFiles();
+const { files, names } = getFiles();
 const TODO_REGEXP = /\/\/ TODO\s*(.+)/gm;
 const USER_TODO_REGEXP = /(.+)\s*;\s*(\d{4}-\d{2}-\d{2})\s*;\s*(.*)/gm
 
@@ -10,7 +10,8 @@ readLine(processCommand);
 
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
-    return filePaths.map(path => readFile(path));
+    const fileNames = filePaths.map(function (str) { return str.split('/').pop() });
+    return { files: filePaths.map(path => readFile(path)), names: fileNames};
 }
 
 function getTodos(file) {
@@ -54,7 +55,8 @@ function getUserTodos(file, user) {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let processedCommand = command.split(' ');
+    switch (processedCommand.at(0)) {
         case 'exit':
             process.exit(0);
             break;
@@ -64,10 +66,59 @@ function processCommand(command) {
         case 'important':
             console.log(files.map(getImportantTodos));
             break;
+        case 'user':
+            let user = processedCommand.at(1);
+            console.log(getUserTodos(files.at(0), user));
+            break;
+        case 'sort':
+            let sort_by = processedCommand.at(1);
+            console.log(getSortedTodos(files.at(0), sort_by));
+            break;
         default:
             console.log('wrong command');
             break;
     }
 }
 
+function getTable(array)
+{
+    const labels = ['!', 'user', 'date', 'comment']
+    let table = `  ${labels.join("\t|  ")}\n`
+    for (const TODO of array) {
+        let cur_infos = [];
+        for (const info in TODO) {
+            cur_infos.push(`${TODO[info]}`);
+        }
+        table += `  ${cur_infos.join("\t|  ")}\n`;
+    }
+
+    return table;
+}
+
+function getCoolTable(array)
+{
+    const labels = ['!', 'user', 'date', 'comment'];
+    let infos = {};
+    let line_lengths = [];
+    for (const TODO of array) {
+        for (const info in TODO) {
+            if (!infos.hasOwnProperty(info)) {
+                infos[info] = [];
+            }
+            infos[info].push(TODO[info]);
+        }
+    }
+
+    for (const info in infos){
+        let arr = infos[info];
+        let max_length = arr.map(function (obj) { return String(obj).length }).max();
+        line_lengths.push(max_length);
+    }
+
+    console.log(infos)
+
+    return table;
+}
+
+console.log(getTable([{isImportant: "AAA", name: 300, date: 45, comment: 24}, {isImportant: "TTT", name: 40, date: 10, comment: 90}]))
 // TODO you can do it!
