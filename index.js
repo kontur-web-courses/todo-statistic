@@ -22,6 +22,20 @@ function getTodos() {
     }
 }
 
+function showImportantTodos() {
+    const todos = getTodos();
+    for (let todo of todos){
+        if (todo.includes('!')) {
+            console.log(todo);
+        }
+    }
+}
+
+function getUserTodos(username) {
+    const todos = getTodos();
+    const userRe = /\/\/ TODO {}; {}; {}/
+}
+
 function processCommand(command) {
     switch (command) {
         case 'exit':
@@ -29,6 +43,9 @@ function processCommand(command) {
             break;
         case 'show':
             let todos = getTodos();
+            break;
+        case 'important':
+            showImportantTodos();
             break;
         default:
             console.log('wrong command');
