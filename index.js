@@ -16,7 +16,7 @@ function getToDO(){
     let lines = getFiles();
     
     for (let q = 0; q < lines.length; q++){
-        let txt = lines[q].split('\r\n');
+        let txt = lines[q].split(/$/m);
         //console.log(txt);
         for (let i = 0; i < txt.length; i++) {
             let ind = txt[i].indexOf("// TODO"); 
@@ -29,21 +29,28 @@ function getToDO(){
     return res
 }
 
+function getTodoByUser(username) {
+    const usernameLower = username.toLowerCase();
+    const regex = /\s*(.*)\s*;\s*(.*)\s*;\s*(.*)/;
+    let todos = getToDO();
+    todos = todos.map(v => v.match(regex));
+    todos = todos.filter(match => match !== null && match[1].toLowerCase() === usernameLower);
+    todos = todos.map(g => g[0]);
+    return todos;
+}
+
 function processCommand(command) {
     const stringCommand = String(command);
-    switch (command) {
-        case 'show':
-            console.log('not supported yet');
-            break;
+    const commandPrefix = stringCommand.split(' ')[0];
+    switch (commandPrefix) {
         case 'important':
             console.log('not supported yet');
             break;
-        case command.startsWith('user '):
-            username = stringCommand.split(' ')[1].toLowerCase();
-            // do something
-            console.log('not supported yet');
+        case 'user':
+            const username = stringCommand.slice(5).toLowerCase();
+            console.log(getTodoByUser(username));
             break;
-        case stringCommand.startsWith('sort '):
+        case 'sort':
             flag = stringCommand.split(' ')[1].toLowerCase();
             // process it
             console.log('not supported yet');
