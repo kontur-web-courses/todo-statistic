@@ -76,6 +76,59 @@ function processCommand(command) {
                     importantComments.sort((a, b) => b.split('!').length - a.split('!').length);
                     console.log(importantComments.concat(otherComments));
                     break;
+                case 'user':
+                    const userComments = {};
+                    const unnamedComments = [];
+                    for (const file of files) {
+                        const lines = file.split('\n');
+                        for (const line of lines) {
+                            if (line.trim().startsWith('// TODO')) {
+                                let comment = line.replace('// TODO', '').trim();
+                                let parts_comments = comment.split(';');
+                                if (parts_comments.length === 3){
+                                    const user = parts_comments[0];
+                                    if (!userComments[user]) {
+                                        userComments[user] = [];
+                                    }
+                                    userComments[user].push(comment)
+                                } else {
+                                    unnamedComments.push(comment)
+                                }
+                            }
+                        }
+                    }
+                    const sortedUsers = Object.keys(userComments).sort();
+                    for (const user of sortedUsers) {
+                        console.log(`${user}:`);
+                        console.log(userComments[user]);
+                    }
+                    console.log("Noname:");
+                    console.log(unnamedComments);
+                    break;
+                case 'date':
+                    const datedComments = [];
+                    const undatedComments = [];
+                    for (const file of files) {
+                        const lines = file.split('\n');
+                        for (const line of lines) {
+                            if (line.trim().startsWith('// TODO')) {
+                                let comment = line.replace('// TODO', '').trim();
+                                let parts_comments = comment.split(';');
+                                if (parts_comments.length === 3){
+                                    datedComments.push(comment);
+                                } else {
+                                    undatedComments.push(comment);
+                                }
+                            }
+                        }
+                    }
+                    datedComments.sort((a, b) => {
+                        let dateA = new Date(a.split(';')[1]);
+                        let dateB = new Date(b.split(';')[1]);
+                        return dateB - dateA;
+                    });
+                    console.log(datedComments.concat(undatedComments));
+                    break;
             }
             break;
         default:
