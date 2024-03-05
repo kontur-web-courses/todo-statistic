@@ -26,3 +26,4 @@ module.exports = {
     getAllFilePathsWithExtension,
     readFile,
 };
+// TODO ТИПО ТЕСТ ИМПОРТАНТА!!
