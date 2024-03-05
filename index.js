@@ -22,19 +22,23 @@ function processCommand(command) {
             for (let x in todoComments){
                 console.log(x);
             }
+            break;
         case 'user':
             for (let x in todoComments){
                 if (x.username === splittedCommand[1])
                     console.log(x);
             }
+            break;
         case 'important':
             for (let x in todoComments){
                 if (x.is_important){
                     console.log(x);
                 }
             }
+            break;
         case 'sort':
             console.log(sortComments(todoComments, splittedCommand[1]));
+            break;
         default:
             console.log('wrong command');
             break;
@@ -49,7 +53,7 @@ function parse(files) {
     files.forEach(file => {
         const matches = file.match(todoRegex);
         if (!matches)
-            return
+            return;
         for (let match of matches){
             match = match.slice(8);
             if (match)
@@ -62,6 +66,7 @@ function parse(files) {
 
 function extractCommentData(match){
     let username, date, text, is_important;
+    console.log(match);
     if (match.indexOf(';') == -1){
         text = match;
     }
