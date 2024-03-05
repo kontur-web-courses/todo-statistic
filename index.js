@@ -64,7 +64,6 @@ function getSortedTodos(param){
         return importanceTodos;
     }
     if (param === 'user'){
-        // TODO {Имя автора}; {Дата комментария}; {текст комментария}
         let todos = getTodos();
         let todosWithUser = [];
         let todosWithoutUser = [];
@@ -90,13 +89,14 @@ function getSortedTodos(param){
 
 function processCommand(command) {
     const command_split = command.split(" ")
+
     switch (command_split[0]) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
             let todos = getTodos();
-            console.log(todos);
+            makeTable(todos)
             break;
         case 'important':
             let importantTodos = getTodos('!');
@@ -142,4 +142,27 @@ function countExclamationMarks(str) {
         }
     }
     return -count;
+}
+function makeTable(arrayOfResult){
+    for (let row of arrayOfResult){
+        let countImportant = countExclamationMarks(row)
+        let important = '!'.repeat(-countImportant >= 1 ? 1 : 0);
+        let user = ""
+        let todoData = row.split('; ');
+
+        if (todoData.length > 1){
+            let splitted = todoData[0].split(' ');
+            if (splitted.length >= 3){
+                user = splitted[2]
+            }
+        }
+        let date = ""
+        if (todoData.length === 3) {
+            date = todoData[1];
+        }
+        let comment = todoData.length > 2 ? todoData[2]: "";
+
+        console.log('  '+ important.padEnd(1, " ") + '  |  ' + `${user}`.padEnd(10, " ") + '  |  ' + date.padEnd(10, " ") + '  |  ' + comment.padEnd(50, " ") + "  ")
+
+    }
 }
