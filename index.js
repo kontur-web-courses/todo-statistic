@@ -53,10 +53,10 @@ function processCommand(command) {
                 console.log(obj['noName']);
                 break;
             case 'date':
-                console.log(todos
-                        .map(t => t.match(TODO_REGEX) || [t, null, new Date(0)])
-                        .sort((a, b) => new Date(b[2]) - new Date(a[2]))
-                        .map(t => t[0]))
+                console.log(getAllTodos()
+                        .map(t => t.split('; '))
+                        .sort((a, b) => new Date(b[1]) - new Date(a[1]))
+                        .map(t => t.join('; ')));
             }
             break;
         default:
