@@ -61,6 +61,29 @@ function processCommand(command) {
                 for (let i = 0; i < sortedTodos.length; i++) {
                     console.log(sortedTodos[i][1]);
                 }
+            } else if (argument === "user") {
+                console.log(sortByUsers(todos))
+            } else if (argument === 'date') {
+                const regex = /\d{4}-\d{2}-\d{2}/;
+                let datesAndTodos = []
+                let currentToDo;
+                for (let i = 0; i < todos.length; i++) {
+                    currentToDo = todos[i];
+                    const match = currentToDo.match(regex);
+                    if (match){
+                        const dateString = match[0];
+                        const dateObject = Date.parse(dateString);
+                        datesAndTodos.push([dateObject,currentToDo])
+                    }
+                    else{
+                        datesAndTodos.push([Date.parse('3000-01-01'),currentToDo])
+                    }
+
+                }
+                datesAndTodos.sort((a,b) => a[0] - b[0])
+                for (let todo of datesAndTodos){
+                    console.log(todo[1]);
+                }
             }
             break
         case /date .*/g.test(command):
@@ -102,7 +125,7 @@ function sortByUsers(todosList) {
         }
         todoByName.push([match.groups.name.toLowerCase(), todo]);
     }
-    todoByName.sort(function(a, b) { 
+    todoByName.sort(function (a, b) {
         if (a === null || a[0] < b[0]) {
             return -1;
         }
