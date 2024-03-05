@@ -33,33 +33,26 @@ function processCommand(command) {
             printToDo(getToDo().filter((todo) => todo.type === 'full' && todo.user.toLowerCase() === args[0].toLowerCase()));
             break;
         case 'sort':
-            let fullTodos = [];
-            for (const fileText of files) {
-                for (const todo of extract.todos(fileText)) {
-                    if (todo.type === 'full')
-                        fullTodos.push(todo);
-                }
-            }
+            let todos = getToDo();
+            let fullTodos = todos.filter(t => t.type === 'full');
 
             switch (args[0]) {
                 case 'importance':
-                    fullTodos = fullTodos.toSorted((a, b) => b.priority - a.priority);
+                    todos = todos.toSorted((a, b) => b.priority - a.priority);
+                    printToDo(todos);
                     break;
                 case 'user':
                     fullTodos = fullTodos.toSorted((a, b) => a.user.localeCompare(b.user));
+                    printToDo(fullTodos);
                     break;
                 case 'date':
                     fullTodos = fullTodos.toSorted((a, b) => a.date - b.date);
+                    printToDo(fullTodos);
                     break;
                 default:
                     console.log('Unknown argument for sorting');
                     return;
             }
-
-            for (const todo of fullTodos) {
-                console.log(todo);
-            }
-
             break;
         case 'date':
             let d = Date.parse(args[0]);
@@ -88,9 +81,14 @@ function getToDo() {
 }
 
 function printToDo(toDo) {
-    toDoText = toDo.map((todo) => todo.text);
-    for (let i = 0; i < toDoText.length; i++) {
-        console.log(toDoText[i]);
+    for (t of toDo) {
+        switch (t.type) {
+            case 'full':
+                console.log(`TODO: ${t.user}\t | ${t.date.toLocaleString()}\t | ${t.text}`);
+                break;
+            case 'truncated':
+                console.log(`TODO: ${t.text}`);
+        }
     }
 }
 
