@@ -24,13 +24,13 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            printToDo(getToDo())
+            printToDo(getToDo());
             break;
         case 'important':
-            printToDo(getToDo().filter((todo) => todo.priority > 0))
+            printToDo(getToDo().filter((todo) => todo.priority > 0));
             break;
         case 'user':
-            printToDo(getToDo().filter((todo) => todo.type === 'full' && todo.user.toLowerCase() === args[0].toLowerCase()))
+            printToDo(getToDo().filter((todo) => todo.type === 'full' && todo.user.toLowerCase() === args[0].toLowerCase()));
             break;
         case 'sort':
             let fullTodos = [];
@@ -43,7 +43,7 @@ function processCommand(command) {
 
             switch (args[0]) {
                 case 'importance':
-                    fullTodos = fullTodos.toSorted((a, b) => a.priority - b.priority);
+                    fullTodos = fullTodos.toSorted((a, b) => b.priority - a.priority);
                     break;
                 case 'user':
                     fullTodos = fullTodos.toSorted((a, b) => a.user.localeCompare(b.user));
@@ -52,7 +52,7 @@ function processCommand(command) {
                     fullTodos = fullTodos.toSorted((a, b) => a.date - b.date);
                     break;
                 default:
-                    console.log("Unknown argument for sorting");
+                    console.log('Unknown argument for sorting');
                     return;
             }
 
@@ -79,12 +79,11 @@ function getToDo() {
     return todos;
 }
 
-function printToDo(toDo)
-{
-    toDoText = toDo.map((todo) => todo.text)
+function printToDo(toDo) {
+    toDoText = toDo.map((todo) => todo.text);
     for (let i = 0; i < toDoText.length; i++) {
-        console.log(toDoText[i])
-      }
+        console.log(toDoText[i]);
+    }
 }
 
 // TODO you can do it!
