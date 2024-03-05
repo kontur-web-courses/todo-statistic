@@ -66,13 +66,12 @@ function parse(files) {
 
 function extractCommentData(match){
     let username, date, text, is_important;
-    console.log(match);
     if (match.indexOf(';') == -1){
         text = match;
     }
     else{
         [username, date, text] = match.split(';');
-        date = Date(date);
+        date = new Date(date);
     }
     is_important = (text.indexOf('!') != -1);
     return {
