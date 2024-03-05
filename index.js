@@ -12,13 +12,27 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let arguments = command.split(" ");
+    let com = arguments[0];
+    let data = arguments[1];
+    switch (com) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            let coments = getToDo();
-            console.log(coments);
+            let coments1 = getToDo();
+            console.log(coments1);
+            break;
+        case 'data':
+            let coments2 = getToDo();
+            let result = [];
+            for(const comment of coments2){
+                let index = comment.indexOf(data);
+                if (index !== -1) {
+                    result.push(comment);
+                }
+            }
+            console.log(result);
             break;
         default:
             console.log('wrong command');
