@@ -2,7 +2,8 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-const regex = /\/\/(.*?)\r\n/g;
+const regex = /(\/\/ *TODO *.*$)/mg;
+const nameDataRegex = /(?:\/\/ *TODO (.+); (.+); (?:.*$))/mg;
 
 
 console.log('Please, write your command!');
@@ -14,27 +15,31 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let cmd = command.split(' ');
+    switch (cmd[0]) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            files.forEach(text => {
-                let match;
-                while ((match = regex.exec(text)) !== null) {
-                    console.log(match[1]);
-                }
-            });
-            break
+            getComments().forEach(comment => console.log(comment));
+            break;
         case 'important':
-            files.forEach(text => {
-                let match;
-                while ((match = regex.exec(text)) !== null) {
-                    if (match[1].indexOf('!') !== -1){
-                        console.log(match[1]);
-                    }
+            getComments().forEach(comment => {
+                if (comment.indexOf('!') !== -1){
+                    console.log(comment);
                 }
-            });
+            })
+            break;
+        case 'user':
+            if (command.length > 0){
+                getComments().forEach(comment => {
+                    if ((match = nameDataRegex.exec(comment)) !== null){
+                        if (match[1].toLowerCase() === cmd[1].toLowerCase()){
+                            console.log(comment);
+                        }
+                    }
+                })
+            }
             break;
         default:
             console.log('wrong command');
@@ -42,4 +47,14 @@ function processCommand(command) {
     }
 }
 
+function getComments(){
+    const comments = [];
+    files.forEach(text => {
+        let match;
+        while ((match = regex.exec(text)) !== null) {
+                comments.push(match[1]);
+        }
+    });
+    return comments;
+}
 // TODO you can do it!
