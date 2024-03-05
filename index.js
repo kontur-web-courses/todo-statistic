@@ -24,11 +24,13 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            for (const fileText of files) {
-                for (const todo of extract.todos(fileText)) {
-                    console.log(todo);
-                }
-            }
+            printToDo(getToDo())
+            break;
+        case 'important':
+            printToDo(getToDo().filter((todo) => todo.priority > 0))
+            break;
+        case 'user':
+            printToDo(getToDo().filter((todo) => todo.type === 'full' && todo.user.toLowerCase() === args[0].toLowerCase()))
             break;
         case 'sort':
             let fullTodos = [];
@@ -67,20 +69,21 @@ function processCommand(command) {
 }
 
 function getToDo() {
-    let strings = [];
+    let todos = [];
 
     for (const fileText of files) {
         for (const todo of extract.todos(fileText)) {
-            strings.push(todo.text);
+            todos.push(todo);
         }
     }
-    return strings;
+    return todos;
 }
 
 function printToDo(toDo)
 {
-    for (let i = 0; i < toDo.length; i++) {
-        console.log(toDo[i])
+    toDoText = toDo.map((todo) => todo.text)
+    for (let i = 0; i < toDoText.length; i++) {
+        console.log(toDoText[i])
       }
 }
 
