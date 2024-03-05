@@ -30,7 +30,9 @@ function getTodos(includedText=null){
 }
 
 function processCommand(command) {
-    switch (command) {
+    const command_split = command.split(" ")
+
+    switch (command_split[0]) {
         case 'exit':
             process.exit(0);
             break;
@@ -38,14 +40,29 @@ function processCommand(command) {
             let todos = getTodos();
             console.log(todos);
             break;
-        case "important":
+        case 'important':
             let importantTodos = getTodos('!');
             console.log(importantTodos);
             break;
+        case 'user':
+            searchByUser(command_split[1]);
+            break
         default:
             console.log('wrong command');
             break;
     }
 }
 
-// TODO you can do it!
+function searchByUser(user){
+
+    let getAllToDo = getTodos()
+    let result = [];
+    for (let toDo of getAllToDo ) {
+        let reg = new RegExp(`\/\/ TODO ${user};`, "i");
+        if(toDo.search(reg) !== -1){
+            result.push(toDo)
+        }
+    }
+    return result
+}
+
