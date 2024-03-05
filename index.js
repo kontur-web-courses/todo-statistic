@@ -25,8 +25,9 @@ function findAllTodos(file){
     for(let line of lines){
         let index = line.indexOf('// TODO ');
         if (index !== -1){
-            result.push(line.slice(index));
-            console.log(line.slice(index));
+            result.push({
+                text: line.slice(index + 8),
+            });
         }
     }
     return result;
@@ -38,7 +39,7 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            console.log(searchAllFiles(getFiles()));
+            console.log(searchAllFiles(getFiles()).map(obj => obj.text));
             break;
         default:
             console.log('wrong command');
