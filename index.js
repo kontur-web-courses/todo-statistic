@@ -59,6 +59,22 @@ function processCommand(command) {
                         .map(t => t.join('; ')));
             }
             break;
+        case 'date':
+            let date;
+            let args = splitCommand[1].split('-');
+            if (args.length === 1) {
+                date = new Date(+(args[0]), 0, 0);
+            } else if (args.length === 2) {
+                date = new Date(+(args[0]), +(args[1]) - 1, 0);
+            } else {
+                date = new Date(+(args[0]), +(args[1]) - 1, +(args[2]));
+            }
+            console.log(getAllTodos()
+                .map(t => t.split('; '))
+                .filter(a => new Date(a[1]).getTime() - date.getTime() > 0)
+                .map(t => t.join('; ')));
+            break;
+
         default:
             console.log('wrong command');
             break;
