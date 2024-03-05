@@ -66,4 +66,22 @@ function processCommand(command) {
     }
 }
 
+function getToDo() {
+    let strings = [];
+
+    for (const fileText of files) {
+        for (const todo of extract.todos(fileText)) {
+            strings.push(todo.text);
+        }
+    }
+    return strings;
+}
+
+function printToDo(toDo)
+{
+    for (let i = 0; i < toDo.length; i++) {
+        console.log(toDo[i])
+      }
+}
+
 // TODO you can do it!
