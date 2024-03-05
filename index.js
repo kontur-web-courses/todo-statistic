@@ -14,6 +14,25 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function count(str, char) {
+    let ans = 0;
+    for (let c of str) {
+        ans += (c === char ? 1 : 0);
+    }
+
+    return ans;
+}
+
+function compareNulls(str1, str2) {
+    if ((str1 == null && str2 == null) || (str1 != null && str2 != null))
+        return 0;
+
+    if (str1 == null)
+        return 1;
+
+    return -1;
+}
+
 function getTodos() {
     return files
         .map(file => file
@@ -24,11 +43,15 @@ function getTodos() {
 
 function toObject(match) {
     const parts = match.match(todoParts);
-    if (parts !== null) {
-        return {name: parts[1], date: parts[2], text: parts[3]};
-    }
-
-    return {text: match.match(todoWithoutParts)[1]};
+    return {
+        name: parts != null ? parts[1] : null,
+        date: parts != null ? parts[2] : null,
+        text: parts != null ? parts[3] : match.match(todoWithoutParts)[1],
+        importance: count(
+            parts != null ? parts[3] : match.match(todoWithoutParts)[1],
+            '!'
+        )
+    };
 }
 
 function getImportantTodos() {
@@ -38,6 +61,20 @@ function getImportantTodos() {
 function getUserTodos(username) {
     const userRe = new RegExp(`// TODO ${username}; (.*?); (.*?)\\n`)
     return files.map(file => file.match(userRe)[2])
+}
+
+function sort(argument) {
+    const todos = getTodos();
+    switch (argument) {
+        case 'importance':
+            return todos.sort((todo1, todo2) => todo2.importance - todo1.importance);
+        case 'user':
+            return todos.sort((todo1, todo2) => compareNulls(todo1.name, todo2.name));
+        case 'date':
+            return todos.sort((todo1, todo2) => (todo2.date - todo1.date));
+        default:
+            throw Error(`Unknown sort argument: ${argument}`);
+    }
 }
 
 function processCommand(command) {
@@ -53,14 +90,15 @@ function processCommand(command) {
             const importantTodos = getImportantTodos();
             console.log(importantTodos)
             break;
+        case command.includes('sort'):
+            const argument = command.slice(5);
+            console.log(sort(argument))
+            break;
         case command.includes('user'):
             usernameRe = new RegExp('user \{(.*?)\}')
             username = command.match(usernameRe)[1]
             const userTodos = getUserTodos(username);
             console.log(userTodos)
-            break;
-        case command.includes('sort'):
-            const argument = command.slice(5);
             break;
         default:
             console.log('wrong command');
