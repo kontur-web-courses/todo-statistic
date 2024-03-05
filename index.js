@@ -17,13 +17,25 @@ function getComments() {
         const regex = /\/\/ TODO (.+?)(?=\r\n|\n|$)/g;
         const matches = [...file.matchAll(regex)];
         for (const match of matches) {
-             comments.push(match.toString());
+             comments.push(match[0].toString());
         }
     }
 }
 
+function findExclamationIndex(str) {
+    return str.includes('!') ? str.indexOf('!') : -1;
+}
+
+function findUserIndex(str, user) {
+    user = user.toLowerCase()
+    str = str.toLowerCase()
+    return str.includes(user + ';') ? str.indexOf(user + ';') : -1;
+}
+
 function processCommand(command) {
     getComments();
+    let commandParams = command.split(' ');
+    command = commandParams[0];
     switch (command) {
         case 'exit':
             process.exit(0);
@@ -32,7 +44,24 @@ function processCommand(command) {
             for (let comment of comments)
                 console.log(comment);
             break;
-
+        case 'important':
+            for (let i = 0; i < comments.length; i++) {
+                if (findExclamationIndex(comments[i]) >= 0) {
+                    console.log(comments[i])
+                }
+            }
+            break;
+        case 'user':
+            if (commandParams.length === 2) {
+                for (let i = 0; i < comments.length; i++) {
+                    if (findUserIndex(comments[i], commandParams[1]) >= 0) {
+                        console.log(comments[i])
+                    }
+                }
+            } else {
+                console.log('No user entered')
+            }
+            break;
         default:
             console.log('wrong command123');
             break;
