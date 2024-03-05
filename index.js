@@ -17,7 +17,7 @@ function getTodos(includedText=null){
     for (let path of paths){
         let file = readFile(path);
         for (let line of file.split('\n')){
-            if (line.includes('// TODO') && (includedText == null || line.includes(includedText))){
+            if (line.includes('// TODO' + ' ') && (includedText == null || line.includes(includedText))){
                 let splittedLine = line.split('//');
                 // console.log(splittedLine);
                 let todo = '//' + splittedLine[splittedLine.length - 1];
@@ -29,28 +29,37 @@ function getTodos(includedText=null){
     return todos;
 }
 
-function getSortedTodos(param){
-    console.log(param);
-    if (param === 'date'){
-        console.log('yes');
-        // TODO {Имя автора}; {Дата комментария}; {текст комментария}
-        let todos = getTodos();
-        let todosWithDate = [];
-        let todosWithoutDate = [];
-        for (let todo of todos){
-            let todoData = todo.split(';');
-            if (todoData.length === 3){
-                // todosWithDate.push(todo);
-                todosWithDate.push(todoData[0] + ';' + todoData[2]);
+function getTodosWithDate(verbose=false) {
+    let todos = getTodos();
+    let todosWithDate = [];
+    let todosWithoutDate = [];
+    for (let todo of todos) {
+        let todoData = todo.split('; ');
+        if (todoData.length === 3) {
+            if (verbose) {
+                let todo1 = todoData[0] + ';' + todoData[2];
+                let date = todoData[1];
+                todosWithDate.push([date, todo1])
+            } else {
+                todosWithDate.push(todo1);
             }
-            else{
+        } else {
+            if (verbose) {
+                todosWithoutDate.push([null, todoData[0] + ';' + todoData[2]])
+            } else {
                 todosWithoutDate.push(todo);
             }
         }
-        return todosWithDate.concat(todosWithoutDate);
+    }
+    return todosWithDate.concat(todosWithoutDate);
+}
+
+function getSortedTodos(param){
+    if (param === 'date'){
+        return getTodosWithDate();
     }
     if (param === 'importance'){
-        let importanceTodos = getTodos('!');
+        let importanceTodos = getTodos();
         importanceTodos.sort(countExclamationMarks);
         return importanceTodos;
     }
@@ -81,7 +90,6 @@ function getSortedTodos(param){
 
 function processCommand(command) {
     const command_split = command.split(" ")
-
     switch (command_split[0]) {
         case 'exit':
             process.exit(0);
@@ -90,23 +98,25 @@ function processCommand(command) {
             let todos = getTodos();
             console.log(todos);
             break;
-        case 'importance':
+        case 'important':
             let importantTodos = getTodos('!');
             console.log(importantTodos);
             break;
         case 'user':
             console.log(searchByUser(command_split[1]));
             break
+        case 'sort':
+            let param = command_split[1];
+            let sortedTodos = getSortedTodos(param);
+            console.log(sortedTodos);
+            break;
+        case 'date':
+            let date = command_split[1];
+            let todosWithDate = getTodosWithDate(verbose = true);
+            console.log(todosWithDate);
+            break;
         default:
-            const sortRegex = /^sort\s\{(importance|user|date)\}$/;
-            console.log(sortRegex.test(command));
-            if (sortRegex.test(command) || true) {
-                let param = command.split(' ')[1];
-                let sortedTodos = getSortedTodos(param);
-                console.log(sortedTodos);
-            } else {
-                console.log('wrong command');
-            }
+            console.log('wrong command');
     }
 }
 
@@ -131,5 +141,5 @@ function countExclamationMarks(str) {
             count++;
         }
     }
-    return count;
+    return -count;
 }
