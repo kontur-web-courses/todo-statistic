@@ -101,3 +101,19 @@ function sortByImportance(comments) {
         return a.is_important ? -1 : 1;
     });
 }
+
+function getFormatedTodoComments({username, date, text, is_important}){
+    const importantInfo = (is_important ? '!' : '').padEnd(1, ' ');
+    const dateInfo = formatDate(date).padEnd(10, ' ');
+    const userInfo = username.padEnd(10, ' ');
+    text = text.padEnd(50, ' ');
+    
+    return `${importantInfo}  |  ${userInfo}  |  ${dateInfo}  |  ${text}`;
+}
+
+function formatDate (date) {
+	const day = date.getDate().toString().padStart(2, '0');
+	const month = (date.getMonth() + 1).toString().padStart(2, '0');
+	const year = date.getFullYear().toString();
+	return `${day}-${month}-${year}`;
+}
