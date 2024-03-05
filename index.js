@@ -57,6 +57,6 @@ function getTodosByUser(username) {
     const todos = getTODOComments();
     return todos.filter(todo => {
         const todoParts = todo.split(';').map(part => part.trim());
-        return todoParts[0].toLowerCase().includes(username.toLowerCase());
+        return todoParts[0].toLowerCase() === username.toLowerCase();
     });
 }
