@@ -32,6 +32,23 @@ function processCommand(command) {
                 }
             });
             break;
+        case 'sort important':
+            const allSortImportantTodos = getTodos();
+            const elseTodos = [];
+            allSortImportantTodos.forEach(todo => {
+                if (todo.includes("!")) {
+                    console.log(`${todo}`);
+                } else {
+                    elseTodos.push(todo);
+                }
+            });
+            elseTodos.forEach(todo => {
+                console.log(todo);
+            });
+            break;
+        case 'sort user':
+            sortUsers();
+            break;
         case 'sort date':
             const todoList = getTodos();
 
@@ -89,6 +106,48 @@ function getTodos() {
     });
 
     return todos;
+}
+
+function sortUsers() {
+    const allUserTodos = getTodos();
+    const users = {};
+    users["missing"] = [];
+
+    allUserTodos.forEach(todo => {
+        const index = todo.indexOf(";");
+        if (index === -1) {
+            users["missing"].push(todo);
+        } else {
+            const curUserName = todo.substring(8, index).toLowerCase();
+            if (users[curUserName] !== undefined) {
+                users[curUserName].push(todo);
+            } else {
+                users[curUserName] = [todo];
+            }
+        }
+    });
+
+    for (const user in users) {
+        console.log(`User: ${user}`);
+        for (const todo of users[user]) {
+            console.log(todo);
+        }
+        console.log('\n');
+    }
+}
+
+function printTodo(todo) {
+    console.log(todo);
+    const regex = /^\/\/\s*TODO\s+([^;]+);\s*([^;]+);\s*(.+)$/;
+    const match = todo.match(regex);
+    console.log(match);
+
+    if (match) {
+        const [, username, date, text] = match;
+        console.log(username);
+    } else {
+        return null;
+    }
 }
 
 // TODO you can do it!
