@@ -44,7 +44,7 @@ function processCommand(comm) {
             console.log(findAuthorComments(command.slice(1).join(' ')))
             break;
         case 'date':
-            console.log(findDateComments(new Date(command.slice(1).join(' '))))
+            console.log(findDateComments(new Date(command.slice(1).join(''))))
             break;
         case 'sort':
             let a;
@@ -110,10 +110,8 @@ function findAuthorComments(author) {
 function findDateComments(date) {
     let result = [];
     for (let commentData of todos) {
-        const comment = commentData['comment'];
-        const parseComment = parseAuthorsComment(comment);
-        if (parseComment !== false && parseComment['commentDate'] > date) {
-            result.push(parseComment['comment']);
+        if (commentData['Date'] > date) {
+            result.push(commentData['comment']);
         }
     }
     return result;
