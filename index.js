@@ -13,14 +13,28 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    console.log(command.split(':')[0].split(' ')[0] === 'user');
+    switch (command.split(' ')[0]) {
         case 'exit':
             process.exit(0);
             break;
-        case 'show : показать все todo':
+        case 'show':
             func();
             for (let res of toDo)
                 console.log(res);
+            break;
+        case 'important':
+            func();
+            for (let res of toDo)
+                if (res.includes('!'))
+                    console.log(res);
+            break;
+        case 'user':
+            func();
+            let x = String(command.split(' ').slice(1, )).replace(',', ' ');
+            for (let res of toDo)
+                if (res.toLowerCase().includes(x.toLowerCase()))
+                    console.log(res);
             break;
         default:
             console.log('wrong command');
