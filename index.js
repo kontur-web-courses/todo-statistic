@@ -1,7 +1,8 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
-const todoRe = /\/\/\sTODO\s(.*)\n?/;
+const todoRe = /\/\/\sTODO\s(.*)/gm;
+const todoRe2 = /\/\/\sTODO\s(.*)/;
 const files = getFiles();
 
 console.log('Please, write your command!');
@@ -13,7 +14,11 @@ function getFiles() {
 }
 
 function getTodos() {
-    return files.map(file => file.match(todoRe)[1])
+    return files
+        .map(file => file
+            .match(todoRe)
+            .map(match => match.match(todoRe2)[1]))
+        .reduce((prev, cur, i) => prev.concat(cur));
 }
 
 function getImportantTodos() {
