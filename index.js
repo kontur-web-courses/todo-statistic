@@ -11,7 +11,14 @@ function getTODOs(){
     return files.map(p => [...(p.matchAll(todoRegex) ?? [])].map(p => {
         if (1 in p)
             return p[1]
-    })).flat()
+    })).flat().map(p => {
+        return {
+            comment: p,
+            isImportant: p.includes('!'),
+            isAuthor: p.count(';') >= 2,
+            isDate: isAuthor
+        }
+    })
 }
 
 function getFiles() {
