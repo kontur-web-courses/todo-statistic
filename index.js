@@ -123,7 +123,7 @@ function getCoolTable(array)
     const labelsObj = {
         '!': '!',
         user: 'user',
-        data: 'date',
+        date: 'date',
         comment: 'comment'
     }
 
@@ -132,10 +132,7 @@ function getCoolTable(array)
     for (const TODO of array) {
         for (const info in TODO) {
             if (!infos.hasOwnProperty(info)) {
-                if (info === "isImportant")
-                    infos[info] = ["!"]
-                else
-                    infos[info] = [info];
+                infos[info] = [info];
             }
             infos[info].push(TODO[info]);
         }
