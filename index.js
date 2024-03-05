@@ -3,11 +3,15 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 const todoRegex = /\/\/ TODO (.*)\n?/g;
+const todos = getTODOs()
 console.log('Please, write your command!');
 readLine(processCommand);
 
 function getTODOs(){
-    return files.map(p => [...p.matchAll(todoRegex)].map(p => p[1])).flat()
+    return files.map(p => [...(p.matchAll(todoRegex) ?? [])].map(p => {
+        if (1 in p)
+            return p[1]
+    })).flat()
 }
 
 function getFiles() {
