@@ -2,6 +2,8 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
+const regex = /\/\/(.*?)\r\n/g;
+
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -17,7 +19,6 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            const regex = /\/\/(.*?)\r\n/g;
             files.forEach(text => {
                 let match;
                 while ((match = regex.exec(text)) !== null) {
@@ -25,6 +26,16 @@ function processCommand(command) {
                 }
             });
             break
+        case 'important':
+            files.forEach(text => {
+                let match;
+                while ((match = regex.exec(text)) !== null) {
+                    if (match[1].indexOf('!') !== -1){
+                        console.log(match[1]);
+                    }
+                }
+            });
+            break;
         default:
             console.log('wrong command');
             break;
