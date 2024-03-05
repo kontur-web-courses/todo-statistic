@@ -67,4 +67,15 @@ function findAuthorComments(comments, author) {
     return result;
 }
 
+function findDateComments(date) {
+    let result = [];
+    for (let comment of todos) {
+        const parseComment = parseAuthorsComment(comment);
+        if (parseComment !== false && parseComment['commentDate'] > date) {
+            result.push(parseComment['comment']);
+        }
+    }
+    return result;
+}
+
 // TODO you can do it!
