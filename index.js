@@ -33,17 +33,12 @@ function processCommand(command) {
             printToDo(getToDo().filter((todo) => todo.type === 'full' && todo.user.toLowerCase() === args[0].toLowerCase()));
             break;
         case 'sort':
-            let fullTodos = [];
-            for (const fileText of files) {
-                for (const todo of extract.todos(fileText)) {
-                    if (todo.type === 'full')
-                        fullTodos.push(todo);
-                }
-            }
+            let toDos = getToDo();
+            let fullTodos = toDos.filter((todo) => todo.type === 'full');
 
             switch (args[0]) {
                 case 'importance':
-                    fullTodos = fullTodos.toSorted((a, b) => b.priority - a.priority);
+                    fullTodos = toDos.toSorted((a, b) => b.priority - a.priority);
                     break;
                 case 'user':
                     fullTodos = fullTodos.toSorted((a, b) => a.user.localeCompare(b.user));
@@ -56,10 +51,7 @@ function processCommand(command) {
                     return;
             }
 
-            for (const todo of fullTodos) {
-                console.log(todo);
-            }
-
+            printToDo(fullTodos)
 
             break;
         default:
@@ -80,7 +72,12 @@ function getToDo() {
 }
 
 function printToDo(toDo) {
-    toDoText = toDo.map((todo) => todo.text);
+    toDoText = toDo.map(function(todo)
+    {
+        if (todo.type === 'truncated') return todo.text;
+        else return [todo.user, todo.date, todo.text].join('; ');
+    })
+
     for (let i = 0; i < toDoText.length; i++) {
         console.log(toDoText[i]);
     }
