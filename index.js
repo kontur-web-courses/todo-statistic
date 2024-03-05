@@ -3,7 +3,7 @@ const {readLine} = require('./console');
 
 const { files, names } = getFiles();
 const priority = Symbol('priority');
-const TODO_REGEXP = /\/\/ TODO\s(.+)\n/gmi;
+const TODO_REGEXP = /\/\/ TODO\s(.+)/gmi;
 const USER_TODO_REGEXP = /(.+);\s(\d{4}-\d{2}-\d{2});\s(.*)/mi
 
 console.log('Please, write your command!');
@@ -30,7 +30,7 @@ function getTodos() {
 
     return todosWithoutUser
             .map(todo => {return {
-                isImportant: todo.includes('!'),
+                '!': todo.includes('!'),
                 [priority]: (todo.match(/!/g) || []).length,
                 user: null,
                 date: null,
@@ -39,7 +39,7 @@ function getTodos() {
         todosWithUser
             .map(group => {
                 return {
-                    isImportant: group[3].includes('!'),
+                    '!': group[3].includes('!'),
                     [priority]: (group[3].match(/!/g) || []).length,
                     user: group[1],
                     date: group[2],
@@ -50,7 +50,7 @@ function getTodos() {
 
 function getImportantTodos() {
     const todos = getTodos();
-    return todos.filter(e => e.isImportant);
+    return todos.filter(e => e['!']);
 }
 
 function getUserTodos(user) {
@@ -102,15 +102,15 @@ function processCommand(command) {
             console.log(getCoolTable(getTodos()));
             break;
         case 'important':
-            console.log(getImportantTodos());
+            console.log(getCoolTable(getImportantTodos()));
             break;
         case 'user':
             let user = processedCommand.at(1);
-            console.log(getUserTodos(user));
+            console.log(getCoolTable(getUserTodos(user)));
             break;
         case 'sort':
             let sort_by = processedCommand.at(1);
-            console.log(getSortedTodos(sort_by));
+            console.log(getCoolTable(getSortedTodos(sort_by)));
             break;
         default:
             console.log('wrong command');
@@ -121,7 +121,7 @@ function processCommand(command) {
 function getCoolTable(array)
 {
     const labelsObj = {
-        isImportant: '!',
+        '!': '!',
         user: 'user',
         data: 'date',
         comment: 'comment'
@@ -169,7 +169,7 @@ function getCoolTable(array)
     return table;
 }
 
-console.log(getCoolTable([{isImportant: 10, name: "ffeef", date: 132, comment: "fwfwef"},
-    {isImportant: 242, name: "ffeef", date: 242424, comment: "fwfwef"}]))
+console.log(getCoolTable([{'!': 10, name: "ffeef", date: 132, comment: "fwfwef"},
+    {'!': 242, name: "ffeef", date: 242424, comment: "fwfwef"}]))
 
 // TODO you can do it!
