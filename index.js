@@ -40,21 +40,6 @@ function processCommand(command) {
             break;
     }
 }
-
-function processCommand(command) {
-    if (command.startsWith('user')) {
-        const user = command.split(' ')[1];
-        showUserTodos(user);
-    } else if (command.startsWith('sort')) {
-        const param = command.split(' ')[1];
-        sortTodos(param);
-    } else if (command === 'exit') {
-        process.exit(0);
-    } else if (command === 'show') {
-        show();
-    }
-}
-
 function sortTodos(param) {
     if (param === 'importance') {
         printTodos(getToDo().sort(function(a, b){
@@ -65,6 +50,12 @@ function sortTodos(param) {
     } else if (param === 'date') {
 
     }
+}
+function formatTodo(todo) {
+    const important = todo.includes('!');
+    const parts = [];
+
+    return parts.join('  |  ');
 }
 function formatTodo(todo) {
     const important = todo.includes('!');
