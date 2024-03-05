@@ -18,17 +18,17 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
-        case 'show todo':
+        case 'show':
             const todos = getTodos();
             todos.forEach(todo => {
-                console.log(`${todo}\n`);
+                printTodo(todo);
             });
             break;
-        case 'important todo':
+        case 'important':
             const allTodos = getTodos();
             allTodos.forEach(todo => {
                 if (todo.includes("!")) {
-                    console.log(`${todo}\n`);
+                    printTodo(todo);
                 }
             });
             break;
@@ -37,13 +37,13 @@ function processCommand(command) {
             const elseTodos = [];
             allSortImportantTodos.forEach(todo => {
                 if (todo.includes("!")) {
-                    console.log(`${todo}`);
+                    printTodo(todo);
                 } else {
                     elseTodos.push(todo);
                 }
             });
             elseTodos.forEach(todo => {
-                console.log(todo);
+                printTodo(todo);
             });
             break;
         case 'sort user':
@@ -74,7 +74,7 @@ function processCommand(command) {
             const sorted = Array.from(datesWithTodos).sort((a, b) => a[0] - b[0]);
 
             sorted.forEach(todo => {
-                console.log(todo.flat(Infinity)[1]);
+                printTodo(todo.flat(Infinity)[1]);
             })
     }
 
@@ -85,7 +85,7 @@ function processCommand(command) {
         allUserTodos.forEach(todo => {
             const curUserName = todo.substring(8, todo.indexOf(";"));
             if (userName.toLowerCase() === curUserName.toLowerCase()) {
-                console.log(todo);
+                printTodo(todo);
             }
         });
     }
@@ -128,25 +128,49 @@ function sortUsers() {
     });
 
     for (const user in users) {
-        console.log(`User: ${user}`);
-        for (const todo of users[user]) {
-            console.log(todo);
+        if (user === "missing") {
+            continue;
         }
-        console.log('\n');
+        for (const todo of users[user]) {
+            printTodo(todo);
+        }
+    }
+
+    for (const todo of users["missing"]) {
+        printTodo(todo);
     }
 }
 
 function printTodo(todo) {
-    console.log(todo);
-    const regex = /^\/\/\s*TODO\s+([^;]+);\s*([^;]+);\s*(.+)$/;
-    const match = todo.match(regex);
-    console.log(match);
+    const indices = [];
+    for (let i = 0; i < todo.length; i++) {
+        if (todo[i] === ';') {
+            indices.push(i);
+        }
+    }
 
-    if (match) {
-        const [, username, date, text] = match;
-        console.log(username);
+    if (indices.length === 0) {
+        const comment = todo.slice(7);
+        const strMissing = "missing";
+        if (todo.includes("!")) {
+            console.log(`! | ${strMissing.padEnd(20, " ")}| ${strMissing.padEnd(10, " ")} | ${comment}`);
+        } else {
+            console.log(`! | ${strMissing.padEnd(20, " ")}| ${strMissing.padEnd(10, " ")} | ${comment}`);
+        }
+        return;
+    }
+
+    const username = todo.slice(8, indices[0]);
+    const date = todo.slice(indices[0] + 2, indices[1]);
+    let comment = todo.slice(indices[1] + 1);
+    if (comment.length > 100) {
+        comment = `${comment.slice(0, 100)}...`
+    }
+
+    if (todo.includes("!")) {
+        console.log(`! | ${username.padEnd(20, " ")}| ${date} | ${comment}`);
     } else {
-        return null;
+        console.log(`  | ${username.padEnd(20, " ")}| ${date} | ${comment}`);
     }
 }
 
