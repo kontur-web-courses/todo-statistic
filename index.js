@@ -21,8 +21,8 @@ function getImportantTodos() {
 }
 
 function getUserTodos(username) {
-    const userRe = new RegExp(`// TODO \{${username}\}; \{(.*?)\}; \{(.*?)\}\\n`)
-    return files.map(file => file.match(todoRe)[2])
+    const userRe = new RegExp(`// TODO ${username}; (.*?); (.*?)\\n`)
+    return files.map(file => file.match(userRe)[2])
 }
 
 function processCommand(command) {
@@ -38,15 +38,17 @@ function processCommand(command) {
             const importantTodos = getImportantTodos();
             console.log(importantTodos)
             break;
-        case command.includes('user'):
-            usernameRe = new RegExp('user \{(.*?)\}')
-            username = command.match(usernameRe)[1]
-            const userTodos = getUserTodos(username);
-            console.log(userTodos)
-            break;
         default:
-            console.log('wrong command');
-            break;
+            if (command.includes('user')) {
+                const usernameRe = new RegExp('user (.*)');
+                const username = command.match(usernameRe)[1];
+                const userTodos = getUserTodos(username);
+                console.log(userTodos)
+            }
+            else {
+                console.log('wrong command');
+                break;
+            }
     }
 }
 
