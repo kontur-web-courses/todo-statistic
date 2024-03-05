@@ -13,7 +13,20 @@ function getFiles() {
 }
 
 function getTodos() {
-    return files.map(file => file.match(todoRe)[1])
+    return files
+        .map(file => file
+            .match(todoRe)
+            .map(match => toObject(match)))
+        .reduce((prev, cur, i) => prev.concat(cur));
+}
+
+function toObject(match) {
+    const parts = match.match(todoParts);
+    if (parts !== null) {
+        return {name: parts[1], date: parts[2], text: parts[3]};
+    }
+
+    return {text: match.match(todoWithoutParts)[1]};
 }
 
 function getImportantTodos() {
@@ -26,29 +39,30 @@ function getUserTodos(username) {
 }
 
 function processCommand(command) {
-    switch (command) {
-        case 'exit':
+    switch (true) {
+        case command === 'exit':
             process.exit(0);
             break;
-        case 'show':
+        case command === 'show':
             const todos = getTodos();
             console.log(todos);
             break;
-        case 'important':
+        case command === 'important':
             const importantTodos = getImportantTodos();
             console.log(importantTodos)
             break;
+        case command.includes('user'):
+            usernameRe = new RegExp('user \{(.*?)\}')
+            username = command.match(usernameRe)[1]
+            const userTodos = getUserTodos(username);
+            console.log(userTodos)
+            break;
+        case command.includes('sort'):
+            const argument = command.slice(5);
+            break;
         default:
-            if (command.includes('user')) {
-                const usernameRe = new RegExp('user (.*)');
-                const username = command.match(usernameRe)[1];
-                const userTodos = getUserTodos(username);
-                console.log(userTodos)
-            }
-            else {
-                console.log('wrong command');
-                break;
-            }
+            console.log('wrong command');
+            break;
     }
 }
 
