@@ -12,10 +12,29 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let splittedCommand = command.split(' ');
+    let com = splittedCommand[0];
+    switch (com) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            for (let x in todoComments){
+                console.log(x);
+            }
+        case 'user':
+            for (let x in todoComments){
+                if (x.username === splittedCommand[1])
+                    console.log(x);
+            }
+        case 'important':
+            for (let x in todoComments){
+                if (x.is_important){
+                    console.log(x);
+                }
+            }
+        case 'sort':
+            console.log(sortComments(todoComments, splittedCommand[1]));
         default:
             console.log('wrong command');
             break;
@@ -45,3 +64,31 @@ const obj = {
     text: '',
     is_important: ''
 };
+
+function sortComments(comments, sortBy) {
+    if (sortBy === 'importance') {
+        return comments.sort((a, b) => {
+            if (a.is_important === b.is_important) {
+                const exclamationCountA = (a.text.match(/!/g) || []).length;
+                const exclamationCountB = (b.text.match(/!/g) || []).length;
+                return exclamationCountB - exclamationCountA;
+            }
+            return a.is_important === 'true' ? -1 : 1;
+        });
+    } else if (sortBy === 'user') {
+        return comments.sort((a, b) => {
+            if (a.username === b.username) return 0;
+            if (a.username === undefined) return 1;
+            if (b.username === undefined) return -1;
+            return a.username.localeCompare(b.username);
+        });
+    } else if (sortBy === 'date') {
+        return comments.sort((a, b) => {
+            if (a.date === b.date) return 0;
+            if (a.date === undefined) return 1;
+            if (b.date === undefined) return -1;
+            return b.date.localeCompare(a.date);
+        });
+    }
+    return comments;
+}
