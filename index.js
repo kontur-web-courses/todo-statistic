@@ -30,16 +30,16 @@ function getTodos() {
 
     return todosWithoutUser
             .map(todo => {return {
-                '!': todo.includes('!'),
+                '!': todo.includes('!') ? '!' : '',
                 [priority]: (todo.match(/!/g) || []).length,
-                user: null,
-                date: null,
+                user: '---',
+                date: '---',
                 comment: todo,
             }}).concat(
         todosWithUser
             .map(group => {
                 return {
-                    '!': group[3].includes('!'),
+                    '!': group[3].includes('!') ? '!' : '',
                     [priority]: (group[3].match(/!/g) || []).length,
                     user: group[1],
                     date: group[2],
@@ -67,11 +67,11 @@ function getSortedTodos(key) {
             return todos.sort((x, y) => y[priority] - x[priority]);
         case 'user':
             return todos.sort((x, y) => {
-                if (x.user === null) {
+                if (x.user === '---') {
                     return 1;
                 }
 
-                if (y.user === null) {
+                if (y.user === '---') {
                     return -1;
                 }
 
@@ -79,11 +79,11 @@ function getSortedTodos(key) {
             })
         case 'date':
             return todos.sort((x, y) => {
-                if (x.date === null) {
+                if (x.date === '---') {
                     return 1;
                 }
 
-                if (y.date === null) {
+                if (y.date === '---') {
                     return -1;
                 }
 
@@ -168,8 +168,5 @@ function getCoolTable(array)
 
     return table;
 }
-
-console.log(getCoolTable([{'!': 10, name: "ffeef", date: 132, comment: "fwfwef"},
-    {'!': 242, name: "ffeef", date: 242424, comment: "fwfwef"}]))
 
 // TODO you can do it!
