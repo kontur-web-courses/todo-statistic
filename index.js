@@ -82,7 +82,8 @@ function getTodoByUser(username) {
 
 function processCommand(command) {
     const stringCommand = String(command);
-    switch (command) {
+    const commandPrefix = command.split(' ')[0];
+    switch (commandPrefix) {
         case 'important':
             console.log(getImportant(getToDO()));
             break;
