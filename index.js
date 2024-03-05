@@ -13,8 +13,9 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
-function processCommand(command) {
-    switch (command) {
+function processCommand(input) {
+    const command = input.split(' ');
+    switch (command[0]) {
         case 'exit':
             process.exit(0);
             break;
@@ -24,10 +25,18 @@ function processCommand(command) {
         case 'important':
             console.log(getAllComments().filter(s => s.includes('!')));
             break;
+        case 'user':
+            console.log(getCommentsFromUser(command[1]));
+            break;
         default:
             console.log('wrong command');
             break;
     }
+}
+
+function getCommentsFromUser(user) {
+    const comments = getAllComments();
+    return comments.filter(c => c.startsWith(`${user};`));
 }
 
 function getAllComments() {
