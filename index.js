@@ -28,6 +28,12 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            console.log(getTodos(files.at(0)));
+            break;
+        case 'important':
+            console.log(getImportantTodos(files.at(0)));
+            break;
         default:
             console.log('wrong command');
             break;
