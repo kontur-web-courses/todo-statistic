@@ -16,7 +16,9 @@ function processCommand(command) {
         case 'show':
             showTodoComments();
             break;
-        case 'exit':
+        case 'important':
+            showTodoComments(true)
+       case 'exit':
             process.exit(0);
             break;
         default:
@@ -25,13 +27,19 @@ function processCommand(command) {
     }
 }
 
-function showTodoComments() {
+function showTodoComments(isImportant) {
     const todoComments = [];
+
     files.forEach(fileContent => {
         const lines = fileContent.split('\n');
         lines.forEach(line => {
             if (line.includes('// TODO')) {
-                todoComments.push(line.slice(line.indexOf('// TODO')));
+                if (isImportant && line.includes('!')) {
+                    todoComments.push(line.slice(line.indexOf('// TODO')));
+                }
+                else if (!isImportant){
+                    todoComments.push(line.slice(line.indexOf('// TODO')));
+                }
             }
         });
     });
