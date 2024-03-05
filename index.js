@@ -29,6 +29,56 @@ function getTodos(includedText=null){
     return todos;
 }
 
+function getSortedTodos(param){
+    console.log(param);
+    if (param === 'date'){
+        console.log('yes');
+        // TODO {Имя автора}; {Дата комментария}; {текст комментария}
+        let todos = getTodos();
+        let todosWithDate = [];
+        let todosWithoutDate = [];
+        for (let todo of todos){
+            let todoData = todo.split(';');
+            if (todoData.length === 3){
+                // todosWithDate.push(todo);
+                todosWithDate.push(todoData[0] + ';' + todoData[2]);
+            }
+            else{
+                todosWithoutDate.push(todo);
+            }
+        }
+        return todosWithDate.concat(todosWithoutDate);
+    }
+    if (param === 'importance'){
+        let importanceTodos = getTodos('!');
+        importanceTodos.sort(countExclamationMarks);
+        return importanceTodos;
+    }
+    if (param === 'user'){
+        // TODO {Имя автора}; {Дата комментария}; {текст комментария}
+        let todos = getTodos();
+        let todosWithUser = [];
+        let todosWithoutUser = [];
+        for (let todo of todos){
+            let todoData = todo.split(';');
+            if (todoData.length > 1){
+                let splitted = todoData[0].split(' ');
+                if (splitted.length >= 3){
+                    todosWithUser.push(todo);
+                }
+                else{
+                    todosWithoutUser.push(todo);
+                }
+            }
+            else{
+                todosWithoutUser.push(todo);
+            }
+        }
+        return todosWithUser.concat(todosWithoutUser);
+    }
+
+}
+
 function processCommand(command) {
     const command_split = command.split(" ")
 
@@ -40,16 +90,23 @@ function processCommand(command) {
             let todos = getTodos();
             console.log(todos);
             break;
-        case 'important':
+        case 'importance':
             let importantTodos = getTodos('!');
             console.log(importantTodos);
             break;
         case 'user':
-            searchByUser(command_split[1]);
+            console.log(searchByUser(command_split[1]));
             break
         default:
-            console.log('wrong command');
-            break;
+            const sortRegex = /^sort\s\{(importance|user|date)\}$/;
+            console.log(sortRegex.test(command));
+            if (sortRegex.test(command) || true) {
+                let param = command.split(' ')[1];
+                let sortedTodos = getSortedTodos(param);
+                console.log(sortedTodos);
+            } else {
+                console.log('wrong command');
+            }
     }
 }
 
@@ -66,3 +123,13 @@ function searchByUser(user){
     return result
 }
 
+
+function countExclamationMarks(str) {
+    let count = 0;
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] === '!') {
+            count++;
+        }
+    }
+    return count;
+}
