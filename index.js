@@ -19,7 +19,10 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            getAllComments();
+            console.log(getAllComments());
+            break;
+        case 'important':
+            console.log(getAllComments().filter(s => s.includes('!')));
             break;
         default:
             console.log('wrong command');
@@ -41,7 +44,6 @@ function getAllComments() {
             }
         }
     }
-    console.log(comments);
     return comments;
 }
 
