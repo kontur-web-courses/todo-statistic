@@ -17,6 +17,11 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            for (let i = 0; i < todos.length; i++) {
+                console.log(todos[i]);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
