@@ -5,6 +5,8 @@ const todoRe = /\/\/\sTODO\s(.*)/gm;
 const todoParts = /\/\/\sTODO\s(.*);\s(\d{4}-\d{2}-\d{2});\s(.*)\n?/;
 const todoWithoutParts = /\/\/\sTODO\s(.*)\n?/;
 const usernameRe = new RegExp('user (.*)')
+const dateRe = /\b\d{4}(?:-\d{2}(?:-\d{2})?)?\b/g;
+
 const files = getFiles();
 
 console.log('Please, write your command!');
@@ -26,7 +28,7 @@ function getTodos() {
 function toObject(match) {
     const parts = match.match(todoParts);
     if (parts !== null) {
-        return {name: parts[1], date: parts[2], text: parts[3]};
+        return {name: parts[1], date: new Date(parts[2]), text: parts[3]};
     }
 
     return {text: match.match(todoWithoutParts)[1]};
@@ -37,8 +39,13 @@ function getImportantTodos() {
 }
 
 function getUserTodos(command) {
-    const username = command.match(usernameRe)[1]
-    return getTodos().filter(item => item.name === username)
+    const username = command.match(usernameRe)[1];
+    return getTodos().filter(item => item.name === username);
+}
+
+function getDateTodos(command) {
+    const date = new Date(command.match(dateRe)[0]);
+    return getTodos().filter(item => item.date >= date);
 }
 
 function processCommand(command) {
@@ -60,6 +67,10 @@ function processCommand(command) {
             break;
         case command.includes('sort'):
             const argument = command.slice(5);
+            break;
+        case command.includes('date'):
+            const dateTodos = getDateTodos(command);
+            console.log(dateTodos)
             break;
         default:
             console.log('wrong command');
