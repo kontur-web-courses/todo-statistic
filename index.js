@@ -66,7 +66,7 @@ function sortTodos(param) {
 
     }
 }
-function formatTodo(todo){
+function formatTodo(todo) {
     const important = todo.includes('!');
     const parts = [];
 
