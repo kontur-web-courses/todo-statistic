@@ -27,8 +27,7 @@ function processCommand(command) {
         case 'user':
             let user = splitCommand[1]
             console.log(getAllTodos()
-                    .filter(t => t !== null && t[1].toLowerCase() === user.toLowerCase())
-                    .map(t => t[0]));
+                    .filter(t => t.toLowerCase().includes(user.toLowerCase())));
             break;
         default:
             console.log('wrong command');
@@ -45,7 +44,6 @@ function getAllTodos() {
             if (todoIndex === -1)
                 continue;
             let todo = line.slice(todoIndex)
-            console.log(todo);
             result.push(todo);
         }
     }
