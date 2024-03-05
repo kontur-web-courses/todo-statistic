@@ -16,10 +16,24 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            console.log(getTODOcomments());
+            break;
         default:
             console.log('wrong command');
             break;
     }
 }
 
+const regex = /\/\/\s*TODO\s.*/g;
+function getTODOcomments() {
+    let result = [];
+    for (let file of files) {
+        result = result.concat(file.match(regex).map(line => line.slice(8)));
+    }
+    return result;
+}
+
 // TODO you can do it!
+
+console.log(getTODOcomments())
