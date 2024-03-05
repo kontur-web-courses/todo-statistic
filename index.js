@@ -19,7 +19,7 @@ function getToDO(){
         let txt = lines[q].split('\r\n');
         //console.log(txt);
         for (let i = 0; i < txt.length; i++) {
-            let ind = txt[i].indexOf("// TODO"); 
+            let ind = txt[i].indexOf("// " + "TODO");
             if (ind != -1) {
                 //console.log(txt[i]);
                 res.push(txt[i].slice(ind+8));
@@ -29,24 +29,66 @@ function getToDO(){
     return res
 }
 
+function getImportant(comments){
+    let res = [];
+    for (let i = 0; i < comments.length; i++){
+        if (comments[i].indexOf('!') != -1){
+            res.push(comments[i])
+        }
+    }
+    return res;
+}
+
+function compareImportant(a, b){
+    return b.split('!').length - a.split('!').length;
+}
+
+function sortByImportance(comments){
+    comments.sort(compareImportant);
+    return comments;
+}
+
+
+function sortByDate(comments){
+    let res = []
+    return res;
+}
+
+function getName(x){
+    if (x.split(';') < 2) {
+        return ""
+    }
+    else{
+        let name = x.split(';')[0];
+        return name;
+    }
+}
+
+function sortByName(comments){
+    comments.sort((a, b) => getName(a).localeCompare(getName(b)));
+    return comments;
+}
+
+
 function processCommand(command) {
     const stringCommand = String(command);
     switch (command) {
-        case 'show':
-            console.log('not supported yet');
-            break;
         case 'important':
-            console.log('not supported yet');
+            console.log(getImportant(getToDO()));
             break;
         case command.startsWith('user '):
             username = stringCommand.split(' ')[1].toLowerCase();
             // do something
             console.log('not supported yet');
             break;
-        case stringCommand.startsWith('sort '):
-            flag = stringCommand.split(' ')[1].toLowerCase();
-            // process it
-            console.log('not supported yet');
+        case 'sort importance':
+            console.log(sortByImportance(getImportant(getToDO())));
+            break
+        case 'sort date':
+            console.log(sortByDate(getToDO()));
+            break
+        case 'sort user':
+            console.log(sortByName(getToDO()));
             break;
         case 'exit':
             process.exit(0);
