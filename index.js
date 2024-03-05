@@ -42,6 +42,22 @@ function processCommand(comm) {
         case 'user':
             console.log(findAuthorComments(command.slice(1).join(' ')))
             break;
+        case 'sort':
+            let a;
+            switch (command.slice(1).join(' ')){
+                case 'importance':
+                    a = "isImportant"
+                    break;
+                case 'user':
+                    a = "Author"
+                    break;
+                case 'date':
+                    a = "Date"
+                    break;
+            }
+
+
+            console.log(Sort(a))
         default:
             console.log('wrong command');
             break;
