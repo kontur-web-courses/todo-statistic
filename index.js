@@ -22,4 +22,14 @@ function processCommand(command) {
     }
 }
 
+function findImportantComments(comments) {
+    let result = [];
+    for (let comment of comments) {
+        if (comment.indexOf('!') >= 0) {
+            result.push(comment);
+        }
+    }
+    return result;
+}
+
 // TODO you can do it!
