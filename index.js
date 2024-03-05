@@ -1,6 +1,6 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
-const todoRe = "//\\sTODO\\s(.*)\n";
+const todoRe = /\/\/ TODO (.*)\n?/;
 console.log(todoRe)
 
 const files = getFiles();
@@ -14,12 +14,7 @@ function getFiles() {
 }
 
 function getTodos() {
-    for (let file of files) {
-        let kek = file.match(todoRe);
-        for (let el of kek) {
-            console.log(el);
-        }
-    }
+    return files.map(file => file.match(todoRe)[1])
 }
 
 function showImportantTodos() {
@@ -43,6 +38,7 @@ function processCommand(command) {
             break;
         case 'show':
             let todos = getTodos();
+            console.log(todos);
             break;
         case 'important':
             showImportantTodos();
