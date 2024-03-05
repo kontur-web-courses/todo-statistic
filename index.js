@@ -11,7 +11,7 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    switch (command.split(' ')[0]) {
         case 'exit':
             process.exit(0);
             break;
@@ -20,6 +20,10 @@ function processCommand(command) {
             break;
         case 'important' :
             printArray(getImportantLines(getTODOLines()));
+            break;
+        case 'user':
+            let user = command.split(' ')[1];
+            printArray(getUserLines(getFormatLines(getTODOLines()), user));
             break;
         default:
             console.log('wrong command');
@@ -58,4 +62,37 @@ function printArray(arr){
         console.log(item);
     }
 }
-// TODO you can do it!
+
+function getFormatLines(lines) {
+    let formatLines = new Array();
+    for (const line of lines) {
+        let data = {
+            line : line,
+            user : '',
+            date : '',
+            text : '',
+            important : false
+        };
+        let a = line.split(";");
+        if (a.length - 1 === 2) {
+            data.user = a[0].split('TODO ')[1].toLowerCase();
+            data.date = a[1];
+            data.text = a[2];
+        }
+        if(line.indexOf('!') !== -1){
+            data.important = true;
+        }
+        formatLines.push(data);
+    }
+    return formatLines;
+}
+
+function getUserLines(formatLines, user) {
+    let result = new Array();
+    for (const line of formatLines) {
+        if (line.user === user.toString().toLowerCase()) {
+            result.push(line.line);
+        }
+    }
+    return result;
+}
