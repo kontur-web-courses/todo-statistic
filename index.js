@@ -36,18 +36,19 @@ function getTodosWithDate(verbose=false) {
     for (let todo of todos) {
         let todoData = todo.split('; ');
         if (todoData.length === 3) {
+            let todoToReturn = todo;
+            let date = todoData[1];
             if (verbose) {
-                let todo1 = todoData[0] + ';' + todoData[2];
-                let date = todoData[1];
-                todosWithDate.push([date, todo1])
+                // let todo1 = todoData[0] + ';' + todoData[2];
+                todosWithDate.push([date, todoToReturn])
             } else {
-                todosWithDate.push(todo1);
+                todosWithDate.push(todoToReturn);
             }
         } else {
             if (verbose) {
-                todosWithoutDate.push([null, todoData[0] + ';' + todoData[2]])
+                todosWithoutDate.push([null, todo1])
             } else {
-                todosWithoutDate.push(todo);
+                todosWithoutDate.push(todo1);
             }
         }
     }
@@ -87,6 +88,29 @@ function getSortedTodos(param){
 
 }
 
+function getTodosWithDateGreaterThan(date) {
+    let formattedDate = date.split('-');
+    let todosWithDate = getTodosWithDate(verbose = true);
+    let result = [];
+    for (let todoData of todosWithDate) {
+        let ok = true;
+        let curDate = todoData[0];
+        let slicedDate = curDate.split('-').slice(0, formattedDate.length);
+        for (let ind in slicedDate) {
+            let number1 = Number(slicedDate[ind]);
+            let number2 = Number(formattedDate[ind]);
+            if (isNaN(number1) || number1 < number2) {
+                ok = false;
+            }
+        }
+        if (ok) {
+            result.push(todoData[1]);
+        }
+
+    }
+    return result;
+}
+
 function processCommand(command) {
     const command_split = command.split(" ")
 
@@ -100,20 +124,20 @@ function processCommand(command) {
             break;
         case 'important':
             let importantTodos = getTodos('!');
-            console.log(importantTodos);
+            makeTable(importantTodos);
             break;
         case 'user':
-            console.log(searchByUser(command_split[1]));
+            makeTable(searchByUser(command_split[1]));
             break
         case 'sort':
             let param = command_split[1];
             let sortedTodos = getSortedTodos(param);
+            makeTable(sortedTodos);
             console.log(sortedTodos);
             break;
         case 'date':
             let date = command_split[1];
-            let todosWithDate = getTodosWithDate(verbose = true);
-            console.log(todosWithDate);
+            makeTable(getTodosWithDateGreaterThan(date));
             break;
         default:
             console.log('wrong command');
@@ -157,12 +181,18 @@ function makeTable(arrayOfResult){
             }
         }
         let date = ""
+        let comment = ""
         if (todoData.length === 3) {
             date = todoData[1];
+            comment = todoData.length > 2 ? todoData[2]: "";
+            if (comment.length > 50){
+                comment = comment.slice(0, 50)+'...'
+            }
         }
-        let comment = todoData.length > 2 ? todoData[2]: "";
-
-        console.log('  '+ important.padEnd(1, " ") + '  |  ' + `${user}`.padEnd(10, " ") + '  |  ' + date.padEnd(10, " ") + '  |  ' + comment.padEnd(50, " ") + "  ")
-
+        else{
+            comment = todoData[todoData.length-1];
+        }
+        // console.log(comment)
+        console.log('  '+ important.padEnd(1, " ") + '  |  ' + `${user}`.padEnd(10, " ") + '  |  ' + date.padEnd(10, " ") + '  |  ' + comment)
     }
 }
