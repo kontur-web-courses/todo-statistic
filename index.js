@@ -12,16 +12,26 @@ function getFiles() {
 }
 
 function processCommand(command) {
+    const todoComments = getTodoComments();
     switch (command.split(' ')[0]) {
         case 'show':
-            showTodoComments();
+            showTodoComments(todoComments);
             break;
         case 'important':
-            showTodoComments(true)
+            showTodoComments(showImportantTodoComments(todoComments));
             break;
         case `user`:
-            showUserTodoComments(command.split(' ')[1]);
+            showTodoComments(showUserTodoComments(command.split(' ')[1], todoComments));
             break;
+        case 'sort':
+            switch (command.split(' ')[1]) {
+                case 'importance':
+                    break
+                case 'user':
+                    break
+                case 'date':
+                    break
+            }
         case 'exit':
             process.exit(0);
             break;
@@ -30,42 +40,49 @@ function processCommand(command) {
             break;
     }
 }
-
-function showUserTodoComments(username) {
+function showUserTodoComments(username, todoComments) {
     const userTodoComments = [];
-    files.forEach(fileContent => {
-        const lines = fileContent.split('\n');
-        lines.forEach(line => {
-            if (line.includes('// TODO')) {
-                const todoComment = line.slice(line.indexOf('// TODO') + 8);
-                const todoParts = todoComment.split(';');
-                if (todoParts.length >= 2) {
-                    const todoAuthor = todoParts[0].trim();
-                    if (todoAuthor.toLowerCase() === username.trim()) {
-                        userTodoComments.push(line);
-                    }
-                }
+    todoComments.forEach(comment => {
+        const todoParts = comment.split(';');
+
+        if (todoParts.length >= 2) {
+            const todoAuthor = todoParts[0].trim();
+            if (todoAuthor.toLowerCase() === username.trim()) {
+                userTodoComments.push(comment);
             }
-        });
-    });
-    userTodoComments.forEach(comment => console.log(comment));
+        }
+    })
+    return userTodoComments;
 }
 
-function showTodoComments(isImportant) {
+function sortByDate(todoComments) {}
+function sortByUserName(todoComments) {}
+function sortByImportance(todoComments) {}
+function showImportantTodoComments(todoComments) {
+    const importantComments = [];
+    todoComments.forEach(comment => {
+        console.log(comment);
+        if (comment.includes('!')){
+            importantComments.push(comment);
+        }
+    });
+    return importantComments;
+}
+function getTodoComments(){
     const todoComments = [];
 
     files.forEach(fileContent => {
         const lines = fileContent.split('\n');
         lines.forEach(line => {
             if (line.includes('// TODO')) {
-                if (isImportant && line.includes('!')) {
-                    todoComments.push(line.slice(line.indexOf('// TODO')));
-                } else if (!isImportant) {
-                    todoComments.push(line.slice(line.indexOf('// TODO')));
-                }
+                todoComments.push(line.slice(line.indexOf('// TODO') + 8));
             }
         });
     });
+   return todoComments;
+}
+
+function showTodoComments(todoComments) {
     todoComments.forEach(comment => console.log(comment));
 }
 
