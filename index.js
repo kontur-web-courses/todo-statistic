@@ -2,9 +2,13 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-
+const todoRegex = /\/\/ TODO (.*)\n?/g;
 console.log('Please, write your command!');
 readLine(processCommand);
+
+function getTODOs(){
+    return files.map(p => [...p.matchAll(todoRegex)].map(p => p[1])).flat()
+}
 
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
