@@ -117,7 +117,7 @@ function findDateComments(date) {
 
 function Sort(by){
     return todos.slice().sort((a,b) => {
-        if (value?.constructor === String)
+        if (a?.constructor === String)
             return a.localeCompare(b);
         else
             return b[by] - a[by]
