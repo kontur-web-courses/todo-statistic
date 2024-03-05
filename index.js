@@ -16,6 +16,15 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            const regex = /\/\/(.*?)\r\n/g;
+            files.forEach(text => {
+                let match;
+                while ((match = regex.exec(text)) !== null) {
+                    console.log(match[1]);
+                }
+            });
+            break
         default:
             console.log('wrong command');
             break;
