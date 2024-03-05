@@ -19,21 +19,30 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
-        case 'exit':
+    switch (true) {
+        case /exit$/g.test(command):
             process.exit(0);
             break;
-        case 'show':
+        case /show$/g.test(command):
             for (let i = 0; i < todos.length; i++) {
                 console.log(todos[i]);
             }
             break;
-        case 'important':
+        case /important$/g.test(command):
             let currentToDo;
             for (let i = 0; i < todos.length; i++) {
                 currentToDo = todos[i];
                 if (currentToDo.includes('!')) {
                     console.log(currentToDo);
+                }
+            }
+            break;
+        case /user .*$/g.test(command):
+            let userName = command.split(' ')[1].toLowerCase();
+            let pattern = new RegExp(`\/\/ TODO .*${userName};`, 'g');
+            for (let todo of todos) {
+                if (pattern.test(todo)) {
+                    console.log(todo);
                 }
             }
             break;
