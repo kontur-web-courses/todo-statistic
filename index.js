@@ -22,4 +22,32 @@ function processCommand(command) {
     }
 }
 
-// TODO you can do it!
+function parseComment(comment) {
+    const commentPattern = /(?:(.*?); ?([\d-]*?); ?)?(.*)/;
+    const parsedComment = commentPattern.exec(comment);
+    let commentObj = {
+        text : parsedComment[3],
+        hasDate : false,
+        importanceLevel : symbolCount(comment, '!'),
+    };
+
+    const isVerbose = parsedComment[0] !== parsedComment[3];
+    if (isVerbose) {
+        commentObj.username = parsedComment[1];
+        commentObj.hasDate = true;
+        commentObj.date = new Date(parsedComment[2]);
+    }
+
+    return commentObj;
+}
+
+function symbolCount(str, symbol) {
+    let count = 0;
+    for (let i = 0; i < str.length; i++) {
+        if(str[i] === symbol) {
+            count++;
+        }
+    }
+
+    return count;
+}
