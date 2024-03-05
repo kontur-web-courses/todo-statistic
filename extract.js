@@ -1,7 +1,3 @@
-const greedyTodo = new RegExp('\/\/ ?TODO ?.*$', 'gm');
-const todoDeclaration = new RegExp('\/\/ ?TODO ?', 'gm');
-
-
 function priority(todoText) {
     let p = 0;
     for (const c of todoText) {
@@ -40,13 +36,13 @@ function truncated(todoText) {
 
 
 function todos(text) {
-    let allTodos = greedyTodo.exec(text);
-    if (allTodos === null)
-        return [];
+    let allTodos = text.split('\n').map(s => s.split(new RegExp('\/\/ ?TODO ?'), 2)[1]);
 
     let todos = [];
     for (const todoText of allTodos) {
-        let text = todoText.replace(todoDeclaration, '');
+        if (todoText == null)
+            continue
+        let text = todoText.replace(new RegExp('\/\/ ?TODO ?', 'gm'), '');
         let todo = full(text) ?? truncated(text);
         todos.push(todo);
     }
