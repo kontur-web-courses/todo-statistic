@@ -18,8 +18,10 @@ function processCommand(command) {
             break;
         case 'important':
             showTodoComments(true)
+            break;
         case `user`:
-            showUserComments(username);
+            showUserTodoComments(command.split(' ')[1]);
+            break;
         case 'exit':
             process.exit(0);
             break;
@@ -29,21 +31,24 @@ function processCommand(command) {
     }
 }
 
-function showUserComments(username) {
-    const todoComments = [];
-
+function showUserTodoComments(username) {
+    const userTodoComments = [];
     files.forEach(fileContent => {
         const lines = fileContent.split('\n');
         lines.forEach(line => {
             if (line.includes('// TODO')) {
-                const splittedLine = line.split(' ');
-                if (splittedLine[1][-1] === ';' && splittedLine[2][-1] === ';' && splittedLine[1].includes(username)) {
-                    todoComments.push(line);
+                const todoComment = line.slice(line.indexOf('// TODO') + 8);
+                const todoParts = todoComment.split(';');
+                if (todoParts.length >= 2) {
+                    const todoAuthor = todoParts[0].trim();
+                    if (todoAuthor.toLowerCase() === username.trim()) {
+                        userTodoComments.push(line);
+                    }
                 }
             }
         });
     });
-    todoComments.forEach(comment => console.log(comment));
+    userTodoComments.forEach(comment => console.log(comment));
 }
 
 function showTodoComments(isImportant) {
