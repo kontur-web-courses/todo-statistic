@@ -50,6 +50,21 @@ function processCommand(command) {
             break;
         case /sort .*/g.test(command):
             let argument = command.split(" ")[1];
+            if (argument === 'importance') {
+                let important = new Map();
+                let currentToDo;
+                let currentCountExclamationMarks;
+                for (let i = 0; i < todos.length; i++) {
+                    currentToDo = todos[i];
+                    currentCountExclamationMarks = (currentToDo.match(/!/g) || []).length;
+                    important.set(currentCountExclamationMarks, currentToDo);
+                }
+                const sortedTodos = [...important].sort().reverse()
+                for (let i = 0; i < sortedTodos.length; i++) {
+                    console.log(sortedTodos[i][1]);
+                }
+            }
+            break
         default:
             console.log('wrong command');
             break;
