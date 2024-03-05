@@ -20,7 +20,7 @@ function processCommand(command) {
         case 'show':
             for (const fileText of files) {
                 for (const todo of extract.todos(fileText)) {
-                    console.log(`TODO: ${todo.text}`)
+                    console.log(todo);
                 }
             }
             break
