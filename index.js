@@ -2,7 +2,6 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-const TODO_REGEX = new RegExp("\\/\\/ TODO ([\\w\\-]+);\\s*([\\w\\-]+);\\s*(.*)$");
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -19,7 +18,11 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            showAllTODOs();
+            todos.forEach(t => console.log(t));
+            break;
+        case 'important':
+            todos.filter(t => ~t.indexOf('!'))
+                .forEach(t => console.log(t));
             break;
         case 'user':
             let user = splitCommand[1]
@@ -34,8 +37,7 @@ function processCommand(command) {
     }
 }
 
-function getAllTodos() {
-    let result = [];
+function showAllTODOs() {
     for (let file of files) {
         for (let line of file.split('\n')) {
             let todoIndex = line.indexOf("// TODO ");
@@ -44,10 +46,8 @@ function getAllTodos() {
                 continue;
             let todo = line.slice(todoIndex)
             console.log(todo);
-            result.push(todo);
         }
     }
-    return result;
 }
 
 // TODO you can do it!
