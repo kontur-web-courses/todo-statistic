@@ -8,7 +8,7 @@ readLine(processCommand);
 
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
-    return filePaths.map(path => readFile(path));
+    return filePaths.map(path =>  readFile(path));
 }
 
 function processCommand(command) {
@@ -35,6 +35,7 @@ function processCommand(command) {
             if (commandParts.length === 2) {
                 sortTodos(commandParts[1]);
             }
+            break;
         case 'date':
             if (commandParts.length === 2) {
                 const dateComments = getCommentsAfterDate(String(commandParts[1]))
@@ -43,6 +44,7 @@ function processCommand(command) {
             else  {
                 console.log('Need date');
             }
+            break;
         case 'exit':
             process.exit(0);
             break;
@@ -58,7 +60,7 @@ function getTODOComments() {
     let result = [];
     let matches;
     for (let file of files) {
-        matches = file.match(regex);
+        matches = file.match(TODORegex);
         if (matches)
             result = result.concat(matches.map(line => line.slice(8)));
     }
