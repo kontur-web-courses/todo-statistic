@@ -43,17 +43,25 @@ function findImportantComments(comments) {
     return result;
 }
 
-function parseAutorsComments(comments) {
+function parseAuthorsComment(comment) {
+    const data = comment.split(';');
+    if (data.length >= 3) {
+        const parseDate = {
+            author: data[0],
+            commentDate: new Date(data[1].trim()),
+            comment: data[2].slice(1)
+        };
+        return parseDate;
+    }
+    return false;
+}
+
+function findAuthorComments(comments, author) {
     let result = [];
     for (let comment of comments) {
-        const data = comment.split(';');
-        if (data.length >= 3) {
-            const parseDate = {
-                name: data[0].slice(data[0].indexOf('TODO ') + 5),
-                commentDate: new Date(data[1].trim()),
-                comment: data[2].slice(1)
-            };
-            result.push(parseDate);
+        const parseComment = parseAuthorsComment(comment);
+        if (parseComment !== false && parseComment['author'].toLowerCase() == author.toLowerCase()) {
+            result.push(parseComment['comment']);
         }
     }
     return result;
