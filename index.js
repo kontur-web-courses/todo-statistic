@@ -43,6 +43,9 @@ function processCommand(comm) {
         case 'user':
             console.log(findAuthorComments(command.slice(1).join(' ')))
             break;
+        case 'date':
+            console.log(findDateComments(new Date(command.slice(1).join(' '))))
+            break;
         case 'sort':
             let a;
             switch (command.slice(1).join(' ')){
