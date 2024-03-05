@@ -108,9 +108,10 @@ function processCommand(command) {
             break;
         case command.includes('date'):
             const dateTodos = getDateTodos(command);
-            console.log(dateTodos)
+            console.log(dateTodos);
+            break;
         default:
-            console.log('wrong command');
+            console.log('Unknown command')
             break;
     }
 }
