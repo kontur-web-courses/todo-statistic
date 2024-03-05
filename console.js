@@ -11,6 +11,8 @@ function readLine(callback) {
 }
 
 // TODO digi; 2016-04-08; добавить writeLine!!!
+// TODO Lesha; 2016-04-08; добавить writeLine!!!
+// TODO Pasha; 2016-04-08; добавить writeLine!!!
 
 module.exports = {
     readLine,
