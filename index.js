@@ -22,6 +22,15 @@ function processCommand(command) {
                 console.log(todos[i]);
             }
             break;
+        case 'important':
+            let currentToDo;
+            for (let i = 0; i < todos.length; i++) {
+                currentToDo = todos[i];
+                if (currentToDo.includes('!')) {
+                    console.log(currentToDo);
+                }
+            }
+            break;
         default:
             console.log('wrong command');
             break;
