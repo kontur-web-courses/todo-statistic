@@ -17,12 +17,17 @@ function processCommand(command) {
     let com = arguments[0];
     let data = arguments[1];
     switch (com) {
+        case 'user':
+            showUserTodos(data);
+            break;
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            let coments1 = getToDo();
-            console.log(coments1);
+            printTodos(getToDo());
+            break;
+        case 'important':
+            important()
             break;
         case 'data':
             let coments2 = getToDo();
@@ -33,13 +38,36 @@ function processCommand(command) {
                     result.push(comment);
                 }
             }
-            console.log(result);
+            printTodos(result);
             break;
         default:
             console.log('wrong command');
             break;
     }
 }
+
+function important() {
+    const todos = getToDo().filter(function (n) {
+        return n.includes('!');
+    });
+
+    printTodos(todos);
+}
+
+function showUserTodos(user) {
+    const todos = getToDo().filter(function (todo) {
+        const parts = todo.split(';');
+        if (parts.length !== 3) {
+            return false;
+        }
+
+        const todoUser = parts[0].split(' ')[2];
+
+        return user.toLowerCase() === todoUser.toLowerCase();
+    });
+    printTodos(todos);
+}
+
 function sortTodos(param) {
     if (param === 'importance') {
         printTodos(getToDo().sort(function(a, b){
@@ -51,12 +79,14 @@ function sortTodos(param) {
 
     }
 }
-function formatTodo(todo) {
-    const important = todo.includes('!');
-    const parts = [];
 
-    return parts.join('  |  ');
+function printTodos(todos) {
+    for (let todo of todos) {
+
+        console.log(todo);
+    }
 }
+
 function formatTodo(todo) {
     const important = todo.includes('!');
     const parts = [];
