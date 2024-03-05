@@ -14,7 +14,8 @@ function getFiles() {
 let comments = []
 
 function processCommand(command) {
-    switch (command) {
+    let part_command = command.split(' ');
+    switch (part_command[0]) {
         case 'exit':
             process.exit(0);
             break;
@@ -33,13 +34,49 @@ function processCommand(command) {
             for (const file of files) {
                 const lines = file.split('\n');
                 for (const line of lines) {
-                    if (line.trim().startsWith('//') && line.includes('TODO') && line.includes('!')) {
+                    if (line.trim().startsWith('//') &&
+                        line.includes('TODO') &&
+                        line.includes('!')) {
                         comments.push(line.replace('// TODO', '').trim());
                     }
                 }
             }
-            comments.pop();
             console.log(comments);
+            break;
+        case 'user':
+            for (const file of files) {
+                const lines = file.split('\n');
+                for (const line of lines) {
+                    if (line.trim().startsWith('//') &&
+                        line.includes('TODO') &&
+                        line.includes(part_command[1])) {
+                        comments.push(line.replace('// TODO', '').trim());
+                    }
+                }
+            }
+            console.log(comments);
+            break;
+        case 'sort':
+            switch (part_command[1]){
+                case 'importance':
+                    const importantComments = [];
+                    const otherComments = [];
+                    for (const file of files) {
+                        const lines = file.split('\n');
+                        for (const line of lines) {
+                            if (line.trim().startsWith('//')) {
+                                if (line.includes('TODO') && line.includes('!')) {
+                                    importantComments.push(line.replace('// TODO', '').trim());
+                                } else {
+                                    otherComments.push(line.replace('// TODO', '').trim());
+                                }
+                            }
+                        }
+                    }
+                    importantComments.sort((a, b) => b.split('!').length - a.split('!').length);
+                    console.log(importantComments.concat(otherComments));
+                    break;
+            }
             break;
         default:
             console.log('wrong command');
