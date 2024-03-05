@@ -15,21 +15,18 @@ function processCommand(command) {
     const commandParts = command.split(' ');
     switch (commandParts[0]) {
         case 'important':
-            const importantTodos = getImportantTodos();
-            importantTodos.forEach(todo => console.log(todo));
+            printTodos(getImportantTodos());
             break;
         case 'user':
             if (commandParts.length === 2) {
-                const userTodos = getTodosByUser(commandParts[1]);
-                userTodos.forEach(todo => console.log(todo));
+                printTodos(getTodosByUser(commandParts[1]));
             }
             else  {
                 console.log('Need username');
             }
             break;
         case 'show':
-            const todos = getTODOComments();
-            todos.forEach(todo => console.log(todo));
+            printTodos(getTODOComments());
             break;
         case 'sort':
             if (commandParts.length === 2) {
@@ -38,8 +35,7 @@ function processCommand(command) {
             break;
         case 'date':
             if (commandParts.length === 2) {
-                const dateComments = getCommentsAfterDate(String(commandParts[1]))
-                dateComments.forEach(comment => console.log(comment));
+                printTodos(getCommentsAfterDate(String(commandParts[1])));
             }
             else  {
                 console.log('Need date');
@@ -104,13 +100,13 @@ function getCommentsAfterDate(date) {
 function sortTodos(criteria) {
     switch (criteria) {
         case 'importance':
-            printSortedTodos(sortByImportance());
+            printTodos(sortByImportance());
             break;
         case 'user':
-            printSortedTodos(sortByUser());
+            printTodos(sortByUser());
             break;
         case 'date':
-            printSortedTodos(sortByDate());
+            printTodos(sortByDate());
             break;
         default:
             console.log('Invalid sorting criterion. Please choose importance, user, or date.');
@@ -151,20 +147,37 @@ function sortByUser() {
 
 function sortByDate() {
     const todos = getTODOComments();
-    const datedTodos = todos.filter(todo => todo.match(/\d{4}-\d{2}-\d{2}/)).sort((a, b) => {
-        const dateA = getDateFromTodoString(a);
-        const dateB = getDateFromTodoString(b);
+    const datedTodos = todos.filter(todo => todo.match(dateRegex)).sort((a, b) => {
+        const dateA = new Date(extractDateFromComment(a));
+        const dateB = new Date(extractDateFromComment(b));
         return dateB - dateA;
     });
-    const undatedTodos = todos.filter(todo => !todo.match(/\d{4}-\d{2}-\d{2}/)).sort();
+    const undatedTodos = todos.filter(todo => !todo.match(dateRegex)).sort();
     return [...datedTodos, ...undatedTodos];
 }
 
-function getDateFromTodoString(todo) {
-    const dateMatch = todo.match(/\d{4}-\d{2}-\d{2}/);
-    return dateMatch ? new Date(dateMatch[0]) : null;
+function printTodos(todos) {
+    todos.forEach(todo => {
+        const todoParts = todo.split(';').map(part => part.trim());
+        let importance = '';
+        if (todo.includes('!')) {
+            importance = '!';
+        }
+        if (todoParts.length >= 3) {
+            const username = todoParts[0] ? todoParts[0].substring(0, 10) : '';
+            user = username.padEnd(10).length > 10 ? username.substring(0, 7) + '...' : username.padEnd(10);
+            todoParts.shift();
+        } else {
+            user = ''.padEnd(10);
+        }
+        const date = todoParts[0] ? todoParts[0].substring(0, 10).padEnd(10) : ''.padEnd(10);
+        const comment = todoParts[1] ? truncate(todoParts[1], 50) : '';
+        console.log(`${importance.padEnd(3)}|  ${user}  |  ${date}  |  ${comment}`);
+    });
 }
 
-function printSortedTodos(sortedTodos) {
-    sortedTodos.forEach(todo => console.log(todo));
+
+function truncate(text, maxLength) {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength - 3) + '...';
 }
