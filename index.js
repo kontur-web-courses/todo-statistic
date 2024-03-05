@@ -2,8 +2,8 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const { files, names } = getFiles();
-const TODO_REGEXP = /\/\/ TODO\s*(.+)/gm;
-const USER_TODO_REGEXP = /(.+)\s*;\s*(\d{4}-\d{2}-\d{2})\s*;\s*(.*)/gm
+const TODO_REGEXP = /\/\/ TODO\s(.+)\n/gmi;
+const USER_TODO_REGEXP = /(.+);\s(\d{4}-\d{2}-\d{2});\s(.*)/mi
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -14,8 +14,10 @@ function getFiles() {
     return { files: filePaths.map(path => readFile(path)), names: fileNames};
 }
 
-function getTodos(file) {
-    const allTodos = Array.from(file.matchAll(TODO_REGEXP))
+function getTodos() {
+    const allText = files.join('\n');
+
+    const allTodos = Array.from(allText.matchAll(TODO_REGEXP))
         .map(group => group[1]);
 
     const todosWithoutUser = allTodos
@@ -23,11 +25,12 @@ function getTodos(file) {
 
     const todosWithUser = allTodos
         .filter(todo => USER_TODO_REGEXP.test(todo))
-        .map(todo => Array.from(todo.matchAll(USER_TODO_REGEXP))[0]);
+        .map(todo => Array.from(todo.match(USER_TODO_REGEXP)));
 
     return todosWithoutUser
             .map(todo => {return {
                 isImportant: todo.includes('!'),
+                priority: (todo.match(/!/g) || []).length,
                 user: null,
                 date: null,
                 comment: todo,
@@ -36,6 +39,7 @@ function getTodos(file) {
             .map(group => {
                 return {
                     isImportant: group[3].includes('!'),
+                    priority: (group[3].match(/!/g) || []).length,
                     user: group[1],
                     date: group[2],
                     comment: group[3],
@@ -43,15 +47,48 @@ function getTodos(file) {
             }));
 }
 
-function getImportantTodos(file) {
+function getImportantTodos() {
     const todos = getTodos(file);
     return todos.filter(e => e.isImportant);
 }
 
-function getUserTodos(file, user) {
+function getUserTodos(user) {
     const todos = getTodos(file);
     return todos
         .filter(obj => obj.user === user);
+}
+
+function getSortedTodos(key) {
+    var todos = getTodos();
+
+    switch(key) {
+        case 'importance':
+            return todos.sort((x, y) => y.priority - x.priority);
+        case 'user':
+            return todos.sort((x, y) => {
+                if (x.user === null) {
+                    return 1;
+                }
+
+                if (y.user === null) {
+                    return -1;
+                }
+
+                return x.user.localeCompare(y.user);
+            })
+        case 'date':
+            return todos.sort((x, y) => {
+                if (x.date === null) {
+                    return 1;
+                }
+
+                if (y.date === null) {
+                    return -1;
+                }
+
+                return Date.parse(y.date) - Date.parse(x.date);
+            });
+    }
 }
 
 function processCommand(command) {
@@ -61,18 +98,18 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            console.log(files.map(getTodos));
+            console.log(getTodos());
             break;
         case 'important':
-            console.log(files.map(getImportantTodos));
+            console.log(getImportantTodos());
             break;
         case 'user':
             let user = processedCommand.at(1);
-            console.log(getUserTodos(files.at(0), user));
+            console.log(getUserTodos(user));
             break;
         case 'sort':
             let sort_by = processedCommand.at(1);
-            console.log(getSortedTodos(files.at(0), sort_by));
+            console.log(getSortedTodos(sort_by));
             break;
         default:
             console.log('wrong command');
