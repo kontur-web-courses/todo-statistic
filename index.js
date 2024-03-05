@@ -29,12 +29,33 @@ function parse(files) {
 
     files.forEach(file => {
         const matches = file.match(todoRegex);
-        if (matches) {
-            todos.push(...matches);
-        }
+        for (let match of matches){
+            match = match.slice(8);
+            if (match)
+                todos.push(extractCommentData(match));
+        }        
     });
 
     return todos;
+}
+
+function extractCommentData(match){
+    let username, date, text, is_important;
+    if (match.indexOf(';') == -1){
+        text = match;
+    }
+    else{
+        [username, date, text] = match.split(';');
+        console.log('Here');
+        date = Date(date);
+    }
+    is_important = (text.indexOf('!') != -1);
+    return {
+        username,
+        date,
+        text,
+        is_important
+    };
 }
 
 // TODO you can do it!
