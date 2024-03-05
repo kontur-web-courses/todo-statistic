@@ -4,6 +4,7 @@ const {readLine} = require('./console');
 const todoRe = /\/\/\sTODO\s(.*)/gm;
 const todoParts = /\/\/\sTODO\s(.*);\s(\d{4}-\d{2}-\d{2});\s(.*)\n?/;
 const todoWithoutParts = /\/\/\sTODO\s(.*)\n?/;
+const usernameRe = new RegExp('user (.*)')
 const files = getFiles();
 
 console.log('Please, write your command!');
@@ -35,9 +36,9 @@ function getImportantTodos() {
     return getTodos().filter((todo, i) => todo.text.includes('!'));
 }
 
-function getUserTodos(username) {
-    const userRe = new RegExp(`// TODO ${username}; (.*?); (.*?)\\n`)
-    return files.map(file => file.match(userRe)[2])
+function getUserTodos(command) {
+    const username = command.match(usernameRe)[1]
+    return getTodos().filter(item => item.name === username)
 }
 
 function processCommand(command) {
@@ -54,9 +55,7 @@ function processCommand(command) {
             console.log(importantTodos)
             break;
         case command.includes('user'):
-            usernameRe = new RegExp('user \{(.*?)\}')
-            username = command.match(usernameRe)[1]
-            const userTodos = getUserTodos(username);
+            const userTodos = getUserTodos(command);
             console.log(userTodos)
             break;
         case command.includes('sort'):
