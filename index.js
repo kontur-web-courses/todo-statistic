@@ -13,6 +13,35 @@ function getFiles() {
 }
 
 function processCommand(command) {
+    let arguments = command.split(" ");
+    let com = arguments[0];
+    let data = arguments[1];
+    switch (com) {
+        case 'exit':
+            process.exit(0);
+            break;
+        case 'show':
+            let coments1 = getToDo();
+            console.log(coments1);
+            break;
+        case 'data':
+            let coments2 = getToDo();
+            let result = [];
+            for(const comment of coments2){
+                let index = comment.indexOf(data);
+                if (index !== -1) {
+                    result.push(comment);
+                }
+            }
+            console.log(result);
+            break;
+        default:
+            console.log('wrong command');
+            break;
+    }
+}
+
+function processCommand(command) {
     if (command.startsWith('user')) {
         const user = command.split(' ')[1];
         showUserTodos(user);
@@ -42,40 +71,6 @@ function formatTodo(todo){
     const parts = [];
 
     return parts.join('  |  ');
-
-}
-function showUserTodos(user) {
-    const todos = getToDo().filter(function (todo) {
-        const parts = todo.split(';');
-        if (parts.length !== 3) {
-            return false;
-        }
-
-        const todoUser = parts[0].split(' ')[2];
-
-        return user.toLowerCase() === todoUser.toLowerCase();
-    });
-    printTodos(todos);
-}
-
-function important() {
-    const todos = getToDo().filter(function (n) {
-        return n.contains('!');
-    });
-
-    printTodos(todos);
-}
-
-function show() {
-    const todos = getToDo();
-    printTodos(todos);
-}
-
-function printTodos(todos) {
-    for (let todo of todos) {
-
-        console.log(todo);
-    }
 }
 
 function findAllOccurrences(text) {
