@@ -25,9 +25,7 @@ function findAllTodos(file){
     for(let line of lines){
         let index = line.indexOf('// TODO ');
         if (index !== -1){
-            result.push({
-                text: line.slice(index + 8),
-            });
+            result.push(line.slice(index + 8));
         }
     }
     return result;
@@ -54,22 +52,21 @@ function printText(todos){
 }
 
 function processCommand(command) {
-    const todos = searchAllFiles(getFiles());
+    let todos = searchAllFiles(getFiles()).map(comment => parseComment(comment));
     switch (command) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            printText(todos);
             break;
         case 'important':
-            markTodosImportance(todos);
-            printText(findImportantTodos(todos));
+            todos = todos.filter(todo => todo.importanceLevel > 0);
             break;
         default:
             console.log('wrong command');
             break;
     }
+    printText(todos);
 }
 
 function parseComment(comment) {
@@ -83,7 +80,7 @@ function parseComment(comment) {
 
     const isVerbose = parsedComment[0] !== parsedComment[3];
     if (isVerbose) {
-        commentObj.username = parsedComment[1];
+        commentObj.username = parsedComment[1].toLowerCase();
         commentObj.hasDate = true;
         commentObj.date = new Date(parsedComment[2]);
     }
@@ -101,3 +98,5 @@ function symbolCount(str, symbol) {
 
     return count;
 }
+
+// TODO You can do it!
