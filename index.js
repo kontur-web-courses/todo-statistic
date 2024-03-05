@@ -24,6 +24,30 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
+function processTODO(string){
+    return string;
+    let baseString = string;
+    let first = string.indexOf(';');
+    if (first === -1){
+        return {inf: baseString};
+    }
+    let comment = {};
+    comment.name = string.substring(first+1).split(';')[0];
+    string = string.substring(first + 1, 9999999);
+    let second = string.indexOf(';');
+    if (second === -1){
+        return {inf: baseString};
+    }
+    comment.date = string.substring(second+1).split(';')[0];
+    string = string.substring(first + 1, 9999999);
+    let third = string.indexOf(';');
+    if (third === -1){
+        return {inf: baseString};
+    }
+    comment.text = string.substring(third);
+    return comment;
+}
+
 function getComments() {
     const files = getFiles();
     const todoComments = [];
@@ -46,7 +70,7 @@ function getComments() {
         });
     });
 
-    return todoComments;
+    return todoComments.map(processTODO);
 }
 
 function processCommand(command) {
@@ -110,6 +134,33 @@ function processCommand(command) {
             } else {
                 console.log('Please specify valid sort option: importance, user, date');
             }
+            break;
+        case 'date':
+            const dateArg = command.split(' ')[1];
+            const targetParts = dateArg.split('-');
+
+            let targetYear = parseInt(targetParts[0], 10);
+            let targetMonth = targetParts[1] ? parseInt(targetParts[1], 10) - 1 : 11;
+            let targetDay = targetParts[2] ? parseInt(targetParts[2], 10) : -1;
+
+            if (targetDay === -1) {
+                const nextMonthDate = new Date(targetYear, targetMonth);
+                targetDay = new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth()+1, -1).getDate();
+            }
+
+            const targetDate = new Date(targetYear, targetMonth, targetDay);
+
+            todos.forEach(comment => {
+                const commentDateMatch = comment.match(/\d{4}-\d{2}-\d{2}/);
+                if (commentDateMatch) {
+                    const [year, month, day] = commentDateMatch[0].split('-').map(Number);
+                    const commentDate = new Date(year, month - 1, day);
+                    if (commentDate > targetDate) {
+                        console.log(comment);
+                    }
+                }
+            });
+
             break;
         default:
             console.log('Unknown command. Please enter "exit" to exit or one of the specified commands.');
