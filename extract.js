@@ -26,13 +26,15 @@ function full(todoText) {
         user: components[0],
         date: date,
         text: components[2],
+        priority: priority(components[2])
     };
 }
 
 function truncated(todoText) {
     return {
         type: 'truncated',
-        text: todoText
+        text: todoText,
+        priority: priority(todoText)
     };
 }
 
