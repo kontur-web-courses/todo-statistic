@@ -3,8 +3,7 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 const regex = /(\/\/ *TODO *.*$)/mg;
-const nameDataRegex = /(?:\/\/ *TODO (.+); (.+); (?:.*$))/mg;
-
+const nameDataRegex = /(?:\/\/ *TODO (.+); (.+); (?:.*$))/;
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -85,12 +84,12 @@ function dateSorting(arr) {
             dateMap[comment] = match[2];
         }
     }
-    console.log(dateMap);
     arr.sort((a, b) => +(new Date(dateMap[b]) - new Date(dateMap[a])));
     return arr;
 }
 
 function getUsers(user){
+    let match;
     getComments().forEach(comment => {
         if ((match = nameDataRegex.exec(comment)) !== null){
             if (match[1].toLowerCase() === user.toLowerCase()){
@@ -118,6 +117,7 @@ function sortByImportance() {
 function sortByUsers(){
     let withUser = [];
     let withoutUser = [];
+    let match;
     getComments().forEach(comment => {
         if ((match = nameDataRegex.exec(comment)) !== null){
             withUser.push(comment);
