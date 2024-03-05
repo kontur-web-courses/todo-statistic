@@ -42,19 +42,20 @@ function processCommand(command) {
             let array = getTODOcomments(getFiles());
             if (command[1] === 'importance'){
                 array.sort((a, b) => b.importance - a.importance);
+                array = array.map(TODO => TODO.comment);
             } else if (command[1] === 'date') {
-                let withoutDate = array.filter(TODO => TODO.date === undefined);
-                let withDate = array.filter(TODO => TODO.date !== undefined).sort((a, b) => b.date - a.date);
-                array = withDate + withoutDate;
+                let withoutDate = array.filter(TODO => TODO.date === undefined).map(TODO => TODO.comment);
+                let withDate = array.filter(TODO => TODO.date !== undefined).sort((a, b) => b.date - a.date).map(TODO => TODO.comment);
+                array = withDate.concat(withoutDate);
             } else if (command[1] === 'user'){
                 let dict = {};
                 let undef = [];
                 for (let TODO of array){
                     if (TODO.user !== undefined) {
-                        if (!(TODO.user in dict)) {
-                            dict[TODO.user] = [];
+                        if (!(TODO.user.toLowerCase() in dict)) {
+                            dict[TODO.user.toLowerCase()] = [];
                         }
-                        dict[TODO.user].push(TODO.comment.replace(TODO.user + ';', '').trim());
+                        dict[TODO.user.toLowerCase()].push(TODO.comment.replace(TODO.user + ';', '').trim());
                     } else {
                         undef.push(TODO.comment);
                     }
@@ -73,7 +74,8 @@ function processCommand(command) {
                 console.log('Такая сортировка не поддерживается');
             }
             for (let elem of array){
-                console.log(elem.comment);
+                console.log();
+                console.log(elem);
             }
             break;
         default:
@@ -108,10 +110,10 @@ function getTODOcomments(files){
 }
 
 function createTODOObject(TODOComment) {
-    let TODOobject = { user: " ",
-                        date: " ",
+    let TODOobject = { user: undefined,
+                        date: undefined,
                         importance: 0,
-                        comment: ' '
+                        comment: undefined
     };
     let ops =  TODOComment.split(';').map(
         function (tag) {
