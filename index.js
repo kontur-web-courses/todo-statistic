@@ -13,7 +13,7 @@ function getFiles() {
 
 // TODO you can do it!
 function getTODOComments() {
-    const PATTERN = /(\/\/ TODO .+)(\r\n)*/g;
+    const PATTERN = /\/\/(\s?)[tT][oO][dD][oO][\s:].+/g;
     return files.join('').match(PATTERN);
 }
 
@@ -22,13 +22,14 @@ function showTodoComments() {
 }
 
 function showTodoImportantComments() {
+    console.log(getTODOComments());
     console.log(getTODOComments().filter(com => com.at(-1) === '!')?.join('\n'));
 }
 
 function showTodoUserComments(name) {
     console.log(getTODOComments().filter(com => {
-        let s = com.match(/\/\/ TODO (.+?);\s*(.+?);\s*/)
-        return s !== null && s[1].toLowerCase() === name.toLowerCase();
+        let s = com.match(/\/\/(\s?)[tT][oO][dD][oO][\s:](.+?);\s*(.+?);/);
+        return s !== null && s[2].toLowerCase() === name.toLowerCase();
     })?.join('\n'));
 }
 
@@ -57,12 +58,12 @@ function showSortImportanceComments() {
 function showSortUserComments() {
     console.log(getTODOComments()
         .sort((com1, com2) => {
-            const s1 = com1.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
-            const s2 = com2.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
+            const s1 = com1.match(/\/\/(\s?)[tT][oO][dD][oO][\s:](.+?);\s*(.+?);\s*/);
+            const s2 = com2.match(/\/\/(\s?)[tT][oO][dD][oO][\s:](.+?);\s*(.+?);\s*/);
             if (s1 === null) {
                 return s2 !== null ? 1 : -1;
             } else if (s2 !== null) {
-                return s1[1].toLowerCase() > s2[1].toLowerCase() ? 1 : -1;
+                return s1[2].toLowerCase() > s2[2].toLowerCase() ? 1 : -1;
             }
             return 1;
         })?.join('\n'));
@@ -71,12 +72,12 @@ function showSortUserComments() {
 function showSortDateComments() {
     console.log(getTODOComments()
         .sort((com1, com2) => {
-            const s1 = com1.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
-            const s2 = com2.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
+            const s1 = com1.match(/\/\/(\s?)[tT][oO][dD][oO][\s:](.+?);\s*(.+?);\s*/);
+            const s2 = com2.match(/\/\/(\s?)[tT][oO][dD][oO][\s:](.+?);\s*(.+?);\s*/);
             if (s1 === null) {
                 return s2 !== null ? 1 : -1
             } else if (s2 !== null) {
-                return s1[2].toLowerCase() < s2[2].toLowerCase() ? 1 : -1;
+                return s1[3].toLowerCase() < s2[3].toLowerCase() ? 1 : -1;
             }
             return 1;
         })?.join('\n'));
@@ -84,8 +85,8 @@ function showSortDateComments() {
 
 function showDateCommand(date) {
     console.log(getTODOComments().filter(com => {
-        const s = com.match(/\/\/ TODO (.+?);\s*(.+?);\s*/);
-        return s !== null ? s[2] > date : false;
+        const s = com.match(/\/\/(\s?)[tT][oO][dD][oO][\s:](.+?);\s*(.+?);\s*/);
+        return s !== null ? s[3] > date : false;
     })?.join('\n'));
 }
 
