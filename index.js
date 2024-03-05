@@ -24,11 +24,11 @@ function processCommand(command) {
                 userTodos.forEach(todo => console.log(todo));
             }
             break;
-        case 'exit':
-            process.exit(0);
-            break;
         case 'show':
             console.log(getTODOComments());
+            break;
+        case 'exit':
+            process.exit(0);
             break;
         default:
             console.log('wrong command');
@@ -39,8 +39,11 @@ function processCommand(command) {
 const regex = /\/\/\s*TODO\s.*/g;
 function getTODOComments() {
     let result = [];
+    let matches;
     for (let file of files) {
-        result = result.concat(file.match(regex).map(line => line.slice(8)));
+        matches = file.match(regex);
+        if (matches)
+            result = result.concat(matches.map(line => line.slice(8)));
     }
     return result;
 }
