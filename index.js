@@ -32,4 +32,20 @@ function findImportantComments(comments) {
     return result;
 }
 
+function parseAutorsComments(comments) {
+    let result = [];
+    for (let comment of comments) {
+        const data = comment.split(';');
+        if (data.length >= 3) {
+            const parseDate = {
+                name: data[0].slice(data[0].indexOf('TODO ') + 5),
+                commentDate: new Date(data[1].trim()),
+                comment: data[2].slice(1)
+            };
+            result.push(parseDate);
+        }
+    }
+    return result;
+}
+
 // TODO you can do it!
