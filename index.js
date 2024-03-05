@@ -2,9 +2,8 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
-const TODO_REGEXP = /\/\/ TODO.*/gm;
-const IMPORTANT_TODO_REGEXP = /\/\/ TODO.*/gm;
-const USER_TODO_REGEXP = /\/\/ TODO\s*(.+)\s*;\s*(\d{4}-\d{2}-\d{2})\s*;\s*(.*)/gm
+const TODO_REGEXP = /\/\/ TODO\s*(.+)/gm;
+const USER_TODO_REGEXP = /(.+)\s*;\s*(\d{4}-\d{2}-\d{2})\s*;\s*(.*)/gm
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -15,17 +14,32 @@ function getFiles() {
 }
 
 function getTodos(file) {
-    const todos = Array.from(file.matchAll(USER_TODO_REGEXP));
+    const allTodos = Array.from(file.matchAll(TODO_REGEXP))
+        .map(group => group[1]);
 
-    return todos
-        .map(group => {
-            return {
-                isImportant: group[3].includes('!'),
-                username: group[1],
-                date: group[2],
-                text: group[3],
-            }
-        });
+    const todosWithoutUser = allTodos
+        .filter(todo => !USER_TODO_REGEXP.test(todo));
+
+    const todosWithUser = allTodos
+        .filter(todo => USER_TODO_REGEXP.test(todo))
+        .map(todo => Array.from(todo.matchAll(USER_TODO_REGEXP))[0]);
+
+    return todosWithoutUser
+            .map(todo => {return {
+                isImportant: todo.includes('!'),
+                user: null,
+                date: null,
+                comment: todo,
+            }}).concat(
+        todosWithUser
+            .map(group => {
+                return {
+                    isImportant: group[3].includes('!'),
+                    user: group[1],
+                    date: group[2],
+                    comment: group[3],
+                }
+            }));
 }
 
 function getImportantTodos(file) {
@@ -33,10 +47,10 @@ function getImportantTodos(file) {
     return todos.filter(e => e.isImportant);
 }
 
-function getUserTodos(file, username) {
+function getUserTodos(file, user) {
     const todos = getTodos(file);
     return todos
-        .filter(obj => obj.username === username);
+        .filter(obj => obj.user === user);
 }
 
 function processCommand(command) {
@@ -45,10 +59,10 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            console.log(getTodos(files.at(0)));
+            console.log(files.map(getTodos));
             break;
         case 'important':
-            console.log(getImportantTodos(files.at(0)));
+            console.log(files.map(getImportantTodos));
             break;
         default:
             console.log('wrong command');
