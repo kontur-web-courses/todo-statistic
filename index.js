@@ -68,9 +68,7 @@ function processCommand(command) {
             const match = command.match(regex);
             if (match) {
                 const date = match[1];
-                console.log(date);
                 let commandDate = new Date(date);
-
                 for (let comment of comments) {
                     const regex2 = /\b(\d{4})-(\d{2})-(\d{2})\b/;
                     let commentDataStr = comment.match(regex2);
@@ -84,36 +82,6 @@ function processCommand(command) {
 
             }
             break;
-
-        case 'sort':
-            if (commandParams[1] === 'date') {
-
-
-                let arr = comments.sort((a, b) => {
-                    if (a.match(/\b(\d{4})-(\d{2})-(\d{2})\b/) === null)
-                        return 10000;
-                    if (b.match(/\b(\d{4})-(\d{2})-(\d{2})\b/) === null)
-                        return 10000;
-
-                    let dateA = new Date(a.match(/\b(\d{4})-(\d{2})-(\d{2})\b/)[0]).getTime();
-                    let dateB = new Date(b.match(/\b(\d{4})-(\d{2})-(\d{2})\b/)[0]).getTime();
-
-                    if (dateA > dateB) {
-                        return 1;
-                    }
-                    if (dateA < dateB) {
-                        return -1;
-                    }
-                    if (dateA === dateB) {
-                        return 0;
-                    }
-                } )
-
-                for (let comment of arr)
-                    console.log(comment)
-
-                break;
-            }
         case 'show':
             for (let comment of comments)
                 console.log(comment);
@@ -169,8 +137,31 @@ function processCommand(command) {
                         console.log(it.next().value)
                     }
                 }
-                if (commandParams[1] == 'date') {
-                    
+                if (commandParams[1] === 'date') {
+                    let arr = comments.sort((a, b) => {
+                        if (a.match(/\b(\d{4})-(\d{2})-(\d{2})\b/) === null)
+                            return 10000;
+                        if (b.match(/\b(\d{4})-(\d{2})-(\d{2})\b/) === null)
+                            return 10000;
+
+                        let dateA = new Date(a.match(/\b(\d{4})-(\d{2})-(\d{2})\b/)[0]).getTime();
+                        let dateB = new Date(b.match(/\b(\d{4})-(\d{2})-(\d{2})\b/)[0]).getTime();
+
+                        if (dateA > dateB) {
+                            return 1;
+                        }
+                        if (dateA < dateB) {
+                            return -1;
+                        }
+                        if (dateA === dateB) {
+                            return 0;
+                        }
+                    } )
+
+                    for (let comment of arr)
+                        console.log(comment)
+
+                    break;
                 }
             } else {
                 console.log('No sorting parameter')
@@ -178,7 +169,7 @@ function processCommand(command) {
 
             break;
         default:
-            console.log('wrong command123');
+            console.log('wrong command');
             break;
     }
 }
