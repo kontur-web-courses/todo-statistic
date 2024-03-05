@@ -48,6 +48,8 @@ function parse(files) {
 
     files.forEach(file => {
         const matches = file.match(todoRegex);
+        if (!matches)
+            return
         for (let match of matches){
             match = match.slice(8);
             if (match)
@@ -65,7 +67,6 @@ function extractCommentData(match){
     }
     else{
         [username, date, text] = match.split(';');
-        console.log('Here');
         date = Date(date);
     }
     is_important = (text.indexOf('!') != -1);
@@ -77,14 +78,6 @@ function extractCommentData(match){
     };
 }
 
-// TODO you can do it!
-
-const obj = {
-    username: '',
-    date: '',
-    text: '',
-    is_important: ''
-};
 
 function sortComments(comments, sortBy) {
     if (sortBy === 'importance') {
