@@ -73,10 +73,21 @@ function sortByDate(arr) {
 }
 
 
-function sortByUserName(todoComments) {
-    const sortedWithName = todoComments.filter(item => /^[A-Za-z]+;/.test(item)).sort();
-    const sortedWithoutName = todoComments.filter(item => !/^[A-Za-z]+;/.test(item)).sort();
-    return [sortedWithName.concat(sortedWithoutName)];
+function sortByUserName(arr) {
+    const sortedWithName = arr.filter(item => /^[A-Za-z]+;/.test(item)).reduce((acc, curr) => {
+        const name = /^[A-Za-z]+/.exec(curr)[0].toLowerCase();
+        if (!acc[name]) {
+            acc[name] = [];
+        }
+        acc[name].push(curr);
+        return acc;
+    }, {});
+
+    const groupedAndSortedWithName = Object.values(sortedWithName)
+        .reduce((acc, curr) => acc.concat(curr.sort()), []);
+
+    const sortedWithoutName = arr.filter(item => !/^[A-Za-z]+;/.test(item)).sort();
+    return [...groupedAndSortedWithName, ...sortedWithoutName];
 }
 
 function sortByImportance(importantComments) {
