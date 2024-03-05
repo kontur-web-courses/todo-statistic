@@ -5,7 +5,7 @@ const files = getFiles();
 
 let re = /\/\/ TODO .*/g;
 let todos = [];
-for(let file of files) {
+for (let file of files) {
     let c_todos = file.match(re);
     todos = todos.concat(c_todos);
 }
@@ -46,6 +46,8 @@ function processCommand(command) {
                 }
             }
             break;
+        case /sort .*/g.test(command):
+            let argument = command.split(" ")[1];
         default:
             console.log('wrong command');
             break;
