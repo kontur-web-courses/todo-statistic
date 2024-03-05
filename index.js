@@ -26,6 +26,9 @@ function processCommand(command) {
         case 'sort':
             switch (command.split(' ')[1]) {
                 case 'importance':
+                    const importantComments =sortByImportance(showImportantTodoComments(todoComments));
+                    const remaining = todoComments.filter(item => !importantComments.includes(item));
+                    showTodoComments(importantComments.concat(remaining))
                     break
                 case 'user':
                     break
@@ -57,11 +60,20 @@ function showUserTodoComments(username, todoComments) {
 
 function sortByDate(todoComments) {}
 function sortByUserName(todoComments) {}
-function sortByImportance(todoComments) {}
+function sortByImportance(importantComments) {
+    importantComments.sort((a, b) => {
+        const countA = (a.match(/!/g) || []).length; // Считаем количество восклицательных знаков в строке a
+        const countB = (b.match(/!/g) || []).length; // Считаем количество восклицательных знаков в строке b
+
+        return countB - countA; // Сортируем строки в порядке убывания количества восклицательных знаков
+    });
+
+    return importantComments;
+}
+
 function showImportantTodoComments(todoComments) {
     const importantComments = [];
     todoComments.forEach(comment => {
-        console.log(comment);
         if (comment.includes('!')){
             importantComments.push(comment);
         }
