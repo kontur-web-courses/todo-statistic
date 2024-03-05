@@ -2,6 +2,11 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
+String.prototype.count=function(c) {
+    var result = 0, i = 0;
+    for(i;i<this.length;i++)if(this[i]==c)result++;
+    return result;
+};
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -73,9 +78,15 @@ function showUserTodos(user) {
 
 function sortTodos(param) {
     if (param === 'importance') {
-        printTodos(getToDo().sort(function(a, b){
-            return a.includes('!') ? -1 : 1;
-        }))
+        const other = [];
+        for(const todo of getToDo()){
+            if (todo.includes("!")) {
+                console.log(todo);
+            } else {
+                other.push(todo);
+            }
+        }
+        printTodos(other);
     } else if (param === 'user') {
         sortUsers();
     } else if (param === 'date') {
