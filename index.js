@@ -2,7 +2,7 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const { files, names } = getFiles();
-const priority = new Symbol('priority');
+const priority = Symbol('priority');
 const TODO_REGEXP = /\/\/ TODO\s(.+)\n/gmi;
 const USER_TODO_REGEXP = /(.+);\s(\d{4}-\d{2}-\d{2});\s(.*)/mi
 
@@ -49,14 +49,14 @@ function getTodos() {
 }
 
 function getImportantTodos() {
-    const todos = getTodos(file);
+    const todos = getTodos();
     return todos.filter(e => e.isImportant);
 }
 
 function getUserTodos(user) {
-    const todos = getTodos(file);
+    const todos = getTodos();
     return todos
-        .filter(obj => obj.user === user);
+        .filter(obj => obj.user !== null && obj.user.toLowerCase() === user.toLowerCase());
 }
 
 function getSortedTodos(key) {
