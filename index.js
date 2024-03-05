@@ -12,12 +12,23 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    const commandParts = command.split(' ');
+    switch (commandParts[0]) {
+        case 'important':
+            const importantTodos = getImportantTodos();
+            importantTodos.forEach(todo => console.log(todo));
+            break;
+        case 'user':
+            if (commandParts.length === 2) {
+                const userTodos = getTodosByUser(commandParts[1]);
+                userTodos.forEach(todo => console.log(todo));
+            }
+            break;
         case 'exit':
             process.exit(0);
             break;
         case 'show':
-            console.log(getTODOcomments());
+            console.log(getTODOComments());
             break;
         default:
             console.log('wrong command');
@@ -26,7 +37,7 @@ function processCommand(command) {
 }
 
 const regex = /\/\/\s*TODO\s.*/g;
-function getTODOcomments() {
+function getTODOComments() {
     let result = [];
     for (let file of files) {
         result = result.concat(file.match(regex).map(line => line.slice(8)));
@@ -34,6 +45,15 @@ function getTODOcomments() {
     return result;
 }
 
-// TODO you can do it!
+function getImportantTodos() {
+    const todos = getTODOComments();
+    return todos.filter(todo => todo.includes('!'));
+}
 
-console.log(getTODOcomments())
+function getTodosByUser(username) {
+    const todos = getTODOComments();
+    return todos.filter(todo => {
+        const todoParts = todo.split(';').map(part => part.trim());
+        return todoParts[0].toLowerCase().includes(username.toLowerCase());
+    });
+}
