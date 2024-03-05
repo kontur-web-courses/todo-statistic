@@ -38,10 +38,16 @@ function processCommand(command) {
             break;
         case 'sort':
             if (splittedCommand[1] === 'importance'){
-                sortByImportance(todoComments);
+                 console.log(sortByImportance(todoComments));
+            }
+            else if (splittedCommand[1] === 'user'){
+                console.log(sortByUser(todoComments));
+            }
+            else if (splittedCommand[1] === 'date'){
+                console.log(sortByDate(todoComments));
             }
             else{
-                console.log(':///');
+                console.log('There is no anymore options')
             }
             break;
         default:
@@ -99,5 +105,23 @@ function sortByImportance(comments) {
             return 0;
         }
         return a.is_important ? -1 : 1;
+    });
+}
+
+
+function sortByUser(comments) {
+    return comments.sort((a, b) => {
+        const usernameA = a.username || 'zzz';
+        const usernameB = b.username || 'zzz';
+        return usernameA.localeCompare(usernameB);
+    });
+}
+
+
+function sortByDate(comments) {
+    return comments.sort((a, b) => {
+        const dateA = a.date ? new Date(a.date) : new Date(0);
+        const dateB = b.date ? new Date(b.date) : new Date(0);
+        return dateB - dateA;
     });
 }
