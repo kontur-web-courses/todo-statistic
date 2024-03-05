@@ -1,8 +1,7 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
-const todoRe = /\/\/ TODO (.*)\n?/;
-console.log(todoRe)
 
+const todoRe = /\/\/\sTODO\s(.*)\n?/;
 const files = getFiles();
 
 console.log('Please, write your command!');
@@ -17,13 +16,8 @@ function getTodos() {
     return files.map(file => file.match(todoRe)[1])
 }
 
-function showImportantTodos() {
-    const todos = getTodos();
-    for (let todo of todos){
-        if (todo.includes('!')) {
-            console.log(todo);
-        }
-    }
+function getImportantTodos() {
+    return getTodos().filter((todo, i) => todo.includes('!'));
 }
 
 function getUserTodos(username) {
@@ -37,11 +31,12 @@ function processCommand(command) {
             process.exit(0);
             break;
         case 'show':
-            let todos = getTodos();
+            const todos = getTodos();
             console.log(todos);
             break;
         case 'important':
-            showImportantTodos();
+            const importantTodos = getImportantTodos();
+            console.log(importantTodos)
             break;
         case command.includes('user'):
             usernameRe = new RegExp('user \{(.*?)\}')
