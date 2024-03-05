@@ -31,8 +31,10 @@ function processCommand(command) {
                     showTodoComments(importantComments.concat(remaining))
                     break
                 case 'user':
+                    showTodoComments(sortByUserName(todoComments));
                     break
                 case 'date':
+                    showTodoComments(sortByDate(todoComments))
                     break
             }
         case 'exit':
@@ -58,8 +60,25 @@ function showUserTodoComments(username, todoComments) {
     return userTodoComments;
 }
 
-function sortByDate(todoComments) {}
-function sortByUserName(todoComments) {}
+
+function sortByDate(arr) {
+    const getDate = (str) => {
+        const dateMatch = str.match(/\d{4}-\d{2}-\d{2}/);
+        return dateMatch ? new Date(dateMatch[0]) : null;
+    }
+
+    const sortedWithDate = arr.filter(item => getDate(item)).sort((a, b) => getDate(b) - getDate(a));
+    const sortedWithoutDate = arr.filter(item => !getDate(item));
+    return sortedWithDate.concat(sortedWithoutDate);
+}
+
+
+function sortByUserName(todoComments) {
+    const sortedWithName = todoComments.filter(item => /^[A-Za-z]+;/.test(item)).sort();
+    const sortedWithoutName = todoComments.filter(item => !/^[A-Za-z]+;/.test(item)).sort();
+    return [sortedWithName.concat(sortedWithoutName)];
+}
+
 function sortByImportance(importantComments) {
     importantComments.sort((a, b) => {
         const countA = (a.match(/!/g) || []).length; // Считаем количество восклицательных знаков в строке a
