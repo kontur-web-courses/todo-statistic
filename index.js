@@ -23,9 +23,9 @@ function findAllTodos(file){
     let result = [];
     let lines = file.split('\r\n');
     for(let line of lines){
-        let index = line.indexOf('// TODO ');
-        if (index !== -1){
-            result.push(line.slice(index + 8));
+        let match = /^.*?\/\/ ?(?:TODO)[ :](.*)/i.exec(line);
+        if (match !== null){
+            result.push(match[1]);
         }
     }
     return result;
@@ -48,12 +48,13 @@ function findImportantTodos(todos){
 }
 
 function printText(todos){
-    console.log(todos.map(obj => obj.text));
+    console.log(todos.map(obj => obj.username + ':' + obj.date + ':' + obj.text));
 }
 
 function processCommand(command) {
+    let [commandType, arg] = command.split(' ', 2);
     let todos = searchAllFiles(getFiles()).map(comment => parseComment(comment));
-    switch (command) {
+    switch (commandType) {
         case 'exit':
             process.exit(0);
             break;
@@ -61,6 +62,28 @@ function processCommand(command) {
             break;
         case 'important':
             todos = todos.filter(todo => todo.importanceLevel > 0);
+            break;
+        case 'user':
+            todos = todos.filter(todo => todo.username === arg.toLowerCase());
+            break;
+        case 'sort':
+            let comparator = null;
+            switch (arg){
+                case 'importance':
+                    comparator = (a, b) => b.importanceLevel - a.importanceLevel;
+                    break;
+                case 'user':
+                    comparator = (a, b) => -a.username.localeCompare(b.username);
+                    break;
+                case 'date':
+                    comparator = (a, b) => b.date - a.date;
+                    break;
+            }
+            todos.sort(comparator);
+            break;
+        case 'date':
+            let checkDate = new Date(arg);
+            todos = todos.filter(todo => todo.date > checkDate);
             break;
         default:
             console.log('wrong command');
@@ -73,6 +96,7 @@ function parseComment(comment) {
     const commentPattern = /(?:(.*?); ?([\d-]*?); ?)?(.*)/;
     const parsedComment = commentPattern.exec(comment);
     let commentObj = {
+        username : '',
         text : parsedComment[3],
         hasDate : false,
         importanceLevel : symbolCount(comment, '!'),
@@ -99,4 +123,4 @@ function symbolCount(str, symbol) {
     return count;
 }
 
-// TODO You can do it!
+//tODO You can do it!
