@@ -12,7 +12,24 @@ function getFiles() {
 }
 
 function processCommand(command) {
+    const stringCommand = String(command);
     switch (command) {
+        case 'show':
+            console.log('not supported yet');
+            break;
+        case 'important':
+            console.log('not supported yet');
+            break;
+        case command.startsWith('user '):
+            username = stringCommand.split(' ')[1].toLowerCase();
+            // do something
+            console.log('not supported yet');
+            break;
+        case stringCommand.startsWith('sort '):
+            flag = stringCommand.split(' ')[1].toLowerCase();
+            // process it
+            console.log('not supported yet');
+            break;
         case 'exit':
             process.exit(0);
             break;
