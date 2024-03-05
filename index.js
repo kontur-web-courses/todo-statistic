@@ -12,6 +12,8 @@ function getFiles() {
 }
 
 function processCommand(command) {
+    const dateRegex = /\d{4}-\d\d-\d\d/
+
     switch (command) {
         case 'exit':
             process.exit(0);
@@ -30,10 +32,36 @@ function processCommand(command) {
                 }
             });
             break;
+        case 'sort date':
+            const todoList = getTodos();
+
+            const datesWithTodos = new Map();
+
+            todoList.forEach(todo => {
+                const match = dateRegex.exec(todo)
+
+                if (match) {
+                    const dateStr = todo.slice(match.index, match.index + 10);
+
+                    const date = new Date(dateStr);
+
+                    if (datesWithTodos.has(date)) {
+                        const dateTodos = datesWithTodos.get(date);
+                        datesWithTodos.set(date, dateTodos + todo);
+                    } else {
+                        datesWithTodos.set(date, [todo]);
+                    }
+                }
+            });
+
+            const sorted = Array.from(datesWithTodos).sort((a, b) => a[0] - b[0]);
+
+            sorted.forEach(todo => {
+                console.log(todo.flat(Infinity)[1]);
+            })
     }
 
-    if (command.includes("user"))
-    {
+    if (command.includes("user")) {
         const allUserTodos = getTodos();
         const userName = command.split(" ")[1];
 
