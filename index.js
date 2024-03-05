@@ -3,6 +3,7 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 const TODO_REGEXP = /\/\/ TODO.*/gm;
+const IMPORTANT_TODO_REGEXP = /\/\/ TODO.*/gm;
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -14,6 +15,12 @@ function getFiles() {
 
 function getTodos(file) {
     return file.match(TODO_REGEXP);
+}
+
+function getImportantTodos(file) {
+    const todos = getTodos(file);
+
+    return todos.filter(e => e.includes('!'));
 }
 
 function processCommand(command) {
