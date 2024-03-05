@@ -12,8 +12,6 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    const dateRegex = /\d{4}-\d\d-\d\d/
-
     switch (command) {
         case 'exit':
             process.exit(0);
@@ -52,26 +50,9 @@ function processCommand(command) {
         case 'sort date':
             const todoList = getTodos();
 
-            const datesWithTodos = new Map();
+            const datesWithTodos = getDatesWithTodos(todoList);
 
-            todoList.forEach(todo => {
-                const match = dateRegex.exec(todo)
-
-                if (match) {
-                    const dateStr = todo.slice(match.index, match.index + 10);
-
-                    const date = new Date(dateStr);
-
-                    if (datesWithTodos.has(date)) {
-                        const dateTodos = datesWithTodos.get(date);
-                        datesWithTodos.set(date, dateTodos + todo);
-                    } else {
-                        datesWithTodos.set(date, [todo]);
-                    }
-                }
-            });
-
-            const sorted = Array.from(datesWithTodos).sort((a, b) => a[0] - b[0]);
+            const sorted = Array.from(datesWithTodos).sort((a, b) => b[0] - a[0]);
 
             sorted.forEach(todo => {
                 console.log(todo.flat(Infinity)[1]);
@@ -88,6 +69,29 @@ function processCommand(command) {
                 console.log(todo);
             }
         });
+    }
+
+    const dateCommandYearRegex = /date \d{4}/
+
+    if (dateCommandYearRegex.test(command)) {
+        const dateYearRegex = /\d{4}/
+
+        const match = dateYearRegex.exec(command)
+        const dateStr = command.slice(match.index)
+
+        const date = new Date(dateStr)
+
+        const datesWithTodos = getDatesWithTodos(getTodos())
+
+        for (let todoDate of datesWithTodos.keys()) {
+            if (todoDate < date) {
+                continue;
+            }
+
+            const todo = datesWithTodos.get(todoDate);
+
+            console.log(todo[0]);
+        }
     }
 }
 
@@ -148,6 +152,40 @@ function printTodo(todo) {
     } else {
         return null;
     }
+}
+
+function getDatesWithTodos(todos) {
+    const dateRegex = /\d{4}-\d\d-\d\d/
+
+    const datesWithTodos = new Map();
+
+    todos.forEach(todo => {
+        const match = dateRegex.exec(todo)
+
+        if (match) {
+            const dateStr = todo.slice(match.index, match.index + 10);
+
+            const date = new Date(dateStr);
+
+            if (datesWithTodos.has(date)) {
+                const dateTodos = datesWithTodos.get(date);
+                datesWithTodos.set(date, dateTodos + todo);
+            } else {
+                datesWithTodos.set(date, [todo]);
+            }
+        } else {
+            const nullDate = new Date('1977-01-01');
+
+            if (datesWithTodos.has(nullDate)) {
+                const todosWithoutDate = datesWithTodos.get(nullDate)
+                datesWithTodos.set(nullDate, todosWithoutDate + todo)
+            } else {
+                datesWithTodos.set(nullDate, [todo])
+            }
+        }
+    });
+
+    return datesWithTodos;
 }
 
 // TODO you can do it!
