@@ -65,15 +65,17 @@ function getImportantLines(lines){
 
 function printArray(arr){
     let maxUserLength = 0;
+    let maxDateLength = 0;
     for(const item of arr){
         maxUserLength = Math.max(item.user.length, maxUserLength);
+        maxDateLength = Math.max(item.date.length, maxDateLength);
     }
     for(const item of arr){
         let importanceLine = item.importance ? '! ' : '  ';
         let userLine = ` ${item.user}`;
         userLine  = userLine.padEnd(maxUserLength + 1);
         userLine += ' ';
-        console.log(`${importanceLine}|${userLine}| ${item.date} | ${item.text}`);
+        console.log(`${importanceLine}|${userLine}| ${item.date.padEnd(maxDateLength)} | ${item.text}`);
     }
 }
 
@@ -92,6 +94,9 @@ function getFormatLines(lines) {
             data.user = a[0].split('TODO ')[1].toLowerCase();
             data.date = a[1];
             data.text = a[2];
+        }else
+        {
+            data.text = line.split('DO')[1];
         }
         if(line.indexOf('!') !== -1){
             data.importance = true;
@@ -105,7 +110,7 @@ function getUserLines(formatLines, user) {
     let result = new Array();
     for (const line of formatLines) {
         if (line.user === user.toString().toLowerCase()) {
-            result.push(line.line);
+            result.push(line);
         }
     }
     return result;
@@ -118,3 +123,5 @@ function sortByKey(arr, key){
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
 }
+
+// TODO !!!!!!! uytvfyfc
