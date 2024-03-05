@@ -2,7 +2,8 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const todoRe = /\/\/\sTODO\s(.*)/gm;
-const todoRe2 = /\/\/\sTODO\s(.*)/;
+const todoParts = /\/\/\sTODO\s(.*);\s(\d{4}-\d{2}-\d{2});\s(.*)\n?/;
+const todoWithoutParts = /\/\/\sTODO\s(.*)\n?/;
 const files = getFiles();
 
 console.log('Please, write your command!');
@@ -17,8 +18,17 @@ function getTodos() {
     return files
         .map(file => file
             .match(todoRe)
-            .map(match => match.match(todoRe2)[1]))
+            .map(match => toObject(match)))
         .reduce((prev, cur, i) => prev.concat(cur));
+}
+
+function toObject(match) {
+    const parts = match.match(todoParts);
+    if (parts !== null) {
+        return {name: parts[1], date: parts[2], text: parts[3]};
+    }
+
+    return {text: match.match(todoWithoutParts)[1]};
 }
 
 function getImportantTodos() {
@@ -31,15 +41,15 @@ function getUserTodos(username) {
 }
 
 function processCommand(command) {
-    switch (command) {
-        case 'exit':
+    switch (true) {
+        case command === 'exit':
             process.exit(0);
             break;
-        case 'show':
+        case command === 'show':
             const todos = getTodos();
             console.log(todos);
             break;
-        case 'important':
+        case command === 'important':
             const importantTodos = getImportantTodos();
             console.log(importantTodos)
             break;
@@ -48,6 +58,9 @@ function processCommand(command) {
             username = command.match(usernameRe)[1]
             const userTodos = getUserTodos(username);
             console.log(userTodos)
+            break;
+        case command.includes('sort'):
+            const argument = command.slice(5);
             break;
         default:
             console.log('wrong command');
