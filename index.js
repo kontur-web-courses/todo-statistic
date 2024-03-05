@@ -20,31 +20,34 @@ function processCommand(command) {
             break;
         case 'show':
             for (let x of todoComments){
-                console.log(x);
+                console.log(getFormatedTodoComment(x));
             }
             break;
         case 'user':
             for (let x of todoComments){
                 if (x.username === splittedCommand[1])
-                    console.log(x);
+                    console.log(getFormatedTodoComment(x));
             }
             break;
         case 'important':
             for (let x of todoComments){
                 if (x.is_important){
-                    console.log(x);
+                    console.log(getFormatedTodoComment(x));
                 }
             }
             break;
         case 'sort':
             if (splittedCommand[1] === 'importance'){
-                 console.log(sortByImportance(todoComments));
+                for (const todoComment of sortByImportance(todoComments))
+                    console.log(getFormatedTodoComment(todoComment));
             }
             else if (splittedCommand[1] === 'user'){
-                console.log(sortByUser(todoComments));
+                for (const todoComment of sortByUser(todoComments))
+                    console.log(getFormatedTodoComment(todoComment));
             }
             else if (splittedCommand[1] === 'date'){
-                console.log(sortByDate(todoComments));
+                for (const todoComment of sortByDate(todoComments))
+                    console.log(getFormatedTodoComment(todoComment));
             }
             else{
                 console.log('There is no anymore options')
@@ -108,13 +111,19 @@ function sortByImportance(comments) {
     });
 }
 
-function getFormatedTodoComments({username, date, text, is_important}){
+function getFormatedTodoComment({username, date, text, is_important}){
     const importantInfo = (is_important ? '!' : '').padEnd(1, ' ');
     const dateInfo = formatDate(date).padEnd(10, ' ');
-    const userInfo = username.padEnd(10, ' ');
-    text = text.padEnd(50, ' ');
+    let userInfo = cutExtended(username.padEnd(10, ' '), 10);
+    text = cutExtended(text.padEnd(50, ' '), 50);
     
     return `${importantInfo}  |  ${userInfo}  |  ${dateInfo}  |  ${text}`;
+}
+
+function cutExtended(str, maxLen){
+    if (str.length > maxLen)
+        return str.slice(0, maxLen - 3) + '...';
+    return str;
 }
 
 function formatDate (date) {
