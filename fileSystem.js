@@ -19,9 +19,10 @@ function getAllFilePathsWithExtension(directoryPath, extension, filePaths) {
 function readFile(filePath) {
     return fs.readFileSync(filePath, 'utf8'); // TODO Veronika; 2018-08-16; сделать кодировку настраиваемой
 }
-
+// TODO !!  2018-08-16 Переписать этот код в асинхронном стиле
+// TODO !!!!!!  2018-08-16 Переписать этот код в асинхронном стиле
 // TODO Digi; 2018-09-21; Добавить функцию getFileName, которая по пути файла будет возвращать его имя. Воспользоваться модулем path из Node.js
-
+// TODO 123123123
 module.exports = {
     getAllFilePathsWithExtension,
     readFile,
