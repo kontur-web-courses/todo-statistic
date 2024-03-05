@@ -1,9 +1,9 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
-const todoRe = /\/\/\sTODO\s(.*)/gm;
-const todoParts = /\/\/\sTODO\s(.*);\s(\d{4}-\d{2}-\d{2});\s(.*)\n?/;
-const todoWithoutParts = /\/\/\sTODO\s(.*)\n?/;
+const todoRe = /\/\/\s?TODO[\s:](.*)/gmi;
+const todoParts = /\/\/\s?TODO[\s:](.*);\s(\d{4}-\d{2}-\d{2});\s(.*)\n?/i;
+const todoWithoutParts = /\/\/\s?TODO[\s:](.*)\n?/i;
 const usernameRe = new RegExp('user (.*)')
 const dateRe = /\b\d{4}(?:-\d{2}(?:-\d{2})?)?\b/g;
 
@@ -117,3 +117,4 @@ function processCommand(command) {
 }
 
 // TODO you can do it!
+//toDo:sperma!
