@@ -79,6 +79,13 @@ function sortTodos(param) {
     } else if (param === 'user') {
         sortUsers();
     } else if (param === 'date') {
+        const datesWithTodos = getDatesWithTodos(getToDo());
+
+        const sorted = Array.from(datesWithTodos).sort((a, b) => b[0] - a[0]);
+
+        sorted.forEach(todo => {
+            console.log(todo.flat(Infinity)[1]);
+        })
 
     }
 }
@@ -138,6 +145,40 @@ function findAllOccurrences(text) {
     const regex = new RegExp(pattern, 'g');
     let matches = text.match(regex);
     return matches;
+}
+
+function getDatesWithTodos(todos) {
+    const dateRegex = /\d{4}-\d\d-\d\d/
+
+    const datesWithTodos = new Map();
+
+    todos.forEach(todo => {
+        const match = dateRegex.exec(todo)
+
+        if (match) {
+            const dateStr = todo.slice(match.index, match.index + 10);
+
+            const date = new Date(dateStr);
+
+            if (datesWithTodos.has(date)) {
+                const dateTodos = datesWithTodos.get(date);
+                datesWithTodos.set(date, dateTodos + todo);
+            } else {
+                datesWithTodos.set(date, [todo]);
+            }
+        } else {
+            const nullDate = new Date('1977-01-01');
+
+            if (datesWithTodos.has(nullDate)) {
+                const todosWithoutDate = datesWithTodos.get(nullDate)
+                datesWithTodos.set(nullDate, todosWithoutDate + todo)
+            } else {
+                datesWithTodos.set(nullDate, [todo])
+            }
+        }
+    });
+
+    return datesWithTodos;
 }
 
 // TODO you can do it!
