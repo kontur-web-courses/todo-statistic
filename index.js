@@ -77,11 +77,47 @@ function sortTodos(param) {
             return a.includes('!') ? -1 : 1;
         }))
     } else if (param === 'user') {
-
+        sortUsers();
     } else if (param === 'date') {
 
     }
 }
+
+function sortUsers() {
+    const allUserTodos = getToDo();
+    const users = {};
+    users["missing"] = [];
+
+    allUserTodos.forEach(todo => {
+        const index = todo.indexOf(";");
+        if (index === -1) {
+            users["missing"].push(todo);
+        } else {
+            const curUserName = todo.substring(8, index).toLowerCase();
+            if (users[curUserName] !== undefined) {
+                users[curUserName].push(todo);
+            } else {
+                users[curUserName] = [todo];
+            }
+        }
+    });
+
+    for (const user in users) {
+        if (user === "missing") {
+            continue;
+        }
+        for (const todo of users[user]) {
+            console.log(todo);
+        }
+    }
+
+    for (const todo of users["missing"]) {
+        console.log(todo);
+    }
+}
+
+
+
 
 function printTodos(todos) {
     for (let todo of todos) {
