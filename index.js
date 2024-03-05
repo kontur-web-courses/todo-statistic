@@ -13,6 +13,9 @@ function getFiles() {
 
 function processCommand(command) {
     switch (command) {
+        case 'show':
+            showTodoComments();
+            break;
         case 'exit':
             process.exit(0);
             break;
@@ -22,4 +25,16 @@ function processCommand(command) {
     }
 }
 
+function showTodoComments() {
+    const todoComments = [];
+    files.forEach(fileContent => {
+        const lines = fileContent.split('\n');
+        lines.forEach(line => {
+            if (line.includes('// TODO')) {
+                todoComments.push(line.slice(line.indexOf('// TODO')));
+            }
+        });
+    });
+    todoComments.forEach(comment => console.log(comment));
+}
 // TODO you can do it!
