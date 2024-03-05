@@ -4,6 +4,7 @@ const {readLine} = require('./console');
 const files = getFiles();
 const todoRegex = /\/\/ TODO (.*)\n?/g;
 const todos = getTODOs()
+Print(todos[0])
 console.log('Please, write your command!');
 readLine(processCommand);
 
@@ -14,7 +15,7 @@ function getTODOs(){
     })).flat().map(p => {
         const parsed = parseAuthorsComment(p)
         return {
-            comment: p,
+            comment: parsed['comment'],
             isImportant: p.includes('!'),
             Author: parsed.author,
             Date: parsed.commentDate
@@ -122,6 +123,16 @@ function Sort(by){
         else
             return b[by] - a[by]
     })
+}
+
+
+function Print(comment){
+    const important = comment['isImportant'] ? '!' : ' '
+    const author = comment['Author'].length > 8 ? comment['Author'].slice(0, 6) : comment['Author'].padEnd(6);
+    const date = comment['Date'].toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    const commen = comment['comment'].length > 8 ? comment['comment'].slice(0, 46) : comment['comment'].padEnd(46)
+    console.log(`${important} |  ${author}  |  ${date}  |  ${commen}`)
+
 }
 
 // TODO you can do it!
