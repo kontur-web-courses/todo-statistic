@@ -42,6 +42,35 @@ function processCommand(command) {
             let array = getTODOcomments(getFiles());
             if (command[1] === 'importance'){
                 array.sort((a, b) => b.importance - a.importance);
+            } else if (command[1] === 'date') {
+                let withoutDate = array.filter(TODO => TODO.date === undefined);
+                let withDate = array.filter(TODO => TODO.date !== undefined).sort((a, b) => b.date - a.date);
+                array = withDate + withoutDate;
+            } else if (command[1] === 'user'){
+                let dict = {};
+                let undef = [];
+                for (let TODO of array){
+                    if (TODO.user !== undefined) {
+                        if (!(TODO.user in dict)) {
+                            dict[TODO.user] = [];
+                        }
+                        dict[TODO.user].push(TODO.comment.replace(TODO.user + ';', '').trim());
+                    } else {
+                        undef.push(TODO.comment);
+                    }
+                }
+                array = [];
+                for (let key in dict){
+                    array.push(key+':');
+                    for (let e of dict[key]){
+                        array.push(e);
+                    }
+                }
+                for (let e of undef){
+                    array.push(e);
+                }
+            } else{
+                console.log('Такая сортировка не поддерживается');
             }
             for (let elem of array){
                 console.log(elem.comment);
