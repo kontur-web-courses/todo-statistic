@@ -22,17 +22,20 @@ function processCommand(command) {
             for (let x of todoComments){
                 console.log(x);
             }
+            break;
         case 'user':
             for (let x of todoComments){
                 if (x.username === splittedCommand[1])
                     console.log(x);
             }
+            break;
         case 'important':
             for (let x of todoComments){
                 if (x.is_important){
                     console.log(x);
                 }
             }
+            break;
         case 'sort':
             if (splittedCommand[1] === 'importance'){
                 sortByImportance(todoComments);
@@ -40,6 +43,7 @@ function processCommand(command) {
             else{
                 console.log(':///');
             }
+            break;
         default:
             console.log('wrong command');
             break;
@@ -53,6 +57,8 @@ function parse(files) {
 
     files.forEach(file => {
         const matches = file.match(todoRegex);
+        if (!matches)
+            return;
         for (let match of matches){
             match = match.slice(8);
             if (match)
@@ -70,8 +76,7 @@ function extractCommentData(match){
     }
     else{
         [username, date, text] = match.split(';');
-        console.log('Here');
-        date = Date(date);
+        date = new Date(date);
     }
     is_important = (text.indexOf('!') != -1);
     return {
@@ -82,14 +87,6 @@ function extractCommentData(match){
     };
 }
 
-// TODO you can do it!
-
-const obj = {
-    username: '',
-    date: '',
-    text: '',
-    is_important: ''
-};
 
 function sortByImportance(comments) {
     return comments.sort((a, b) => {
