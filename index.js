@@ -7,7 +7,7 @@ const todos = files.map(file => file.split("\n").map(line => line.trim()).filter
 const todos_obj = todos.map(todo => {
     let todoSplit = todo.split(";");
     if (todoSplit.length !== 3) {
-        return { importance: todo.split('!').length - 1, name: "", date: new Date("1000"), comment: todo, pureComment: todo }
+        return { importance: todo.split('!').length - 1, name: "", date: new Date(""), comment: todo, pureComment: todo }
     }
     return { importance: todo.split('!').length - 1, name: todoSplit[0].toLowerCase(), date: new Date(todoSplit[1]), comment: todo, pureComment: todoSplit[2].trim() }
 });
@@ -22,16 +22,21 @@ function getFiles() {
 
 function formatEntries(entries) {
     const nameColumnWidth = Math.min(Math.max(...entries.map(obj => obj.name.length)), 10);
-    const dateColumnWidth = Math.min(Math.max(...entries.map(obj => obj.date)), 10);
+    const dateColumnWidth = Math.min(Math.max(...entries.map(obj => obj.date).filter(date => !isNaN(+date))), 10);
     const commentColumnWidth = Math.min(Math.max(...entries.map(obj => obj.comment.length)), 50)
 
     const formatName = name => name.length > nameColumnWidth 
         ? `  ${name.slice(0, nameColumnWidth - 3)}...  ` 
         : `  ${name.padEnd(nameColumnWidth, ' ')}  `;
 
-    const formatDate = date => date.toISOString().split("T")[0] > dateColumnWidth 
-        ? `  ${date.toISOString().split("T")[0].slice(0, dateColumnWidth - 3)}...  ` 
-        : `  ${date.toISOString().split("T")[0].padEnd(dateColumnWidth, ' ')}  `;
+    const formatDate = date => {
+        if (isNaN(+date)) {
+            return ' '.repeat(dateColumnWidth + 4);
+        }
+        return date.toISOString().split("T")[0] > dateColumnWidth 
+            ? `  ${date.toISOString().split("T")[0].slice(0, dateColumnWidth - 3)}...  ` 
+            : `  ${date.toISOString().split("T")[0].padEnd(dateColumnWidth, ' ')}  `
+    }
 
     const formatComment = comment => comment.length > commentColumnWidth 
         ? `  ${comment.slice(0, commentColumnWidth - 3)}...  ` 
@@ -52,30 +57,29 @@ function processCommand(command) {
             break;
 
         case 'important':
-            console.log(formatEntries(todos_obj.filter(obj => obj.importance !== 0).map(obj => obj.comment)))
+            console.log(formatEntries(todos_obj.filter(obj => obj.importance !== 0)))
             break;
 
         case "user":
             let username = arg;
-            console.log(formatEntries(todos_obj.filter(obj => obj.name === username).map(obj => obj.comment)))
+            console.log(formatEntries(todos_obj.filter(obj => obj.name === username)))
             break;
 
         case "sort":
             let entries;
             if (arg === "importance") {
-                entries = todos.slice();
+                entries = todos_obj.slice();
                 entries.sort((a, b) => b.importance - a.importance);
             } else if (arg === "user") {
                 named_entries = todos_obj.filter(obj => obj.name !== "");
                 unnamed_entries = todos_obj.filter(obj => obj.name === "")
 
                 named_entries.sort((a, b) => a.name.localeCompare(b.name));
-                entries = [...named_entries, ...unnamed_entries].map(obj => obj.comment);
+                entries = [...named_entries, ...unnamed_entries];
             } 
             else if (arg === "date") {
                 entries = todos_obj.slice();
                 entries.sort((a, b) => b.date - a.date);
-                entries = entries.map(todo_obj => todo_obj.comment);
             }
 
             if (entries === undefined) {
@@ -87,7 +91,7 @@ function processCommand(command) {
 
         case "date":
             const date = new Date(arg);
-            let entriesDate = todos_obj.filter(obj => obj.date > date).map(obj => obj.comment);
+            let entriesDate = todos_obj.filter(obj => obj.date > date);
             console.log(formatEntries(entriesDate)); 
             break;
 
