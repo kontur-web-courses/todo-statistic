@@ -1,7 +1,9 @@
 const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
-const todoRe = /\/\/\sTODO\s(.*)\n?/;
+const todoRe = /\/\/\sTODO\s(.*)/gm;
+const todoParts = /\/\/\sTODO\s(.*);\s(\d{4}-\d{2}-\d{2});\s(.*)\n?/;
+const todoWithoutParts = /\/\/\sTODO\s(.*)\n?/;
 const files = getFiles();
 
 console.log('Please, write your command!');
@@ -30,7 +32,7 @@ function toObject(match) {
 }
 
 function getImportantTodos() {
-    return getTodos().filter((todo, i) => todo.includes('!'));
+    return getTodos().filter((todo, i) => todo.text.includes('!'));
 }
 
 function getUserTodos(username) {
