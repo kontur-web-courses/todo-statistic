@@ -13,7 +13,13 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    let commandParts = command.split(' ', 2);
+    let cmd = commandParts[0];
+    let args = [];
+    if (commandParts.length > 1)
+        args = commandParts[1].split(' ');
+
+    switch (cmd) {
         case 'exit':
             process.exit(0);
             break;
@@ -23,7 +29,37 @@ function processCommand(command) {
                     console.log(todo);
                 }
             }
-            break
+            break;
+        case 'sort':
+            let fullTodos = [];
+            for (const fileText of files) {
+                for (const todo of extract.todos(fileText)) {
+                    if (todo.type === 'full')
+                        fullTodos.push(todo);
+                }
+            }
+
+            switch (args[0]) {
+                case 'importance':
+                    fullTodos = fullTodos.toSorted((a, b) => a.priority - b.priority);
+                    break;
+                case 'user':
+                    fullTodos = fullTodos.toSorted((a, b) => a.user.localeCompare(b.user));
+                    break;
+                case 'date':
+                    fullTodos = fullTodos.toSorted((a, b) => a.date - b.date);
+                    break;
+                default:
+                    console.log("Unknown argument for sorting");
+                    return;
+            }
+
+            for (const todo of fullTodos) {
+                console.log(todo);
+            }
+
+
+            break;
         default:
             console.log('wrong command');
             break;
