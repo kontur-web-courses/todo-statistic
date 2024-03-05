@@ -85,10 +85,8 @@ function getAllTodos() {
     let result = [];
     for (let file of files) {
         for (let line of file.split('\n')) {
-            let todoIndex = line.indexOf("// TODO ");
+            let todoIndex = line.search(/\/\/\s*todo\s*:?/gi);
             if (todoIndex === -1) continue;
-            if (todoIndex === -1)
-                continue;
             let todo = line.slice(todoIndex)
             result.push(todo);
         }
