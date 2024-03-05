@@ -60,7 +60,15 @@ function processCommand(command) {
                 console.log(todo);
             }
 
+            break;
+        case 'date':
+            let d = Date.parse(args[0]);
+            if (d == null) {
+                console.log('Wrong date, use format YYYY-MM-DD');
+                return;
+            }
 
+            printToDo(getToDo().filter(t => t.type === 'full' && t.date >= d));
             break;
         default:
             console.log('wrong command');
