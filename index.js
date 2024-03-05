@@ -29,6 +29,9 @@ function processCommand(command) {
         case 'important':
             important()
             break;
+        case 'sort':
+            sortTodos(data)
+            break;
         case 'data':
             let coments2 = getToDo();
             let result = [];
