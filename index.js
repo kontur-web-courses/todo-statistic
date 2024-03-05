@@ -19,23 +19,30 @@ function getFiles() {
     return filePaths.map(path => readFile(path));
 }
 
-function processCommand(command) {
-    switch (command) {
+function processCommand(comm) {
+    const command = comm.split(' ')
+    switch (command[0]) {
         case 'exit':
             process.exit(0);
             break;
         case 'show':
             console.log(todos)
-            break
+            break;
+        case 'important':
+            console.log(findImportantComments())
+            break;
+        case 'user':
+            console.log(findAuthorComments(command.slice(1).join(' ')))
+            break;
         default:
             console.log('wrong command');
             break;
     }
 }
 
-function findImportantComments(comments) {
+function findImportantComments() {
     let result = [];
-    for (let comment of comments) {
+    for (let comment of todos) {
         if (comment.indexOf('!') >= 0) {
             result.push(comment);
         }
@@ -56,11 +63,11 @@ function parseAuthorsComment(comment) {
     return false;
 }
 
-function findAuthorComments(comments, author) {
+function findAuthorComments(author) {
     let result = [];
-    for (let comment of comments) {
+    for (let comment of todos) {
         const parseComment = parseAuthorsComment(comment);
-        if (parseComment !== false && parseComment['author'].toLowerCase() == author.toLowerCase()) {
+        if (parseComment !== false && parseComment['author'].toLowerCase() === author.toLowerCase()) {
             result.push(parseComment['comment']);
         }
     }
