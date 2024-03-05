@@ -4,6 +4,7 @@ const {readLine} = require('./console');
 const files = getFiles();
 const TODO_REGEXP = /\/\/ TODO.*/gm;
 const IMPORTANT_TODO_REGEXP = /\/\/ TODO.*/gm;
+const USER_TODO_REGEXP = /\/\/ TODO\s*(.+)\s*;\s*(\d{4}-\d{2}-\d{2})\s*;\s*(.*)/gm
 
 console.log('Please, write your command!');
 readLine(processCommand);
@@ -14,13 +15,28 @@ function getFiles() {
 }
 
 function getTodos(file) {
-    return file.match(TODO_REGEXP);
+    const todos = Array.from(file.matchAll(USER_TODO_REGEXP));
+
+    return todos
+        .map(group => {
+            return {
+                isImportant: group[3].includes('!'),
+                username: group[1],
+                date: group[2],
+                text: group[3],
+            }
+        });
 }
 
 function getImportantTodos(file) {
     const todos = getTodos(file);
+    return todos.filter(e => e.isImportant);
+}
 
-    return todos.filter(e => e.includes('!'));
+function getUserTodos(file, username) {
+    const todos = getTodos(file);
+    return todos
+        .filter(obj => obj.username === username);
 }
 
 function processCommand(command) {
