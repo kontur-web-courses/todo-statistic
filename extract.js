@@ -12,6 +12,32 @@ function priority(todoText) {
     return p;
 }
 
+function full(todoText) {
+    let components = todoText.split(';', 3).map(c => c.trim());
+    if (components.length < 3)
+        return null;
+
+    let date = Date.parse(components[1]);
+    if (date == null)
+        return null;
+
+    return {
+        type: 'full',
+        user: components[0],
+        date: date,
+        text: components[2],
+        priority: priority(components[2])
+    };
+}
+
+function truncated(todoText) {
+    return {
+        type: 'truncated',
+        text: todoText,
+        priority: priority(todoText)
+    };
+}
+
 
 function todos(text) {
     let allTodos = greedyTodo.exec(text);
@@ -20,10 +46,9 @@ function todos(text) {
 
     let todos = [];
     for (const todoText of allTodos) {
-        todos.push({
-            text: todoText.replace(todoDeclaration, ''),
-            priority: priority(todoText)
-        });
+        let text = todoText.replace(todoDeclaration, '');
+        let todo = full(text) ?? truncated(text);
+        todos.push(todo);
     }
 
     return todos;
