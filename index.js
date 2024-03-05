@@ -51,8 +51,8 @@ function processCommand(comm) {
 function findImportantComments() {
     let result = [];
     for (let comment of todos) {
-        if (comment.indexOf('!') >= 0) {
-            result.push(comment);
+        if (comment['isImportant']) {
+            result.push(comment['comment']);
         }
     }
     return result;
@@ -77,7 +77,8 @@ function parseAuthorsComment(comment) {
 
 function findAuthorComments(author) {
     let result = [];
-    for (let comment of todos) {
+    for (let commentData of todos) {
+        const comment = commentData['comment'];
         const parseComment = parseAuthorsComment(comment);
         if (parseComment !== false && parseComment['author'].toLowerCase() === author.toLowerCase()) {
             result.push(parseComment['comment']);
@@ -88,7 +89,8 @@ function findAuthorComments(author) {
 
 function findDateComments(date) {
     let result = [];
-    for (let comment of todos) {
+    for (let commentData of todos) {
+        const comment = commentData['comment'];
         const parseComment = parseAuthorsComment(comment);
         if (parseComment !== false && parseComment['commentDate'] > date) {
             result.push(parseComment['comment']);
