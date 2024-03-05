@@ -12,11 +12,12 @@ function getTODOs(){
         if (1 in p)
             return p[1]
     })).flat().map(p => {
+        const parsed = parseAuthorsComment(p)
         return {
             comment: p,
             isImportant: p.includes('!'),
-            isAuthor: p.count(';') >= 2,
-            isDate: isAuthor
+            Author: parsed.author,
+            Date: parsed.commentDate
         }
     })
 }
@@ -67,7 +68,11 @@ function parseAuthorsComment(comment) {
         };
         return parseDate;
     }
-    return false;
+    return  {
+        author: null,
+        commentDate: null,
+        comment: comment
+    };
 }
 
 function findAuthorComments(author) {
@@ -90,6 +95,10 @@ function findDateComments(date) {
         }
     }
     return result;
+}
+
+function Sort(by){
+    return todos.slice().sort((a,b) =>  b[by] - a[by])
 }
 
 // TODO you can do it!
