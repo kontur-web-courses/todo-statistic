@@ -48,15 +48,24 @@ function sortByImportance(comments){
     return comments;
 }
 
+function getDate(x){
+    if (x.split(';').length != 3) {
+        return "";
+    }
+    else{
+        let date = x.split(';')[1];
+        return date;
+    }
+}
 
 function sortByDate(comments){
-    let res = []
-    return res;
+    comments.sort((a, b) => getDate(b).localeCompare(getDate(a)));
+    return comments;
 }
 
 function getName(x){
-    if (x.split(';') < 2) {
-        return ""
+    if (x.split(';').length < 2) {
+        return "";
     }
     else{
         let name = x.split(';')[0];
@@ -91,15 +100,20 @@ function processCommand(command) {
             const username = stringCommand.slice(5).toLowerCase();
             console.log(getTodoByUser(username));
             break;
-        case 'sort importance':
-            console.log(sortByImportance(getImportant(getToDO())));
-            break
-        case 'sort date':
-            console.log(sortByDate(getToDO()));
-            break
-        case 'sort user':
-            console.log(sortByName(getToDO()));
-            break;
+        case 'sort':
+            const command = stringCommand.slice(5).toLowerCase();
+            switch (command){
+                case 'importance':
+                    console.log(sortByImportance(getToDO()));
+                    break
+                case 'date':
+                    console.log(sortByDate(getToDO()));
+                    break
+                case 'user':
+                    console.log(sortByName(getToDO()));
+                    break;
+
+            }
         case 'exit':
             process.exit(0);
             break;
