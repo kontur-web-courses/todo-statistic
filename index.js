@@ -2,6 +2,7 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const files = getFiles();
+let todos = [];
 
 console.log('Please, write your command!');
 readLine(processCommand);
